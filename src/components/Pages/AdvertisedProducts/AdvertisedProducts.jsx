@@ -35,9 +35,21 @@ const AdvertisedProducts = () => {
 
     setLoading(false)
 
+    const [tabselect, setTabSelect] = useState('tab2')
+
     if (advertiseItemsFiltered.length != 0) {
         return (
             <div>
+                <div className="container mx-auto flex flex-col items-center gap-5 text-center ">
+                    <h1 className="text-3xl font-bold">Why Buy From Us</h1>
+                    <p className='w-[900px] text-sm'>"We have a wide selection of products from top brands and a knowledgeable staff to help you find exactly what you need. Plus, our fast delivery ensures that you receive your purchase as soon as possible. Choose us for all your electronic needs and experience the difference. <span className='underline text-secondary'>Learn More</span> </p>
+
+                    <div className="tabs tabs-boxed bg-transparent">
+                        <button onClick={()=> setTabSelect('tab1')} className={`tab text-xl text-neutral ${tabselect === 'tab1' && 'tab-active'}`}>Tab 1</button> 
+                        <button onClick={()=> setTabSelect('tab2')} className={`tab text-xl text-neutral ${tabselect === 'tab2' && 'tab-active'}`}>Tab 2</button> 
+                        <button onClick={()=> setTabSelect('tab3')} className={`tab text-xl text-neutral ${tabselect === 'tab3' && 'tab-active'}`}>Tab 3</button>
+                    </div>
+                </div>
                 <div className='grid grid-cols-1 lg:grid-cols-3 mt-3 justify-items-center gap-5 container mx-auto'>
 
                     {advertiseItemsFiltered &&
@@ -49,7 +61,7 @@ const AdvertisedProducts = () => {
                                     <p>{item.description}</p>
                                     <p className="text-sm">Location: {item.location}</p>
                                     <p className="text-sm">Years of used: {item.used}</p>
-                                    <p className="text-sm">Posted: 2 days</p>
+                                    <p className="text-sm">Posted: 2 days</p> 
                                     <p className="text-sm flex gap-2 inline">Seller Name: <span className='font-bold'>{item.sname}</span> {item.verified ? <GoVerified className='text-sky-500 mt-1' /> : <GoVerified className='text-gray-500 mt-1' />} </p>
                                     <p className="text-sm">Seller Contact: <span className='font-bold'>{item.phoneNo}</span></p>
 
