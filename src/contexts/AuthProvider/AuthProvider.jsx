@@ -12,6 +12,8 @@ const AuthProvider = ({ children }) => {
 
     const [loading, setLoading] = useState(true)
 
+    const [title, setTitle] = useState('home')
+
 
     useEffect(() => {
         fetch('https://buyandsell24-server.vercel.app/users')
@@ -91,7 +93,9 @@ const AuthProvider = ({ children }) => {
         setSearchText,
         searchText,
         items,
-        setItems
+        setItems,
+        setTitle,
+        title
 
     }
 
