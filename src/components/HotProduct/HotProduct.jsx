@@ -1,13 +1,6 @@
 import React, { useRef, useState } from "react";
-// Import Swiper React components
-import { Swiper, SwiperSlide } from "swiper/react";
 
-// Import Swiper styles
-import "swiper/css";
-import "swiper/css/effect-coverflow";
-import "swiper/css/pagination";
-import { EffectCoverflow, Pagination } from "swiper";
-
+import { MdMobileFriendly } from "react-icons/md";
 
 const HotProduct = () => {
 
@@ -81,12 +74,12 @@ const HotProduct = () => {
                                 <p className="font-bold text-xl text-primary">Intel I5 13600K</p>
                                 <img src="https://i.ibb.co/QMjtYff/i5-13th.webp" alt="i5-13th" className="w-52" />
                             </div>
-                            <div className=" h-48 bg-white w-full border py-5 flex flex-col justify-center  gap-5 rounded-xl text-sm">
-                                <p className=" text-center">Download our App to your <span className="text-blue-600 ">Phone</span> </p>
+                            <div className=" h-56 bg-white w-full border py-5 flex flex-col justify-center  gap-5 rounded-xl text-sm">
+                                <p className=" px-2 flex flex-nowrap items-center gap-5  "><MdMobileFriendly className="text-3xl flex"/> Download our App to your Phone </p>
                                 <span className="border-b"></span>
-                                <p className=" text-center">Order now so you dont miss the opportunities.</p>
+                                <p className=" px-2 flex flex-nowrap items-center gap-5  "><MdMobileFriendly className="text-3xl"/> Order now so you dont miss the opportunities.</p>
                                 <span className="border-b"></span>
-                                <p className=" text-center">Your order will arrive at your door in 2 hour.</p>
+                                <p className=" px-2 flex flex-nowrap items-center gap-5  "><MdMobileFriendly className="text-3xl"/> Your order will arrive at your door in 2 hour.</p>
                             </div>
                         </div>
                     
@@ -98,7 +91,7 @@ const HotProduct = () => {
                             </p>
                             <p>Dont miss this opportunity at a special discount just for this week.</p>
                         </div>
-                            <div className="border border-primary h-80 rounded-lg flex justify-center items-center p-10 gap-10">
+                            <div className="border border-primary h-96 rounded-lg flex justify-center items-center p-10 gap-10">
                             <div className="relative group">
                                 <span className=" group-hover:animate-pulse group-hover:-translate-y-10 transition-all duration-300  absolute -left-5 -top-2 z-50 font-mono bg-red-500 h-16 w-16 text-3xl font-bold  text-white flex justify-center items-center  rounded-full">60%</span>
                                 <img src="https://i.ibb.co/JqbDVkt/airpulse-a300-001-500x500.jpg" alt="airpulse" className="w-56 group-hover:scale-125 transition-all duration-300 "/>
