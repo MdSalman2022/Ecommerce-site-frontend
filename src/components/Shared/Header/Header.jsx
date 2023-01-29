@@ -62,6 +62,9 @@ const Header = () => {
         };
     }, []);
 
+
+    const [options, setOptions] = useState(false)
+
     return (
         <div>
             <div className='grid grid-cols-3 container mx-auto lg:gap-80 text-sm justify-items-center place-content-center bg-base-100 w-full h-8'>
@@ -106,21 +109,158 @@ const Header = () => {
                     </div>
                 </div>
             </div>
-                <div className=' py-5 border-y'>
+                <div className='py-4  border-y '>
                 <div className='container mx-auto'>
                     <div className="flex justify-between ">
-                        <div className=''>
-                            <p className='flex gap-2 justify-center items-center p-3 bg-primary text-base-100 w-44 rounded-full'>All Categories <FaAngleDown/> </p>
+                        <div className='relative group'>
+                            <p className='flex gap-2 justify-center items-center p-3 bg-primary text-base-100 w-44 rounded-full '>All Categories <FaAngleDown /> </p>
+                            <div className="hidden group-hover:flex group-hover:flex-col absolute z-50  py-5 w-56  top-12 h-full ">
+                                <ul className='space-y-2 bg-white z-50 rounded-lg'>
+                                    <li className='transition-all duration-300 cursor-pointer hover:text-primary font-semibold border-b p-2'>Desktop Components</li>
+                                    <li className='transition-all duration-300 cursor-pointer hover:text-primary font-semibold border-b p-2'>Laptops</li>
+                                    <li className='transition-all duration-300 cursor-pointer hover:text-primary font-semibold border-b p-2'>Accessories</li>
+                                    <li className='transition-all duration-300 cursor-pointer hover:text-primary font-semibold border-b p-2'>Smartphone</li>
+                                    <li className='transition-all duration-300 cursor-pointer hover:text-primary font-semibold border-b p-2'>Tablet</li>
+                                    <li className='transition-all duration-300 cursor-pointer hover:text-primary font-semibold border-b p-2'>Camera</li>
+                                    <li className='transition-all duration-300 cursor-pointer hover:text-primary font-semibold border-b p-2'>Consoles</li>
+                                    <li className='transition-all duration-300 cursor-pointer hover:text-primary font-semibold p-2'>TV</li>
+                                </ul>
+                            </div>
                         </div>
                         <div className='flex gap-3'>
-                            <p className='flex gap-1 justify-center items-center transition-all duration-300 text-primary bg-accent hover:text-primary w-32 cursor-pointer text-sm font-semibold rounded-full'>Computers <FaAngleDown/> </p>
-                            <p className='flex gap-1 justify-center items-center transition-all duration-300 text-neutral hover:bg-accent hover:text-primary w-32 cursor-pointer text-sm font-semibold rounded-full'>Laptops <FaAngleDown/> </p>
-                            <p className='flex gap-1 justify-center items-center transition-all duration-300 text-neutral hover:bg-accent hover:text-primary w-32 cursor-pointer text-sm font-semibold rounded-full'>Smartphone <FaAngleDown/> </p>
-                            <p className='flex gap-1 justify-center items-center transition-all duration-300 text-neutral hover:bg-accent hover:text-primary w-32 cursor-pointer text-sm font-semibold rounded-full'>Tablet <FaAngleDown/> </p>
-                            <p className='flex gap-1 justify-center items-center transition-all duration-300 text-neutral hover:bg-accent hover:text-primary w-32 cursor-pointer text-sm font-semibold rounded-full'>Camera <FaAngleDown/> </p>
-                            <p className='flex gap-1 justify-center items-center transition-all duration-300 text-neutral hover:bg-accent hover:text-primary w-32 cursor-pointer text-sm font-semibold rounded-full'>Gadgets <FaAngleDown/> </p>
-                            <p className='flex gap-1 justify-center items-center transition-all duration-300 text-neutral hover:bg-accent hover:text-primary w-32 cursor-pointer text-sm font-semibold rounded-full'>TV <FaAngleDown/> </p>
-                            <p className='flex gap-1 justify-center items-center transition-all duration-300 text-neutral hover:bg-accent hover:text-primary w-32 cursor-pointer text-sm font-semibold rounded-full'>AC <FaAngleDown/> </p>
+                            <div className='relative group flex gap-1 justify-center items-center transition-all duration-300 text-primary bg-accent hover:text-primary w-32 cursor-pointer text-sm font-semibold rounded-full'>
+                                
+                                Computers <FaAngleDown />
+
+                                <div className="absolute top-12 left-0 hidden group-hover:flex group-hover:flex-col  z-50  py-5 w-56 bg-white text-neutral rounded-lg h-full">
+                                    <ul className='space-y-2 bg-white  rounded-lg'>
+                                        <li className='transition-all duration-300 cursor-pointer hover:text-primary font-semibold border-b p-2'>Desktop Components</li>
+                                        <li className='transition-all duration-300 cursor-pointer hover:text-primary font-semibold border-b p-2'>Laptops</li>
+                                        <li className='transition-all duration-300 cursor-pointer hover:text-primary font-semibold border-b p-2'>Accessories</li>
+                                        <li className='transition-all duration-300 cursor-pointer hover:text-primary font-semibold border-b p-2'>Smartphone</li>
+                                        <li className='transition-all duration-300 cursor-pointer hover:text-primary font-semibold border-b p-2'>Tablet</li>
+                                        <li className='transition-all duration-300 cursor-pointer hover:text-primary font-semibold border-b p-2'>Camera</li>
+                                        <li className='transition-all duration-300 cursor-pointer hover:text-primary font-semibold border-b p-2'>Consoles</li>
+                                        <li className='transition-all duration-300 cursor-pointer hover:text-primary font-semibold p-2'>TV</li>
+                                    </ul>
+                                </div>
+                            
+                            </div>
+                            <div className='group relative flex gap-1 justify-center items-center transition-all duration-300 text-neutral hover:bg-accent hover:text-primary w-32 cursor-pointer text-sm font-semibold rounded-full'>
+                                
+                                Laptops <FaAngleDown />
+                                <div className="absolute top-12 left-0 hidden group-hover:flex group-hover:flex-col  z-50  py-5 w-56 bg-white text-neutral rounded-lg h-full">
+                                    <ul className='space-y-2 bg-white  rounded-lg'>
+                                        <li className='transition-all duration-300 cursor-pointer hover:text-primary font-semibold border-b p-2'>Desktop Components</li>
+                                        <li className='transition-all duration-300 cursor-pointer hover:text-primary font-semibold border-b p-2'>Laptops</li>
+                                        <li className='transition-all duration-300 cursor-pointer hover:text-primary font-semibold border-b p-2'>Accessories</li>
+                                        <li className='transition-all duration-300 cursor-pointer hover:text-primary font-semibold border-b p-2'>Smartphone</li>
+                                        <li className='transition-all duration-300 cursor-pointer hover:text-primary font-semibold border-b p-2'>Tablet</li>
+                                        <li className='transition-all duration-300 cursor-pointer hover:text-primary font-semibold border-b p-2'>Camera</li>
+                                        <li className='transition-all duration-300 cursor-pointer hover:text-primary font-semibold border-b p-2'>Consoles</li>
+                                        <li className='transition-all duration-300 cursor-pointer hover:text-primary font-semibold p-2'>TV</li>
+                                    </ul>
+                                </div>
+                            </div>
+                            <div className='group relative flex gap-1 justify-center items-center transition-all duration-300 text-neutral hover:bg-accent hover:text-primary w-32 cursor-pointer text-sm font-semibold rounded-full'>
+                                Smartphone <FaAngleDown />
+
+                                <div className="absolute top-12 left-0 hidden group-hover:flex group-hover:flex-col  z-50  py-5 w-56 bg-white text-neutral rounded-lg h-full">
+                                    <ul className='space-y-2 bg-white  rounded-lg'>
+                                        <li className='transition-all duration-300 cursor-pointer hover:text-primary font-semibold border-b p-2'>Desktop Components</li>
+                                        <li className='transition-all duration-300 cursor-pointer hover:text-primary font-semibold border-b p-2'>Laptops</li>
+                                        <li className='transition-all duration-300 cursor-pointer hover:text-primary font-semibold border-b p-2'>Accessories</li>
+                                        <li className='transition-all duration-300 cursor-pointer hover:text-primary font-semibold border-b p-2'>Smartphone</li>
+                                        <li className='transition-all duration-300 cursor-pointer hover:text-primary font-semibold border-b p-2'>Tablet</li>
+                                        <li className='transition-all duration-300 cursor-pointer hover:text-primary font-semibold border-b p-2'>Camera</li>
+                                        <li className='transition-all duration-300 cursor-pointer hover:text-primary font-semibold border-b p-2'>Consoles</li>
+                                        <li className='transition-all duration-300 cursor-pointer hover:text-primary font-semibold p-2'>TV</li>
+                                    </ul>
+                                </div>
+                            
+                            </div>
+                            <div className='group relative flex gap-1 justify-center items-center transition-all duration-300 text-neutral hover:bg-accent hover:text-primary w-32 cursor-pointer text-sm font-semibold rounded-full'>
+                                
+                                Tablet <FaAngleDown />
+                                <div className="absolute top-12 left-0 hidden group-hover:flex group-hover:flex-col  z-50  py-5 w-56 bg-white text-neutral rounded-lg h-full">
+                                    <ul className='space-y-2 bg-white  rounded-lg'>
+                                        <li className='transition-all duration-300 cursor-pointer hover:text-primary font-semibold border-b p-2'>Desktop Components</li>
+                                        <li className='transition-all duration-300 cursor-pointer hover:text-primary font-semibold border-b p-2'>Laptops</li>
+                                        <li className='transition-all duration-300 cursor-pointer hover:text-primary font-semibold border-b p-2'>Accessories</li>
+                                        <li className='transition-all duration-300 cursor-pointer hover:text-primary font-semibold border-b p-2'>Smartphone</li>
+                                        <li className='transition-all duration-300 cursor-pointer hover:text-primary font-semibold border-b p-2'>Tablet</li>
+                                        <li className='transition-all duration-300 cursor-pointer hover:text-primary font-semibold border-b p-2'>Camera</li>
+                                        <li className='transition-all duration-300 cursor-pointer hover:text-primary font-semibold border-b p-2'>Consoles</li>
+                                        <li className='transition-all duration-300 cursor-pointer hover:text-primary font-semibold p-2'>TV</li>
+                                    </ul>
+                                </div>
+                            </div>
+                            <p className='group relative flex gap-1 justify-center items-center transition-all duration-300 text-neutral hover:bg-accent hover:text-primary w-32 cursor-pointer text-sm font-semibold rounded-full'>
+                                
+                                Camera <FaAngleDown />
+                                <div className="absolute top-12 left-0 hidden group-hover:flex group-hover:flex-col  z-50  py-5 w-56 bg-white text-neutral rounded-lg h-full">
+                                    <ul className='space-y-2 bg-white  rounded-lg'>
+                                        <li className='transition-all duration-300 cursor-pointer hover:text-primary font-semibold border-b p-2'>Desktop Components</li>
+                                        <li className='transition-all duration-300 cursor-pointer hover:text-primary font-semibold border-b p-2'>Laptops</li>
+                                        <li className='transition-all duration-300 cursor-pointer hover:text-primary font-semibold border-b p-2'>Accessories</li>
+                                        <li className='transition-all duration-300 cursor-pointer hover:text-primary font-semibold border-b p-2'>Smartphone</li>
+                                        <li className='transition-all duration-300 cursor-pointer hover:text-primary font-semibold border-b p-2'>Tablet</li>
+                                        <li className='transition-all duration-300 cursor-pointer hover:text-primary font-semibold border-b p-2'>Camera</li>
+                                        <li className='transition-all duration-300 cursor-pointer hover:text-primary font-semibold border-b p-2'>Consoles</li>
+                                        <li className='transition-all duration-300 cursor-pointer hover:text-primary font-semibold p-2'>TV</li>
+                                    </ul>
+                                </div>
+                            </p>
+                            <p className='group relative flex gap-1 justify-center items-center transition-all duration-300 text-neutral hover:bg-accent hover:text-primary w-32 cursor-pointer text-sm font-semibold rounded-full'>
+                                
+                                Gadgets <FaAngleDown />
+
+                                <div className="absolute top-12 left-0 hidden group-hover:flex group-hover:flex-col  z-50  py-5 w-56 bg-white text-neutral rounded-lg h-full">
+                                    <ul className='space-y-2 bg-white  rounded-lg'>
+                                        <li className='transition-all duration-300 cursor-pointer hover:text-primary font-semibold border-b p-2'>Desktop Components</li>
+                                        <li className='transition-all duration-300 cursor-pointer hover:text-primary font-semibold border-b p-2'>Laptops</li>
+                                        <li className='transition-all duration-300 cursor-pointer hover:text-primary font-semibold border-b p-2'>Accessories</li>
+                                        <li className='transition-all duration-300 cursor-pointer hover:text-primary font-semibold border-b p-2'>Smartphone</li>
+                                        <li className='transition-all duration-300 cursor-pointer hover:text-primary font-semibold border-b p-2'>Tablet</li>
+                                        <li className='transition-all duration-300 cursor-pointer hover:text-primary font-semibold border-b p-2'>Camera</li>
+                                        <li className='transition-all duration-300 cursor-pointer hover:text-primary font-semibold border-b p-2'>Consoles</li>
+                                        <li className='transition-all duration-300 cursor-pointer hover:text-primary font-semibold p-2'>TV</li>
+                                    </ul>
+                                </div>
+                            </p>
+                            <div className='group relative flex gap-1 justify-center items-center transition-all duration-300 text-neutral hover:bg-accent hover:text-primary w-32 cursor-pointer text-sm font-semibold rounded-full'>
+                                
+                                TV <FaAngleDown/>
+                                <div className="absolute top-12 left-0 hidden group-hover:flex group-hover:flex-col  z-50  py-5 w-56 bg-white text-neutral rounded-lg h-full">
+                                    <ul className='space-y-2 bg-white  rounded-lg'>
+                                        <li className='transition-all duration-300 cursor-pointer hover:text-primary font-semibold border-b p-2'>Desktop Components</li>
+                                        <li className='transition-all duration-300 cursor-pointer hover:text-primary font-semibold border-b p-2'>Laptops</li>
+                                        <li className='transition-all duration-300 cursor-pointer hover:text-primary font-semibold border-b p-2'>Accessories</li>
+                                        <li className='transition-all duration-300 cursor-pointer hover:text-primary font-semibold border-b p-2'>Smartphone</li>
+                                        <li className='transition-all duration-300 cursor-pointer hover:text-primary font-semibold border-b p-2'>Tablet</li>
+                                        <li className='transition-all duration-300 cursor-pointer hover:text-primary font-semibold border-b p-2'>Camera</li>
+                                        <li className='transition-all duration-300 cursor-pointer hover:text-primary font-semibold border-b p-2'>Consoles</li>
+                                        <li className='transition-all duration-300 cursor-pointer hover:text-primary font-semibold p-2'>TV</li>
+                                    </ul>
+                                </div>
+                            </div>
+                            <p className='group relative flex gap-1 justify-center items-center transition-all duration-300 text-neutral hover:bg-accent hover:text-primary w-32 cursor-pointer text-sm font-semibold rounded-full'>
+                                
+                                AC <FaAngleDown />
+                                <div className="absolute top-12 left-0 hidden group-hover:flex group-hover:flex-col  z-50  py-5 w-56 bg-white text-neutral rounded-lg h-full">
+                                    <ul className='space-y-2 bg-white  rounded-lg'>
+                                        <li className='transition-all duration-300 cursor-pointer hover:text-primary font-semibold border-b p-2'>Desktop Components</li>
+                                        <li className='transition-all duration-300 cursor-pointer hover:text-primary font-semibold border-b p-2'>Laptops</li>
+                                        <li className='transition-all duration-300 cursor-pointer hover:text-primary font-semibold border-b p-2'>Accessories</li>
+                                        <li className='transition-all duration-300 cursor-pointer hover:text-primary font-semibold border-b p-2'>Smartphone</li>
+                                        <li className='transition-all duration-300 cursor-pointer hover:text-primary font-semibold border-b p-2'>Tablet</li>
+                                        <li className='transition-all duration-300 cursor-pointer hover:text-primary font-semibold border-b p-2'>Camera</li>
+                                        <li className='transition-all duration-300 cursor-pointer hover:text-primary font-semibold border-b p-2'>Consoles</li>
+                                        <li className='transition-all duration-300 cursor-pointer hover:text-primary font-semibold p-2'>TV</li>
+                                    </ul>
+                                </div>
+                            
+                            </p>
                         </div>
 
                     </div>

@@ -70,8 +70,8 @@ const PopulerProducts = () => {
                         spaceBetween={30}
                         slidesPerGroup={1}
                          autoplay={{
-                            delay: 1000,
-                            disableOnInteraction: false,
+                            delay: 2500,
+                            disableOnInteraction: true,
                         }}
                         pagination={{
                         clickable: true,
@@ -97,10 +97,10 @@ const PopulerProducts = () => {
                                         <div className="card-actions flex-col gap-3">
                                             <div className='w-full flex flex-col gap-3 justify-center items-center'>
                                                 <div className="flex">
-                                                    <button className='btn btn-primary rounded-full h-5 w-12 text-xl' onClick={() => setTypeCount(TypeCount - 1)} disabled={TypeCount === 0}><FaMinus className="text-white"/></button>
-                                                    <input type="number" className='w-60 text-center border-none'  value={TypeCount}/>
-                                                    <button className={`btn btn-primary rounded-full h-8 w-12 text-xl border-none text-neutral${TypeCount === 10 ? ' hover:bg-[#e5e7eb] bg-[#e5e7eb] ' : ''}`}
-                                                        onClick={() => setTypeCount(TypeCount + 1)}  disabled={TypeCount === 10}
+                                                    <button className='btn btn-primary rounded-full h-5 w-12 text-xl' onClick={() => setCount(count - 1)} disabled={count === 0}><FaMinus className="text-white"/></button>
+                                                    <input type="number" className='w-60 text-center border-none'  value={count}/>
+                                                    <button className={`btn btn-primary rounded-full h-8 w-12 text-xl border-none text-neutral${count === 10 ? ' hover:bg-[#e5e7eb] bg-[#e5e7eb] ' : ''}`}
+                                                        onClick={() => setCount(count + 1)}  disabled={count === 10}
                                                     ><FaPlus className="text-white"/></button>
                                                 </div>
                                             <button className="btn rounded-full btn-primary text-white w-full">Add to cart</button>                                    
@@ -128,10 +128,10 @@ const PopulerProducts = () => {
                                         <div className="card-actions flex-col gap-3">
                                             <div className='w-full flex flex-col gap-3 justify-center items-center'>
                                                 <div className="flex">
-                                                    <button className='btn btn-primary rounded-full h-5 w-12 text-xl' onClick={() => setTypeCount(TypeCount - 1)} disabled={TypeCount === 0}><FaMinus className="text-white"/></button>
-                                                    <input type="number" className='w-60 text-center border-none'  value={TypeCount}/>
-                                                    <button className={`btn btn-primary rounded-full h-8 w-12 text-xl border-none text-neutral${TypeCount === 10 ? ' hover:bg-[#e5e7eb] bg-[#e5e7eb] ' : ''}`}
-                                                        onClick={() => setTypeCount(TypeCount + 1)}  disabled={TypeCount === 10}
+                                                    <button className='btn btn-primary rounded-full h-5 w-12 text-xl' onClick={() => setCount(count - 1)} disabled={count === 0}><FaMinus className="text-white"/></button>
+                                                    <input type="number" className='w-60 text-center border-none'  value={count}/>
+                                                    <button className={`btn btn-primary rounded-full h-8 w-12 text-xl border-none text-neutral${count === 10 ? ' hover:bg-[#e5e7eb] bg-[#e5e7eb] ' : ''}`}
+                                                        onClick={() => setCount(count + 1)}  disabled={count === 10}
                                                     ><FaPlus className="text-white"/></button>
                                                 </div>
                                             <button className="btn rounded-full btn-primary text-white w-full">Add to cart</button>                                    
@@ -159,10 +159,10 @@ const PopulerProducts = () => {
                                         <div className="card-actions flex-col gap-3">
                                             <div className='w-full flex flex-col gap-3 justify-center items-center'>
                                                 <div className="flex">
-                                                    <button className='btn btn-primary rounded-full h-5 w-12 text-xl' onClick={() => setTypeCount(TypeCount - 1)} disabled={TypeCount === 0}><FaMinus className="text-white"/></button>
-                                                    <input type="number" className='w-60 text-center border-none'  value={TypeCount}/>
-                                                    <button className={`btn btn-primary rounded-full h-8 w-12 text-xl border-none text-neutral${TypeCount === 10 ? ' hover:bg-[#e5e7eb] bg-[#e5e7eb] ' : ''}`}
-                                                        onClick={() => setTypeCount(TypeCount + 1)}  disabled={TypeCount === 10}
+                                                    <button className='btn btn-primary rounded-full h-5 w-12 text-xl' onClick={() => setCount(count - 1)} disabled={count === 0}><FaMinus className="text-white"/></button>
+                                                    <input type="number" className='w-60 text-center border-none'  value={count}/>
+                                                    <button className={`btn btn-primary rounded-full h-8 w-12 text-xl border-none text-neutral${count === 10 ? ' hover:bg-[#e5e7eb] bg-[#e5e7eb] ' : ''}`}
+                                                        onClick={() => setCount(count + 1)}  disabled={count === 10}
                                                     ><FaPlus className="text-white"/></button>
                                                 </div>
                                             <button className="btn rounded-full btn-primary text-white w-full">Add to cart</button>                                    
@@ -190,10 +190,10 @@ const PopulerProducts = () => {
                                         <div className="card-actions flex-col gap-3">
                                             <div className='w-full flex flex-col gap-3 justify-center items-center'>
                                                 <div className="flex">
-                                                    <button className='btn btn-primary rounded-full h-5 w-12 text-xl' onClick={() => setTypeCount(TypeCount - 1)} disabled={TypeCount === 0}><FaMinus className="text-white"/></button>
-                                                    <input type="number" className='w-60 text-center border-none'  value={TypeCount}/>
-                                                    <button className={`btn btn-primary rounded-full h-8 w-12 text-xl border-none text-neutral${TypeCount === 10 ? ' hover:bg-[#e5e7eb] bg-[#e5e7eb] ' : ''}`}
-                                                        onClick={() => setTypeCount(TypeCount + 1)}  disabled={TypeCount === 10}
+                                                    <button className='btn btn-primary rounded-full h-5 w-12 text-xl' onClick={() => setCount(count - 1)} disabled={count === 0}><FaMinus className="text-white"/></button>
+                                                    <input type="number" className='w-60 text-center border-none'  value={count}/>
+                                                    <button className={`btn btn-primary rounded-full h-8 w-12 text-xl border-none text-neutral${count === 10 ? ' hover:bg-[#e5e7eb] bg-[#e5e7eb] ' : ''}`}
+                                                        onClick={() => setCount(count + 1)}  disabled={count === 10}
                                                     ><FaPlus className="text-white"/></button>
                                                 </div>
                                             <button className="btn rounded-full btn-primary text-white w-full">Add to cart</button>                                    
@@ -221,10 +221,10 @@ const PopulerProducts = () => {
                                         <div className="card-actions flex-col gap-3">
                                             <div className='w-full flex flex-col gap-3 justify-center items-center'>
                                                 <div className="flex">
-                                                    <button className='btn btn-primary rounded-full h-5 w-12 text-xl' onClick={() => setTypeCount(TypeCount - 1)} disabled={TypeCount === 0}><FaMinus className="text-white"/></button>
-                                                    <input type="number" className='w-60 text-center border-none'  value={TypeCount}/>
-                                                    <button className={`btn btn-primary rounded-full h-8 w-12 text-xl border-none text-neutral${TypeCount === 10 ? ' hover:bg-[#e5e7eb] bg-[#e5e7eb] ' : ''}`}
-                                                        onClick={() => setTypeCount(TypeCount + 1)}  disabled={TypeCount === 10}
+                                                    <button className='btn btn-primary rounded-full h-5 w-12 text-xl' onClick={() => setCount(count - 1)} disabled={count === 0}><FaMinus className="text-white"/></button>
+                                                    <input type="number" className='w-60 text-center border-none'  value={count}/>
+                                                    <button className={`btn btn-primary rounded-full h-8 w-12 text-xl border-none text-neutral${count === 10 ? ' hover:bg-[#e5e7eb] bg-[#e5e7eb] ' : ''}`}
+                                                        onClick={() => setCount(count + 1)}  disabled={count === 10}
                                                     ><FaPlus className="text-white"/></button>
                                                 </div>
                                             <button className="btn rounded-full btn-primary text-white w-full">Add to cart</button>                                    
@@ -252,10 +252,10 @@ const PopulerProducts = () => {
                                         <div className="card-actions flex-col gap-3">
                                             <div className='w-full flex flex-col gap-3 justify-center items-center'>
                                                 <div className="flex">
-                                                    <button className='btn btn-primary rounded-full h-5 w-12 text-xl' onClick={() => setTypeCount(TypeCount - 1)} disabled={TypeCount === 0}><FaMinus className="text-white"/></button>
-                                                    <input type="number" className='w-60 text-center border-none'  value={TypeCount}/>
-                                                    <button className={`btn btn-primary rounded-full h-8 w-12 text-xl border-none text-neutral${TypeCount === 10 ? ' hover:bg-[#e5e7eb] bg-[#e5e7eb] ' : ''}`}
-                                                        onClick={() => setTypeCount(TypeCount + 1)}  disabled={TypeCount === 10}
+                                                    <button className='btn btn-primary rounded-full h-5 w-12 text-xl' onClick={() => setCount(count - 1)} disabled={count === 0}><FaMinus className="text-white"/></button>
+                                                    <input type="number" className='w-60 text-center border-none'  value={count}/>
+                                                    <button className={`btn btn-primary rounded-full h-8 w-12 text-xl border-none text-neutral${count === 10 ? ' hover:bg-[#e5e7eb] bg-[#e5e7eb] ' : ''}`}
+                                                        onClick={() => setCount(count + 1)}  disabled={count === 10}
                                                     ><FaPlus className="text-white"/></button>
                                                 </div>
                                             <button className="btn rounded-full btn-primary text-white w-full">Add to cart</button>                                    
@@ -283,10 +283,10 @@ const PopulerProducts = () => {
                                         <div className="card-actions flex-col gap-3">
                                             <div className='w-full flex flex-col gap-3 justify-center items-center'>
                                                 <div className="flex">
-                                                    <button className='btn btn-primary rounded-full h-5 w-12 text-xl' onClick={() => setTypeCount(TypeCount - 1)} disabled={TypeCount === 0}><FaMinus className="text-white"/></button>
-                                                    <input type="number" className='w-60 text-center border-none'  value={TypeCount}/>
-                                                    <button className={`btn btn-primary rounded-full h-8 w-12 text-xl border-none text-neutral${TypeCount === 10 ? ' hover:bg-[#e5e7eb] bg-[#e5e7eb] ' : ''}`}
-                                                        onClick={() => setTypeCount(TypeCount + 1)}  disabled={TypeCount === 10}
+                                                    <button className='btn btn-primary rounded-full h-5 w-12 text-xl' onClick={() => setCount(count - 1)} disabled={count === 0}><FaMinus className="text-white"/></button>
+                                                    <input type="number" className='w-60 text-center border-none'  value={count}/>
+                                                    <button className={`btn btn-primary rounded-full h-8 w-12 text-xl border-none text-neutral${count === 10 ? ' hover:bg-[#e5e7eb] bg-[#e5e7eb] ' : ''}`}
+                                                        onClick={() => setCount(count + 1)}  disabled={count === 10}
                                                     ><FaPlus className="text-white"/></button>
                                                 </div>
                                             <button className="btn rounded-full btn-primary text-white w-full">Add to cart</button>                                    
@@ -314,10 +314,10 @@ const PopulerProducts = () => {
                                         <div className="card-actions flex-col gap-3">
                                             <div className='w-full flex flex-col gap-3 justify-center items-center'>
                                                 <div className="flex">
-                                                    <button className='btn btn-primary rounded-full h-5 w-12 text-xl' onClick={() => setTypeCount(TypeCount - 1)} disabled={TypeCount === 0}><FaMinus className="text-white"/></button>
-                                                    <input type="number" className='w-60 text-center border-none'  value={TypeCount}/>
-                                                    <button className={`btn btn-primary rounded-full h-8 w-12 text-xl border-none text-neutral${TypeCount === 10 ? ' hover:bg-[#e5e7eb] bg-[#e5e7eb] ' : ''}`}
-                                                        onClick={() => setTypeCount(TypeCount + 1)}  disabled={TypeCount === 10}
+                                                    <button className='btn btn-primary rounded-full h-5 w-12 text-xl' onClick={() => setCount(count - 1)} disabled={count === 0}><FaMinus className="text-white"/></button>
+                                                    <input type="number" className='w-60 text-center border-none'  value={count}/>
+                                                    <button className={`btn btn-primary rounded-full h-8 w-12 text-xl border-none text-neutral${count === 10 ? ' hover:bg-[#e5e7eb] bg-[#e5e7eb] ' : ''}`}
+                                                        onClick={() => setCount(count + 1)}  disabled={count === 10}
                                                     ><FaPlus className="text-white"/></button>
                                                 </div>
                                             <button className="btn rounded-full btn-primary text-white w-full">Add to cart</button>                                    
@@ -345,10 +345,10 @@ const PopulerProducts = () => {
                                         <div className="card-actions flex-col gap-3">
                                             <div className='w-full flex flex-col gap-3 justify-center items-center'>
                                                 <div className="flex">
-                                                    <button className='btn btn-primary rounded-full h-5 w-12 text-xl' onClick={() => setTypeCount(TypeCount - 1)} disabled={TypeCount === 0}><FaMinus className="text-white"/></button>
-                                                    <input type="number" className='w-60 text-center border-none'  value={TypeCount}/>
-                                                    <button className={`btn btn-primary rounded-full h-8 w-12 text-xl border-none text-neutral${TypeCount === 10 ? ' hover:bg-[#e5e7eb] bg-[#e5e7eb] ' : ''}`}
-                                                        onClick={() => setTypeCount(TypeCount + 1)}  disabled={TypeCount === 10}
+                                                    <button className='btn btn-primary rounded-full h-5 w-12 text-xl' onClick={() => setCount(count - 1)} disabled={count === 0}><FaMinus className="text-white"/></button>
+                                                    <input type="number" className='w-60 text-center border-none'  value={count}/>
+                                                    <button className={`btn btn-primary rounded-full h-8 w-12 text-xl border-none text-neutral${count === 10 ? ' hover:bg-[#e5e7eb] bg-[#e5e7eb] ' : ''}`}
+                                                        onClick={() => setCount(count + 1)}  disabled={count === 10}
                                                     ><FaPlus className="text-white"/></button>
                                                 </div>
                                             <button className="btn rounded-full btn-primary text-white w-full">Add to cart</button>                                    

@@ -19,7 +19,7 @@ const MostSold = () => {
                  <p className=''>Top 10 most sold this week, next day delivery.</p>
             </div>
             <div className="container mx-auto grid grid-cols-4 gap-5"> 
-                <div className="card card-compact bg-base-100 shadow-lg shadow-blue-50 h-[500px] group relative">
+                <div className="transition-all duration-300 hover:-translate-y-5 card card-compact bg-base-100 shadow-lg shadow-blue-50 h-[500px] group relative">
                     <figure><LazyLoadImage className='object-cover w-60 group-hover:scale-110 transition-all duration-300 p-2 h-60'  src="https://i.ibb.co/LS8Vy9s/Google-Pixel-Buds-2-True-Wireless-Bluetooth-Earbuds-3-1-e1635330490469.jpg" alt="Shoes" /></figure>
                     <div className="card-body">
                         <h2 className="card-title justify-between">
@@ -49,7 +49,7 @@ const MostSold = () => {
                         </div>
                     </div>
                 </div> 
-                <div className="card card-compact bg-base-100 shadow-lg shadow-blue-50 h-[500px] group relative">
+                <div className="transition-all duration-300 hover:-translate-y-5 card card-compact bg-base-100 shadow-lg shadow-blue-50 h-[500px] group relative">
                     <figure><img  src="https://i.ibb.co/xLZQ7Q3/iphn13pm.webp" alt="Shoes" className='object-cover h-60 group-hover:scale-110 transition-all duration-300' /></figure>
                     <div className="card-body">
                          <h2 className="card-title justify-between">
@@ -79,7 +79,7 @@ const MostSold = () => {
                         </div>
                     </div>
                 </div> 
-                <div className="card card-compact bg-base-100 shadow-lg shadow-blue-50 h-[500px] group relative">
+                <div className="transition-all duration-300 hover:-translate-y-5 card card-compact bg-base-100 shadow-lg shadow-blue-50 h-[500px] group relative">
                     <figure><img  src="https://i.ibb.co/qkbxKxR/asus.webp" alt="Shoes" className='object-cover h-60 group-hover:scale-110 transition-all duration-300' /></figure>
                     <div className="card-body">
                         <h2 className="card-title justify-between">
@@ -109,7 +109,7 @@ const MostSold = () => {
                         </div>
                     </div>
                 </div> 
-                <div className="card card-compact bg-base-100 shadow-lg shadow-blue-50 h-[500px] group relative">
+                <div className="transition-all duration-300 hover:-translate-y-5 card card-compact bg-base-100 shadow-lg shadow-blue-50 h-[500px] group relative">
                     <figure><img  src="https://i.ibb.co/yhMqfqD/krakenx.jpg" alt="Razer" className='object-cover h-60 group-hover:scale-110 transition-all duration-300' /></figure>
                     <div className="card-body">
                         <h2 className="card-title justify-between">

@@ -3,7 +3,7 @@ import Marquee from 'react-fast-marquee';
 
 const Review = () => {
     return (
-        <div className='pb-20'>
+        <div className='py-20'>
              <div className="text-center my-5 flex flex-col items-center gap-5 pb-10">
                 <h1 className="text-4xl font-bold">What are people saying about us</h1>
                 <span className="h-1 w-20 bg-primary rounded-full"></span>

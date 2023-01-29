@@ -15,6 +15,8 @@ import FromBlog from '../../components/FromBlog/FromBlog';
 import MostSold from '../../components/MostSold/MostSold';
 import BackInStore from '../../components/BackInStore/BackInStore';
 import HotProduct from '../../components/HotProduct/HotProduct';
+import DiscountCode from '../../components/DiscountCode/DiscountCode';
+import GridDiscount from '../../components/GridDiscount/GridDiscount';
 
 const Home = () => {
     return (
@@ -28,11 +30,13 @@ const Home = () => {
             <ProductGrid />
             <MostSold/>
             <BackInStore/>
-            <PopulerProducts/>
+            <PopulerProducts />
+            <DiscountCode/>
             <HotProduct/>
             <OfferBanner/>
             <LimitedOffer />
             <DealOfTheDay />
+            <GridDiscount/>
             {/* <FromBlog/> */}
             <Review/>
         </div>
