@@ -15,22 +15,22 @@ const AuthProvider = ({ children }) => {
     const [title, setTitle] = useState('home')
 
 
-    useEffect(() => {
-        fetch('https://buyandsell24-server.vercel.app/users')
-            .then(res => res.json())
-            .then(data => setAllUsers(data))
-    }, [])
+    // useEffect(() => {
+    //     fetch('https://buyandsell24-server.vercel.app/users')
+    //         .then(res => res.json())
+    //         .then(data => setAllUsers(data))
+    // }, [])
 
 
     let [searchText, setSearchText] = useState("")
 
     let [items, setItems] = useState("")
 
-    useEffect(() => {
-        fetch(`https://buyandsell24-server.vercel.app/search?name=${searchText}`)
-            .then(res => res.json())
-            .then(data => setItems(data))
-    }, [searchText])
+    // useEffect(() => {
+    //     fetch(`https://buyandsell24-server.vercel.app/search?name=${searchText}`)
+    //         .then(res => res.json())
+    //         .then(data => setItems(data))
+    // }, [searchText])
 
     console.log(items)
     const [user, setUser] = useState(null)
