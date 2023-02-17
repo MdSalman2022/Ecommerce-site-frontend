@@ -13,13 +13,12 @@ import { BsFillPersonFill,BsMenuButtonWideFill } from 'react-icons/bs'
 import { FaQuestion } from 'react-icons/fa'
 import { IoLanguage } from 'react-icons/io5'
 import {TbTruckDelivery} from 'react-icons/tb'
-import {FaAngleDown} from 'react-icons/fa'
-import { clearConfigCache } from 'prettier';
+import {FaAngleDown} from 'react-icons/fa'   
 
 const Header = () => {
     const navigate = useNavigate();
-    const { user, logOut } = useContext(AuthContext)
-    let { searchText, items, setItems, setSearchText, loading } = useContext(AuthContext)
+    const { user, logOut,cart } = useContext(AuthContext)
+    let { searchText, setSearchText, searchedItems,setSearchedItems , loading } = useContext(AuthContext)
 
     const { register, handleSubmit, formState: { errors } } = useForm();
 
@@ -45,13 +44,368 @@ const Header = () => {
     }
 
 
+
+
+
+    const [options, setOptions] = useState(0)
+    const [subOptions, setSubOptions] = useState(0)
+
+    const handleOptions = id => {
+        setOptions(id)
+    }
+    const handleSubOptions = id => {
+        setSubOptions(id)
+    }
+
+    const allcategories = [
+        {
+            id: 1,
+            name: 'Desktop Components',
+            cat:'components', 
+            subcategories: [
+                {
+                    id: 1,
+                    name: 'Processor',
+                    subcat:'processor',
+                    subcategories: [
+                        {
+                            id: 1,
+                            name: 'Intel',
+                            brand:'intel',
+                        },
+                        {
+                            id: 2,
+                            name: 'AMD',
+                            brand:'amd',
+                        }
+                    ]
+                },
+                {
+                    id: 2,
+                    name: 'Motherboard',
+                    subcat:'motherboard',
+                    subcategories: [
+                        {
+                            id: 1,
+                            name: 'Gigabyte',
+                            brand:'gigabyte',
+                        },
+                        {
+                            id: 2,
+                            name: 'Asus',
+                            brand:'asus',
+                        },
+                        {
+                            id: 3,
+                            name: 'MSI',
+                            brand:'msi',
+                        },
+                    ]
+                },
+                {
+                    id: 3,
+                    name: 'Ram',
+                    subcat: 'ram',
+                    subcategories: [
+                        {
+                            id: 1,
+                            name: 'Corsair',
+                            brand:'corsair',
+                        },
+                        {
+                            id: 2,
+                            name: 'G.Skill',
+                            brand:'gskill',
+                        },
+                    ]
+                },
+                {
+                    id: 4,
+                    name: 'Graphics Card',
+                    subcat:'graphics-card',
+                    subcategories: [
+                                {
+                                    id: 1,
+                                    name: 'Asus',
+                                    brand:'asus',
+                                },
+                                {
+                                    id: 2,
+                                    name: 'Zotac',
+                                    brand:'zotac',
+                                },
+                                {
+                                    id: 3,
+                                    name: 'Sapphire',
+                                    brand:'sapphire',
+                                }
+                            ] 
+                },
+                {
+                    id: 5,
+                    name: 'Power Supply',
+                    subcat:'psu',
+                    subcategories: [
+                        {
+                            id: 1,
+                            name: 'Corsair',
+                            brand:'corsair',
+                        },
+                    ]
+                },
+                {
+                    id: 6,
+                    name: 'Storage',
+                    subcat:'storage',
+                    subcategories: [
+                        {
+                            id: 1,
+                            name: 'SSD',
+                            type: 'ssd',
+                            subcategories: [
+                                {
+                                    id: 1,
+                                    name: 'Samsung',
+                                    brand:'samsung',
+                                }, 
+                            ]
+                        },
+                        {
+                            id: 2,
+                            name: 'HDD',
+                            type: 'hdd',
+                            subcategories: [
+                                {
+                                    id: 1,
+                                    name: 'Seagate',
+                                    brand:'seagate',
+                                },
+                                {
+                                    id: 2,
+                                    name: 'Western Digital',
+                                    brand:'wd',
+                                },
+                            ]
+                        }
+                
+                    ]
+                },
+                {
+                    id: 7,
+                    name: 'CPU Cooler',
+                    subcat: 'cooler',
+                    subcategories: [
+                        {
+                            id: 1,
+                            name: 'Corsair',
+                            brand: 'corsair',
+                        }
+                    ]
+                },
+                {
+                    id: 8,
+                    name: 'Case',
+                    subcat: 'case',
+                    subcategories: [
+                        {
+                            id: 1,
+                            name: 'Lian LI',
+                            brand: 'lianli',
+
+                        }
+                    ]
+                }
+            ]
+        },   
+        {
+            id: 2,
+            name: 'Laptops',
+            cat: 'laptop',
+            subcategories: [
+                {
+                    id: 1,
+                    name: 'Asus',
+                    brand: 'asus',
+                },
+                {
+                    id: 2,
+                    name: 'Hp',
+                    brand: 'hp',
+                },
+                {
+                    id: 3,
+                    name: 'MSI',
+                    brand: 'msi',
+                }
+            ]
+
+        },
+        {
+            id: 3,
+            name: 'Monitors',
+            cat: 'monitor',
+            subcategories: [
+                {
+                    id: 1,
+                    name: 'Asus',
+                    brand: 'asus',
+                },
+                {
+                    id: 2,
+                    name: 'Hp',
+                    brand: 'hp',
+                },
+                {
+                    id: 3,
+                    name: 'MSI',
+                    brand: 'msi',
+                }
+            ]
+        },
+        {
+            id: 4,
+            name: 'Smartphone',
+            cat: 'smartphone',
+            subcategories: [
+                {
+                    id: 1,
+                    name: 'Samsung',
+                    brand: 'samsung',
+                },
+                {
+                    id: 2,
+                    name: 'Apple',
+                    brand: 'apple',
+                },
+                {
+                    id: 3,
+                    name: 'Xiaomi',
+                    brand: 'xiaomi',
+                }
+            ]
+        },
+        {
+            id: 5,
+            name: 'Tablets',
+            cat: 'tablet',
+            subcategories: [
+                {
+                    id: 1,
+                    name: 'Samsung',
+                    brand: 'samsung',
+                },
+                {
+                    id: 2,
+                    name: 'Apple',
+                    brand: 'apple',
+                }
+            ]
+        },
+        {
+            id: 6,
+            name: 'Camera',
+            cat: 'camera',
+            subcategories: [
+                {
+                    id: 1,
+                    name: 'Canon',
+                    brand: 'canon',
+                },
+                {
+                    id: 2,
+                    name: 'Nikon',
+                    brand: 'nikon',
+                }
+            ]
+        },
+        {
+            id: 7,
+            name: 'Consoles',
+            cat: 'console',
+            subcategories: [
+                {
+                    id: 1,
+                    name: 'Playstation',
+                    brand: 'sony',
+                },
+                {
+                    id: 2,
+                    name: 'Xbox',
+                    brand: 'microsoft',
+                }
+            ]
+        },
+        {
+            id: 8,
+            name: 'TV',
+            cat: 'tv',
+            subcategories: [
+                {
+                    id: 1,
+                    name: 'Xiaomi',
+                    brand: 'xiaomi',
+
+                },
+                {
+                    id: 2,
+                    name: 'Sony',
+                    brand: 'sony',
+                }
+            ]
+        },
+        {
+            id: 9,
+            name: 'Accessories',
+            cat: 'accessories',
+            subcategories: [
+                {
+                    id: 1,
+                    name: 'Headphones',
+                    type: 'headphone',
+                    subcategories: [
+                        {
+                            id: 1,
+                            name: 'Logitech',
+                            brand: 'logitech',
+                        }
+                    ]
+                },
+                {
+                    id: 2,
+                    name: 'Mouse',
+                    type: 'mouse',
+                    subcategories: [
+                        {
+                            id: 1,
+                            name: 'Razer',
+                            brand: 'razer',
+                        }   
+                    ]
+                },
+                {
+                    id: 3,
+                    name: 'Keyboard',
+                    type: 'keyboard',
+                    subcategories: [
+                        {
+                            id: 1,
+                            name: 'Corsair',
+                            brand: 'corsair',
+                        }   
+                    ]
+                }
+            ]
+        },
+
+    ]
+ 
     const [isFixed, setIsFixed] = useState(false);
 
     useEffect(() => {
         function handleScroll() {
-            if (window.scrollY > 50) {
+            if (window.scrollY > 150) { 
                 setIsFixed(true);
-            } else {
+            } else { 
                 setIsFixed(false);
             }
         }
@@ -62,343 +416,12 @@ const Header = () => {
             window.removeEventListener('scroll', handleScroll);
         };
     }, []);
+  
 
-
-    const [options, setOptions] = useState(0)
-
-    const handleOptions = id => {
-        setOptions(id)
-    }
-
-    const allcategories = [
-        {
-            id: 1,
-            name: 'Desktop Components',
-            subcategories: [
-                {
-                    id: 1,
-                    name: 'CPU',
-                    subcategories: [
-                        {
-                            id: 1,
-                            name: 'Intel',
-                        },
-                        {
-                            id: 2,
-                            name: 'AMD',
-                        }
-                    ]
-                },
-                {
-                    id: 2,
-                    name: 'Motherboard',
-                    subcategories: [
-                        {
-                            id: 1,
-                            name: 'Gigabyte',
-                        },
-                        {
-                            id: 2,
-                            name: 'Asus',
-                        },
-                        {
-                            id: 3,
-                            name: 'MSI',
-                        },
-                    ]
-                },
-                {
-                    id: 3,
-                    name: 'RAM',
-                    subcategories: [
-                        {
-                            id: 1,
-                            name: 'Corsair',
-                        },
-                        {
-                            id: 2,
-                            name: 'G.Skill',
-                        },
-                        {
-                            id: 3,
-                            name: 'Thermaltake',
-                        }
-                    ]
-                },
-                {
-                    id: 4,
-                    name: 'Graphics Card',
-                    subcategories: [
-                        {
-                            id: 1,
-                            name: 'Nvidia',
-                            subcategories: [
-                                {
-                                    id: 1,
-                                    name: 'Asus',
-                                },
-                                {
-                                    id: 2,
-                                    name: 'Gigabyte',
-                                },
-                                {
-                                    id: 3,
-                                    name: 'MSI',
-                                },
-                                {
-                                    id: 4,
-                                    name: 'Zotac',
-                                }
-                            ]
-                        }
-                    ]
-                },
-                {
-                    id: 5,
-                    name: 'Power Supply',
-                    subcategories: [
-                        {
-                            id: 1,
-                            name: 'Corsair',
-                        },
-                        {
-                            id: 2,
-                            name: 'Thermaltake',
-                        },
-                        {
-                            id: 3,
-                            name: 'Antec',
-                        }
-                    ]
-                },
-                {
-                    id: 6,
-                    name: 'Storage',
-                    subcategories: [
-                        {
-                            id: 1,
-                            name: 'SSD',
-                            subcategories: [
-                                {
-                                    id: 1,
-                                    name: 'Samsung',
-                                },
-                                {
-                                    id: 2,
-                                    name: 'Thermaltake',
-                                },
-                                {
-                                    id: 3,
-                                    name: 'Corsair',
-                                },
-                            ]
-                        },
-                        {
-                            id: 2,
-                            name: 'HDD',
-                            subcategories: [
-                                {
-                                    id: 1,
-                                    name: 'Seagate',
-                                },
-                                {
-                                    id: 2,
-                                    name: 'Western Digital',
-                                },
-                            ]
-                        }
-                
-                    ]
-                },
-                {
-                    id: 7,
-                    name: 'CPU Cooler',
-                    subcategories: [
-                        {
-                            id: 1,
-                            name: 'Corsair',
-                        },
-                        {
-                            id: 2,
-                            name: 'Thermaltake',
-                        },
-                        {
-                            id: 3,
-                            name: 'Cooler Master',
-                        },
-                    ]
-                },
-                {
-                    id: 8,
-                    name: 'Case',
-                    subcategories: [
-                        {
-                            id: 1,
-                            name: 'Corsair',
-
-                        },
-                        {
-                            id: 2,
-                            name: 'Thermaltake',
-                        },
-                        {
-                            id: 3,
-                            name: 'Cooler Master',
-                        },
-                    ]
-                }
-            ]
-        },   
-        {
-            id: 2,
-            name: 'Laptops',
-            subcategories: [
-                {
-                    id: 1,
-                    name: 'Asus',
-                },
-                {
-                    id: 2,
-                    name: 'Hp',
-                },
-                {
-                    id: 3,
-                    name: 'MSI',
-                }
-            ]
-
-        },
-        {
-            id: 3,
-            name: 'Monitors',
-            subcategories: [
-                {
-                    id: 1,
-                    name: 'Asus',
-                },
-                {
-                    id: 2,
-                    name: 'Hp',
-                },
-                {
-                    id: 3,
-                    name: 'MSI',
-                }
-            ]
-        },
-        {
-            id: 4,
-            name: 'Smartphone',
-            subcategories: [
-                {
-                    id: 1,
-                    name: 'Asus',
-                },
-                {
-                    id: 2,
-                    name: 'Hp',
-                },
-                {
-                    id: 3,
-                    name: 'MSI',
-                }
-            ]
-        },
-        {
-            id: 5,
-            name: 'Tablets',
-            subcategories: [
-                {
-                    id: 1,
-                    name: 'Samsung',
-                },
-                {
-                    id: 2,
-                    name: 'Apple',
-                }
-            ]
-        },
-        {
-            id: 6,
-            name: 'Camera',
-            subcategories: [
-                {
-                    id: 1,
-                    name: 'Canon',
-                },
-                {
-                    id: 2,
-                    name: 'Nikon',
-                }
-            ]
-        },
-        {
-            id: 7,
-            name: 'Consoles',
-            subcategories: [
-                {
-                    id: 1,
-                    name: 'Playstation',
-                },
-                {
-                    id: 2,
-                    name: 'Xbox',
-                }
-            ]
-        },
-        {
-            id: 8,
-            name: 'TV',
-            subcategories: [
-                {
-                    id: 1,
-                    name: 'Samsung',
-                },
-                {
-                    id: 2,
-                    name: 'Sony',
-                }
-            ]
-        },
-        {
-            id: 9,
-            name: 'AC',
-            subcategories: [
-                {
-                    id: 1,
-                    name: 'General',
-                },
-                {
-                    id: 2,
-                    name: 'LG',
-                }
-            ]
-        },
-        {
-            id: 10,
-            name: 'Accessories',
-            subcategories: [
-                {
-                    id: 1,
-                    name: 'Headphones',
-                },
-                {
-                    id: 2,
-                    name: 'Mouse',
-                },
-                {
-                    id: 3,
-                    name: 'Keyboard',
-                }
-            ]
-        },
-
-    ]
- 
-    
     return (
-        <div>
-            <div className='grid grid-cols-3 container mx-auto lg:gap-80 text-sm justify-items-center place-content-center bg-base-100 w-full h-8'>
+        <div >
+            {/* top header  */}
+            <div className={`hidden h-8 md:grid grid-cols-3 container mx-auto lg:gap-80 text-sm place-items-center  bg-base-100 `}>
                 <div className='flex gap-5'>
                     <p className='flex items-center gap-2'><BiHomeAlt/> Home</p>
                     <p className='flex items-center gap-2'><BsFillPersonFill/> About Us</p>
@@ -417,47 +440,83 @@ const Header = () => {
                 </div>
 
             </div>
-            <div className={`border-t`}>
-                <div className="container mx-auto grid grid-cols-4 justify-items-start gap-10 lg:grid-cols-5  py-5">
-                    <div className="logo hidden lg:flex">
+
+            {/* Primary Header  */}
+            <div className={`hidden md:flex border-t  `}>
+                <div className="container mx-auto grid grid-cols-4 md:justify-items-center lg:justify-items-start gap-10 lg:grid-cols-5  py-5">
+                    <div className="logo hidden md:flex items-center">
                         <Link to='/' className=" ">
                             {/* <LazyLoadImage src="https://i.ibb.co/vd3xm6V/boipaben-final.png" className='w-16' alt="logo" border="0" /> */}
-                            <h1 className="text-4xl font-semibold text-primary underline">Best<span className='font-bold text-neutral'>Deal</span></h1>
+                            <h1 className="text-4xl font-semibold text-transparent bg-clip-text bg-gradient-to-r from-blue-400 to-blue-600 flex items-center gap-1"><img className='w-10' src="https://i.ibb.co/xSLpY24/logo-colored.webp" alt="logo" />Best<span className='font-bold'>Deal</span></h1>
                         </Link>
                     </div>
                     <form onSubmit={handleSubmit(onSubmit)} className="pl-3 lg:pl-0 w-full search col-span-3">
                         <div className="input-group">
-                            <input defaultValue={searchText} type="text" placeholder="Search for a Book" className="input input-bordered border-primary w-full"  {...register("name", { required: true, maxLength: 80 })} />
+                            <input defaultValue={searchText} type="text" placeholder="Search..." className="input input-bordered border-primary w-full"  {...register("name", { required: true, maxLength: 80 })} />
                             <button type="submit" className='bg-primary text-base-100 font-bold px-3 text-2xl'><AiOutlineSearch /></button>
                         </div>
                     </form>
-                    <div className='flex text-3xl gap-5 justify-start items-center col-span-1'>
-                            <p className='rounded-full border p-1 hover:bg-primary hover:text-white transition-all duration-300 ease-in-out'><BsPerson  className='p-1'/></p>
-                            <p className='rounded-full border p-1 hover:bg-primary hover:text-white transition-all duration-300 ease-in-out'><MdFavoriteBorder  className=' p-1'/></p>
-                            <p className='rounded-full border p-1 hover:bg-primary hover:text-white transition-all duration-300 ease-in-out'><FaExchangeAlt className=' p-1'/></p>
-                            <p className='rounded-full border p-1 hover:bg-primary hover:text-white transition-all duration-300 ease-in-out'><IoNotificationsOutline className=' p-1'/></p>
-                            <p className='rounded-full border p-1 hover:bg-primary hover:text-white transition-all duration-300 ease-in-out'><BsBag  className=' p-1'/></p>
+                    <div className='flex md:text-2xl lg:text-3xl gap-5 lg:justify-start items-center col-span-1'>
+                        <p className='rounded-full border p-1 hover:bg-primary hover:text-white transition-all duration-300 ease-in-out'><BsPerson  className='p-1'/></p>
+                        <p className='rounded-full border p-1 hover:bg-primary hover:text-white transition-all duration-300 ease-in-out'><MdFavoriteBorder  className=' p-1'/></p>
+                        <p className='rounded-full border p-1 hover:bg-primary hover:text-white transition-all duration-300 ease-in-out'><FaExchangeAlt className=' p-1'/></p>
+                        <p className='rounded-full border p-1 hover:bg-primary hover:text-white transition-all duration-300 ease-in-out'><IoNotificationsOutline className=' p-1'/></p>
+                        <Link to="/cart">
+                            <div className='rounded-full border p-1 hover:bg-primary hover:text-white transition-all duration-300 ease-in-out relative'>
+                                <BsBag className=' p-1' />
+                                {cart && <div className="absolute -top-1 -right-2  text-sm bg-green-500 text-white rounded-full border border-primary w-5 h-5 flex items-center justify-center">{cart.length}</div>}
+                            </div>
+                        </Link>
                     </div>
                 </div>
             </div>
-                <div className='py-4  border-y '>
+
+
+            {/* Category Header  */}
+
+
+            <div className={`hidden md:flex md:flex-wrap py-4  border-y bg-white w-full pt-2 ${isFixed ? 'transition-all duration-300 z-50 fixed top-0 rounded-md bg-clip-padding backdrop-filter backdrop-blur-sm bg-opacity-80' : ''}`}>
                 <div className='container mx-auto'>
                     <div className="flex justify-between ">
                         <div className='relative group'>
-                            <p className='flex gap-2 justify-center items-center p-3 bg-primary text-base-100 w-44 rounded-full '>All Categories <FaAngleDown /> </p>
-                            <div className="hidden group-hover:flex group-hover:flex-col absolute z-50  py-5 w-56  top-12 h-full ">
-                                <ul className='space-y-2 bg-white z-50 rounded-lg'>
+                            <p className='flex gap-2 justify-center items-center p-3 bg-primary text-base-100 lg:   w-44 rounded-full '>All Categories <FaAngleDown /> </p>
+                            <div className="hidden group-hover:flex group-hover:flex-col absolute z-50  py-5 lg:w-56  top-12 h-full ">
+                                <ul className='space-y-2 bg-white z-50 rounded-lg shadow'>
                                     {
-                                        allcategories.map(category => (
-                                            <li onMouseEnter={()=>handleOptions(category.id)} onMouseLeave={()=>handleOptions(0)} className='transition-all duration-300 cursor-pointer hover:text-primary font-semibold border-b p-2 flex items-start relative group'>
-                                                <span className='flex items-center'>{category.name} &nbsp; <FaAngleRight /></span>
-                                                    <div className={`w-44 absolute -right-44 top-0 bg-white px-5 py-2 rounded-lg ${options=== category.id ? '' : 'hidden'}`}>
-                                                        <ul className='text-neutral hover:text-primary transition-all duration-300'>{
-                                                            category.subcategories.map(subcategory => (
-                                                                <li className='cursor-pointer text-neutral hover:text-primary'>{subcategory.name}</li>
+                                        allcategories.map((category, index) => (
+                                            <li key={index} onMouseEnter={()=>handleOptions(category.id)} onMouseLeave={()=>handleOptions(0)} className='transition-all duration-300 cursor-pointer hover:text-primary font-semibold border-b p-2 flex items-start relative'>
+                                                <Link to={`/${category.cat}`}><span className='flex items-center'>{category.name} &nbsp; <FaAngleRight /></span></Link>
+                                                    <div className={`w-48 absolute -right-44 top-0  px-5 py-0  ${options=== category.id ? '' : 'hidden'}`}>
+                                                        <div className='text-neutral hover:text-primary transition-all duration-300 bg-white rounded-lg'>{
+                                                            category.subcategories.map((subcategory,index) => ( 
+                                                                <Link key={index}
+                                                                    onMouseEnter={() => handleSubOptions(subcategory.id)}
+                                                                    onMouseLeave={() => handleSubOptions(0)}
+                                                                    className='p-2 pl-2 transition-all duration-300 text-neutral hover:text-white hover:bg-primary  border-b rounded-lg flex items-start relative'
+                                                                    to={`/${category.cat}/${subcategory.subcat ? subcategory.subcat : subcategory.brand ? subcategory.brand : subcategory.type}`}>
+                                                                    <span className='flex items-center'>
+                                                                        {subcategory.name} &nbsp; <FaAngleRight />
+                                                                    </span>
+                                                          
+                                                                    { subcategory.subcategories &&
+                                                                        <div className={`w-48 absolute -right-44 top-0 px-5 py-0 rounded-lg ${subOptions === subcategory.id ? '' : 'hidden'}`}>
+                                                                        <ul className='space-y-5 bg-white rounded-lg'>
+                                                                            {
+                                                                                subcategory?.subcategories?.map((s,index) => (
+                                                                                    <Link key={index} className='' to={`/${category.cat}/${subcategory.subcat ? subcategory.subcat : subcategory.type}/${s.brand ? s.brand : s.type}`}>
+                                                                                        <li className='transition-all duration-300 text-neutral hover:text-white hover:bg-primary py-2 pr-5 pl-2 border-b rounded-lg'>
+                                                                                        { s.name}
+                                                                                        </li>
+                                                                                    </Link>
+                                                                                ) )
+                                                                            }
+                                                                            </ul> 
+                                                                        </div>
+                                                                    }
+                                                                </Link> 
                                                                 
                                                             ))
-                                                        }</ul> 
+                                                        }</div> 
                                                     </div>
                                             </li>
                                         ))
@@ -465,16 +524,16 @@ const Header = () => {
                                 </ul>
                             </div>
                         </div>
-                        <div className='flex gap-3'>
-                            <div className='relative group flex gap-1 justify-center items-center transition-all duration-300 text-primary bg-accent hover:text-primary w-32 cursor-pointer text-sm font-semibold rounded-full'>
+                        <div className='flex flex-wrap gap-3'>
+                            <div className={`relative group flex gap-1 justify-center items-center transition-all duration-300 text-primary bg-accent hover:text-primary  w-32 cursor-pointer text-sm font-semibold rounded-full ${isFixed && 'border-primary border'}`}>
                                 
-                                Monitor <FaAngleDown />
+                                <Link to="/monitor" className='flex items-center gap-2'>Monitor <FaAngleDown /></Link>
 
-                                <div className="absolute top-12 left-0 hidden group-hover:flex group-hover:flex-col  z-50  py-5 w-32 bg-white text-neutral rounded-lg h-full">
-                                    <ul className='space-y-2 bg-white rounded-lg'>
+                                <div className="absolute top-12 left-0 hidden group-hover:flex group-hover:flex-col  z-50  py-5 w-40 bg-white text-neutral rounded-lg h-full">
+                                    <ul className='space-y-2 bg-white  rounded-lg shadow'>
                                         {
-                                            allcategories[2].subcategories.map(subcategory => (
-                                                <li className='transition-all duration-300 cursor-pointer hover:text-primary font-semibold p-2'>{subcategory.name}</li>
+                                            allcategories[2].subcategories.map((subcategory, index) => (
+                                                <Link key={index} to={`/monitor/${subcategory.brand}`}><li className='transition-all duration-300 cursor-pointer hover:text-primary font-semibold p-2 '>{subcategory.name}</li></Link>
                                             ))
 
                                         }
@@ -484,12 +543,13 @@ const Header = () => {
                             </div>
                             <div className='group relative flex gap-1 justify-center items-center transition-all duration-300 text-neutral hover:bg-accent hover:text-primary w-32 cursor-pointer text-sm font-semibold rounded-full'>
                                 
-                                Laptops <FaAngleDown />
-                                <div className="absolute top-12 left-0 hidden group-hover:flex group-hover:flex-col  z-50  py-5 w-56 bg-white text-neutral rounded-lg h-full">
-                                    <ul className='space-y-2 bg-white  rounded-lg'>
+                                <Link to="/laptop" className='flex items-center gap-2'>Laptops <FaAngleDown /></Link>
+
+                                <div className="absolute top-12 left-0 hidden group-hover:flex group-hover:flex-col  z-50  py-5 w-40 bg-white text-neutral rounded-lg h-full">
+                                    <ul className='space-y-2 bg-white  rounded-lg shadow'>
                                     {
-                                            allcategories[1].subcategories.map(subcategory => (
-                                                <li className='transition-all duration-300 cursor-pointer hover:text-primary font-semibold p-2'>{subcategory.name}</li>
+                                            allcategories[1].subcategories.map((subcategory,index) => (
+                                                <Link key={index} to={`/laptop/${subcategory.brand}`}><li className='transition-all duration-300 cursor-pointer hover:text-primary font-semibold p-2 '>{subcategory.name}</li></Link>
                                             ))
 
                                         }
@@ -497,13 +557,15 @@ const Header = () => {
                                 </div>
                             </div>
                             <div className='group relative flex gap-1 justify-center items-center transition-all duration-300 text-neutral hover:bg-accent hover:text-primary w-32 cursor-pointer text-sm font-semibold rounded-full'>
-                                Smartphone <FaAngleDown />
+                                
+                                <Link to="/smartphone" className='flex items-center gap-2'>Smartphone <FaAngleDown /></Link>
 
-                                <div className="absolute top-12 left-0 hidden group-hover:flex group-hover:flex-col  z-50  py-5 w-56 bg-white text-neutral rounded-lg h-full">
-                                    <ul className='space-y-2 bg-white  rounded-lg'>
+                                <div className="absolute top-12 left-0 hidden group-hover:flex group-hover:flex-col  z-50  py-5 w-40 bg-white text-neutral rounded-lg h-full">
+                                    <ul className='space-y-2 bg-white  rounded-lg shadow'>
                                     {
-                                            allcategories[3].subcategories.map(subcategory => (
-                                                <li className='transition-all duration-300 cursor-pointer hover:text-primary font-semibold p-2'>{subcategory.name}</li>
+                                            allcategories[3].subcategories.map((subcategory,index) => (
+                                                <Link key={index} to={`/smartphone/${subcategory.brand}`}><li className='transition-all duration-300 cursor-pointer hover:text-primary font-semibold p-2 '>{subcategory.name}</li></Link>
+ 
                                             ))
 
                                         }
@@ -512,77 +574,65 @@ const Header = () => {
                             
                             </div>
                             <div className='group relative flex gap-1 justify-center items-center transition-all duration-300 text-neutral hover:bg-accent hover:text-primary w-32 cursor-pointer text-sm font-semibold rounded-full'>
+                                 
+                                <Link to="/tablet" className='flex items-center gap-2'>Tablet <FaAngleDown /></Link>
                                 
-                                Tablet <FaAngleDown />
-                                <div className="absolute top-12 left-0 hidden group-hover:flex group-hover:flex-col  z-50  py-5 w-56 bg-white text-neutral rounded-lg h-full">
-                                    <ul className='space-y-2 bg-white  rounded-lg'>
+                                <div className="absolute top-12 left-0 hidden group-hover:flex group-hover:flex-col  z-50  py-5 w-40 bg-white text-neutral rounded-lg h-full">
+                                    <ul className='space-y-2 bg-white  rounded-lg shadow'>
                                     {
-                                            allcategories[4].subcategories.map(subcategory => (
-                                                <li className='transition-all duration-300 cursor-pointer hover:text-primary font-semibold p-2'>{subcategory.name}</li>
+                                            allcategories[4].subcategories.map((subcategory,index) => (
+                                                <Link key={index} to={`/tablet/${subcategory.brand}`}><li className='transition-all duration-300 cursor-pointer hover:text-primary font-semibold p-2 '>{subcategory.name}</li></Link>
                                             ))
 
                                         }
                                     </ul>
                                 </div>
                             </div>
-                            <p className='group relative flex gap-1 justify-center items-center transition-all duration-300 text-neutral hover:bg-accent hover:text-primary w-32 cursor-pointer text-sm font-semibold rounded-full'>
-                                
-                                Camera <FaAngleDown />
-                                <div className="absolute top-12 left-0 hidden group-hover:flex group-hover:flex-col  z-50  py-5 w-56 bg-white text-neutral rounded-lg h-full">
-                                    <ul className='space-y-2 bg-white  rounded-lg'>
-                                    {
-                                            allcategories[5].subcategories.map(subcategory => (
-                                                <li className='transition-all duration-300 cursor-pointer hover:text-primary font-semibold p-2'>{subcategory.name}</li>
-                                            ))
-
-                                        }
-                                    </ul>
-                                </div>
-                            </p>
-                            <p className='group relative flex gap-1 justify-center items-center transition-all duration-300 text-neutral hover:bg-accent hover:text-primary w-32 cursor-pointer text-sm font-semibold rounded-full'>
-                                
-                                Gadgets & Accessories <FaAngleDown />
-
-                                <div className="absolute top-12 left-0 hidden group-hover:flex group-hover:flex-col  z-50  py-5 w-56 bg-white text-neutral rounded-lg h-full">
-                                    <ul className='space-y-2 bg-white  rounded-lg'>
-                                    {
-                                            allcategories[10].subcategories.map(subcategory => (
-                                                <li className='transition-all duration-300 cursor-pointer hover:text-primary font-semibold p-2'>{subcategory.name}</li>
-                                            ))
-
-                                        }
-                                    </ul>
-                                </div>
-                            </p>
                             <div className='group relative flex gap-1 justify-center items-center transition-all duration-300 text-neutral hover:bg-accent hover:text-primary w-32 cursor-pointer text-sm font-semibold rounded-full'>
-                                
-                                TV <FaAngleDown/>
-                                <div className="absolute top-12 left-0 hidden group-hover:flex group-hover:flex-col  z-50  py-5 w-56 bg-white text-neutral rounded-lg h-full">
-                                    <ul className='space-y-2 bg-white  rounded-lg'>
+                                 
+                                <Link to="/camera" className='flex items-center gap-2'>Camera <FaAngleDown /></Link>
+
+                                <div className="absolute top-12 left-0 hidden group-hover:flex group-hover:flex-col  z-50  py-5 w-40 bg-white text-neutral rounded-lg h-full">
+                                    <ul className='space-y-2 bg-white  rounded-lg shadow'>
                                     {
-                                            allcategories[7].subcategories.map(subcategory => (
-                                                <li className='transition-all duration-300 cursor-pointer hover:text-primary font-semibold p-2'>{subcategory.name}</li>
+                                            allcategories[5].subcategories.map((subcategory, index) => (
+                                                <Link key={index} to={`/camera/${subcategory.brand}`}><li className='transition-all duration-300 cursor-pointer hover:text-primary font-semibold p-2 '>{subcategory.name}</li></Link>
+ 
                                             ))
 
                                         }
                                     </ul>
                                 </div>
                             </div>
-                            <p className='group relative flex gap-1 justify-center items-center transition-all duration-300 text-neutral hover:bg-accent hover:text-primary w-32 cursor-pointer text-sm font-semibold rounded-full'>
+                            <div className='group relative flex gap-1 justify-center items-center transition-all duration-300 text-neutral hover:bg-accent hover:text-primary w-32 cursor-pointer text-sm font-semibold rounded-full'>
+                                 
+                                <Link to="/accessories" className='flex items-center gap-2'>Accessories <FaAngleDown /></Link>
+
+                                <div className="absolute top-12 left-0 hidden group-hover:flex group-hover:flex-col  z-50  py-5 w-40 bg-white text-neutral rounded-lg h-full">
+                                    <ul className='space-y-2 bg-white  rounded-lg shadow'>
+                                        {
+                                            allcategories[8].subcategories.map((subcategory, index) => (
+                                                <Link key={index} to={`/accessories/${subcategory.type}`}><li className='transition-all duration-300 cursor-pointer hover:text-primary font-semibold p-2 '>{subcategory.name}</li></Link>
+                                            ))
+                                        }
+                                    </ul>
+                                </div>
+                            </div>
+                            <div className='group relative flex gap-1 justify-center items-center transition-all duration-300 text-neutral hover:bg-accent hover:text-primary w-32 cursor-pointer text-sm font-semibold rounded-full'>
+                                 
+                                <Link to="/tv" className='flex items-center gap-2'>TV <FaAngleDown /></Link>
                                 
-                                AC <FaAngleDown />
-                                <div className="absolute top-12 left-0 hidden group-hover:flex group-hover:flex-col  z-50  py-5 w-56 bg-white text-neutral rounded-lg h-full">
-                                    <ul className='space-y-2 bg-white  rounded-lg'>
+                                <div className="absolute top-12 left-0 hidden group-hover:flex group-hover:flex-col  z-50  py-5 w-40 bg-white text-neutral rounded-lg h-full">
+                                    <ul className='space-y-2 bg-white  rounded-lg shadow'>
                                     {
-                                            allcategories[8].subcategories.map(subcategory => (
-                                                <li className='transition-all duration-300 cursor-pointer hover:text-primary font-semibold p-2'>{subcategory.name}</li>
+                                            allcategories[7].subcategories.map((subcategory, index) => (
+                                                <Link key={index} to={`/tv/${subcategory.brand}`}><li className='transition-all duration-300 cursor-pointer hover:text-primary font-semibold p-2 '>{subcategory.name}</li></Link>
                                             ))
 
                                         }
                                     </ul>
                                 </div>
-                            
-                            </p>
+                            </div> 
                         </div>
 
                     </div>

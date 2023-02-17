@@ -5,15 +5,14 @@ import { initializeApp } from "firebase/app";
 
 // Your web app's Firebase configuration
 const firebaseConfig = {
-    apiKey: import.meta.env.VITE_apiKey,
-    authDomain: import.meta.env.VITE_authDomain,
-    projectId: import.meta.env.VITE_projectId,
-    storageBucket: import.meta.env.VITE_storageBucket,
-    messagingSenderId: import.meta.env.VITE_messagingSenderId,
-    appId: import.meta.env.VITE_appId,
+  apiKey: "AIzaSyAprXY30Fuwj7Kjn1coVCVuKVPtuGPPDIo",
+  authDomain: "bestdeal-ecommerce.firebaseapp.com",
+  projectId: "bestdeal-ecommerce",
+  storageBucket: "bestdeal-ecommerce.appspot.com",
+  messagingSenderId: "284233517936",
+  appId: "1:284233517936:web:79d0c7ff5506ed09d25db5"
 };
 
 // Initialize Firebase
 const app = initializeApp(firebaseConfig);
-
 export default app;

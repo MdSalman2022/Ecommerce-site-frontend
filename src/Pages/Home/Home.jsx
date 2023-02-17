@@ -17,6 +17,7 @@ import BackInStore from '../../components/BackInStore/BackInStore';
 import HotProduct from '../../components/HotProduct/HotProduct';
 import DiscountCode from '../../components/DiscountCode/DiscountCode';
 import GridDiscount from '../../components/GridDiscount/GridDiscount';
+import { LazyLoadComponent } from 'react-lazy-load-image-component';
 
 const Home = () => {
     return (
@@ -24,13 +25,13 @@ const Home = () => {
             <Banner></Banner>
             <OurService/>
             <AdvertisedProducts></AdvertisedProducts>
-            <Featured />
-            <FeaturedCategory />
+            <LazyLoadComponent><Featured /></LazyLoadComponent>           
+            <LazyLoadComponent><FeaturedCategory /></LazyLoadComponent>      
             <Brand /> 
             <ProductGrid />
             <MostSold/>
-            <BackInStore/>
-            <PopulerProducts />
+            <LazyLoadComponent><BackInStore /></LazyLoadComponent>
+            <LazyLoadComponent><PopulerProducts /></LazyLoadComponent>            
             <DiscountCode/>
             <HotProduct/>
             <OfferBanner/>
@@ -38,7 +39,8 @@ const Home = () => {
             <DealOfTheDay />
             <GridDiscount/>
             {/* <FromBlog/> */}
-            <Review/>
+            <LazyLoadComponent><Review/></LazyLoadComponent>
+            
         </div>
     );
 };

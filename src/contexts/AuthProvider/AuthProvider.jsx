@@ -1,38 +1,59 @@
 import React, { createContext, useEffect, useState } from 'react'
 import { createUserWithEmailAndPassword, onAuthStateChanged, getAuth, signInWithEmailAndPassword, signInWithPopup, signOut, updateProfile } from "firebase/auth";
 import app from '../../firebase/firebase.config';
+import { useQuery } from '@tanstack/react-query';
 
 export const AuthContext = createContext();
 const auth = getAuth(app)
 
 const AuthProvider = ({ children }) => {
-
-
+ 
+    let [cart, setCart] = useState([]);
+    // useEffect(() => {
+    //     const shoppingCart = localStorage.getItem("cart");
+    //     if (!shoppingCart) {
+    //       // If not, create an empty array and store it in localStorage
+    //       localStorage.setItem("cart", JSON.stringify([]));
+    //     } else {
+    //         setCart(JSON.parse(shoppingCart));
+    //     }
+    // }, []);
+    
     const [allUsers, setAllUsers] = useState('')
 
     const [loading, setLoading] = useState(true)
 
     const [title, setTitle] = useState('home')
 
-
-    // useEffect(() => {
-    //     fetch('https://buyandsell24-server.vercel.app/users')
-    //         .then(res => res.json())
-    //         .then(data => setAllUsers(data))
-    // }, [])
-
-
+    
     let [searchText, setSearchText] = useState("")
 
-    let [items, setItems] = useState("")
+    let [searchedItems, setSearchedItems] = useState("")
 
-    // useEffect(() => {
-    //     fetch(`https://buyandsell24-server.vercel.app/search?name=${searchText}`)
-    //         .then(res => res.json())
-    //         .then(data => setItems(data))
-    // }, [searchText])
+    useEffect(() => {
+        fetch(`https://bestdeal-ecommerce-server.vercel.app/search?name=${searchText}`)
+            .then(res => res.json())
+            .then(data => setSearchedItems(data))
+    }, [searchText])
 
-    console.log(items)
+
+    useEffect(() => {
+        localStorage.setItem('cart', JSON.stringify(cart));
+    }, [cart.length]);
+
+    useEffect(() => {
+        let carts = localStorage.getItem('cart', JSON.stringify(cart));
+        setCart(JSON.parse(carts));
+    }, [cart.length]);
+
+    
+
+    const { data: products = [] } = useQuery({
+        queryKey: ['products'],
+        queryFn: () => fetch('https://bestdeal-ecommerce-server.vercel.app/products')
+            .then(res => res.json())
+    },[])
+ 
     const [user, setUser] = useState(null)
 
 
@@ -89,14 +110,17 @@ const AuthProvider = ({ children }) => {
         createUser,
         signIn,
         providerLogin,
-        logOut,
-        setSearchText,
-        searchText,
-        items,
-        setItems,
+        logOut,   
         setTitle,
-        title
-
+        title,
+        products,
+        cart,
+        setCart,
+        setSearchedItems,
+        searchedItems,
+        setSearchText,
+        searchText
+        
     }
 
     return (

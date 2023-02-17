@@ -3,26 +3,13 @@ import { createBrowserRouter } from 'react-router-dom';
 import Main from '../../Layout/Main';
 import Login from '../../components/Shared/Login/Login';
 import Register from '../../components/Shared/Register/Register'; 
-import PrivateRoute from '../PrivateRoute/PrivateRoute';  
 import ErrorPage from '../../Pages/ErrorPage/ErrorPage';
-import Home from '../../Pages/Home/Home';
+import Home from '../../Pages/Home/Home';    
+import ProductDetails from '../../components/ProductDetails/ProductDetails';
+import ProductPage from '../../Pages/ProductPage/ProductPage'; 
+import CartPage from '../../components/CartPage/CartPage';
 import SearchPage from '../../Pages/SearchPage/SearchPage';
-import SearchRoute from '../SearchRoute/SearchRoute';
-import DashboardLayout from '../../Layout/DashboardLayout';
-import Dashboard from '../../Pages/Dashboard/Dashboard';
-import Orders from '../../Pages/Dashboard/Orders/Orders';
-import Delivery from '../../Pages/Dashboard/Delivery/Delivery';
-import Products from '../../Pages/Dashboard/Products/Products';
-import Categories from '../../Pages/Dashboard/Categories/Categories';
-import Inventory from '../../Pages/Dashboard/Inventory/Inventory';
-import Analytics from '../../Pages/Dashboard/Analytics/Analytics';
-import Payouts from '../../Pages/Dashboard/Payouts/Payouts';
-import Tools from '../../Pages/Dashboard/Tools/Tools';
-import Discounts from '../../Pages/Dashboard/Discounts/Discounts';
-import Percentage from '../../Pages/Dashboard/Discounts/Percentage/Percentage';
-import Appearance from '../../Pages/Dashboard/Appearance/Appearance';
-import MyAccount from '../../Pages/Dashboard/MyAccount/MyAccount';
-import StoreSettings from '../../Pages/Dashboard/StoreSettings/StoreSettings';
+import BrandPage from '../../Pages/BrandPage/BrandPage';
 
 
 export const router = createBrowserRouter([
@@ -40,8 +27,33 @@ export const router = createBrowserRouter([
                 element: <Home></Home>
             },
             {
+                path: '/productdetails/:id/:name',
+                loader: ({ params }) => fetch(`https://bestdeal-ecommerce-server.vercel.app/product/${params.id}`),
+                element: <ProductDetails></ProductDetails>
+            }, 
+            {
+                path: '/:category',
+                element: <ProductPage></ProductPage>
+            }, 
+            {
+                path: '/:category/:subcategory',
+                element: <ProductPage></ProductPage>
+            },
+            {
+                path: '/:category/:subcategory/:brand',
+                element: <ProductPage></ProductPage>
+            },
+            {
+                path: '/cart',
+                element: <CartPage></CartPage>
+            },  
+            {
                 path: '/search/:name',
-                element: <SearchRoute><SearchPage></SearchPage></SearchRoute>
+                element: <SearchPage></SearchPage>
+            },
+            {
+                path: '/brand/:name',
+                element: <BrandPage></BrandPage>
             },
             {
                 path: '/login',
@@ -50,69 +62,6 @@ export const router = createBrowserRouter([
             {
                 path: '/register',
                 element: <Register></Register>
-            },
-        ]
-    },
-    {
-        path: '/',
-        element: <DashboardLayout></DashboardLayout>,
-        errorElement: <ErrorPage />,
-        children: [
-            {
-                path: '/dashboard',
-                element: <Dashboard></Dashboard>
-            },
-            {
-                path: '/dashboard/orders',
-                element: <Orders></Orders>
-            },
-            {
-                path: '/dashboard/delivery',
-                element: <Delivery></Delivery>
-            },
-            {
-                path: '/dashboard/products',
-                element: <Products></Products>
-            },
-            {
-                path: '/dashboard/categories',
-                element: <Categories></Categories>
-            },
-            {
-                path: '/dashboard/inventory',
-                element: <Inventory></Inventory>
-            },
-            {
-                path: '/dashboard/analytics',
-                element: <Analytics></Analytics>
-            },
-            {
-                path: '/dashboard/payouts',
-                element: <Payouts></Payouts>
-            },
-            {
-                path: '/dashboard/tools',
-                element: <Tools></Tools>
-            },
-            {
-                path: '/dashboard/discounts',
-                element: <Discounts></Discounts>
-            },
-            {
-                path: '/dashboard/discounts/percentage',
-                element: <Percentage></Percentage>
-            },
-            {
-                path: '/dashboard/appearance',
-                element: <Appearance></Appearance>
-            },
-            {
-                path: '/dashboard/myaccounts',
-                element: <MyAccount></MyAccount>
-            },
-            {
-                path: '/dashboard/storesettings',
-                element: <StoreSettings></StoreSettings>
             },
         ]
     }

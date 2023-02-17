@@ -104,7 +104,7 @@ const FromBlog = () => {
                             </div>
                         </div> 
                         <div className="card card-compact bg-base-100 shadow-lg shadow-blue-50 h-[500px] group relative">
-                            <figure><img  src="https://i.ibb.co/6Z0czxP/ryzen.webp" alt="Shoes" className='object-cover h-60 group-hover:scale-110 transition-all duration-300' /></figure>
+                            <figure><LazyLoadImage  src="https://i.ibb.co/6Z0czxP/ryzen.webp" alt="Shoes" className='object-cover h-60 group-hover:scale-110 transition-all duration-300' /></figure>
                             <div className="card-body">
                                 <h2 className="card-title">
                                 Ryzen 7900X
@@ -133,7 +133,7 @@ const FromBlog = () => {
                             </div>
                         </div> 
                         <div className="card card-compact bg-base-100 shadow-lg shadow-blue-50 h-[500px] group relative">
-                            <figure><img  src="https://i.ibb.co/qkbxKxR/asus.webp" alt="Shoes" className='object-cover h-60 group-hover:scale-110 transition-all duration-300' /></figure>
+                            <figure><LazyLoadImage  src="https://i.ibb.co/qkbxKxR/asus.webp" alt="Shoes" className='object-cover h-60 group-hover:scale-110 transition-all duration-300' /></figure>
                             <div className="card-body">
                                 <h2 className="card-title">
                                 Asus 34 QHD
@@ -162,7 +162,7 @@ const FromBlog = () => {
                             </div>
                         </div> 
                         <div className="card card-compact bg-base-100 shadow-lg shadow-blue-50 h-[500px] group relative">
-                            <figure><img  src="https://i.ibb.co/PNSM6dd/i14pm.webp" alt="Razer" className='object-cover h-60 group-hover:scale-110 transition-all duration-300' /></figure>
+                            <figure><LazyLoadImage  src="https://i.ibb.co/PNSM6dd/i14pm.webp" alt="Razer" className='object-cover h-60 group-hover:scale-110 transition-all duration-300' /></figure>
                             <div className="card-body">
                                 <h2 className="card-title">
                                 Iphone 14 Pro Max

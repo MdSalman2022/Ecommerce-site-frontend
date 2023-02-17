@@ -27,6 +27,10 @@
   }
 }
 
+/* .logo{
+  background: linear-gradient(90deg, #703fec 0%, #29abe2 100%);
+} */
+
 body {
   margin: 0;
   font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", "Roboto", "Oxygen",

@@ -45,7 +45,6 @@ const Modal = ({ product }) => {
             .then(result => {
                 console.log(result);
                 toast.success(`${booking.pname} is booked successfully`)
-                // Navigate('/dashboard/myproducts')
             })
 
         console.log(booking)
