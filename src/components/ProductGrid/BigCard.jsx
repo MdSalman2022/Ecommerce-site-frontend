@@ -47,20 +47,20 @@ function BigCard({ products }) {
                             }
                             </div>
                             <div className='absolute top-5 right-4 flex flex-col gap-3 w-10'>
-                                <FiHeart className='p-2 bg-white hover:scale-110 hover:border-error transition-all duration-300 text-5xl border rounded-full text-error'/>
-                                <MdOutlineCompareArrows className='p-2 bg-white hover:scale-110 hover:border-success transition-all duration-300 text-5xl border rounded-full text-success'/>
+                                <FiHeart className='p-2 bg-base-100 hover:scale-110 hover:border-error transition-all duration-300 text-5xl border rounded-full text-error'/>
+                                <MdOutlineCompareArrows className='p-2 bg-base-100 hover:scale-110 hover:border-success transition-all duration-300 text-5xl border rounded-full text-success'/>
                             </div>
 
                             <div className="">
                                 <div className="">
                                     <div className=' flex flex-col gap-3 items-center'>
                                         <div className="flex w-full justify-center items-center">
-                                            <button className='btn btn-primary rounded-full ' onClick={() => setCount(count - 1)} disabled={count === 0}><FaMinus className="text-white"/></button>
+                                            <button className='btn btn-primary rounded-full ' onClick={() => setCount(count - 1)} disabled={count === 0}><FaMinus className="text-base-100"/></button>
                                             <input type="number" className='w-full text-center border-none' value={count} onChange={handleChange} />
                                             <button className={`btn btn-primary rounded-full border-none text-neutral ${count === 10 ? ' hover:bg-[#e5e7eb] bg-[#e5e7eb] ' : ''}`}
-                                            onClick={() => setCount(count + 1)}  disabled={count === 10}><FaPlus className="text-white"/></button>
+                                            onClick={() => setCount(count + 1)}  disabled={count === 10}><FaPlus className="text-base-100"/></button>
                                         </div>
-                                    <button className="btn rounded-full btn-primary text-white w-full">Add to cart</button>                                    
+                                    <button className="btn rounded-full btn-primary text-base-100 w-full">Add to cart</button>                                    
                                     </div>                               
                                 </div>                                    
                             </div>

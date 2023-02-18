@@ -46,11 +46,11 @@ function Banner() {
                             
                         </div> 
                         <div className="my-2 md:my-10 gap-3 px-2 md:gap-5 lg:gap-0 md:px-0 lg:space-y-12 h-full flex items-start lg:items-end md:items-center justify-around lg:justify-start lg:flex-col ">
-                                <div className="card lg:card-side bg-base-100">
+                                <div className="card lg:card-side bg-white">
                                     <LazyLoadImage className='rounded-2xl  object-cover border-primary border w-52 h-40 md:w-96 md:h-72' src="https://i.ibb.co/Pc9jLbR/speaker.webp" alt="image" />
                                 </div>                          
                             
-                                <div className="card lg:card-side bg-base-100">
+                                <div className="card lg:card-side bg-white">
                                     <LazyLoadImage className='rounded-2xl object-cover border-primary border w-52 h-40 md:w-96 md:h-72' src="https://i.ibb.co/kXc9Xgt/headphone.webp" alt="image" />
                                 </div>                           
                         </div>

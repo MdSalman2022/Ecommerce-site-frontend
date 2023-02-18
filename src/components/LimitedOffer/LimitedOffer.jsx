@@ -51,25 +51,25 @@ const LimitedOffer = () => {
                     <div className="card-body flex-col justify-center items-center gap-10 border-l">
                         <div className="text-xl md:text-3xl font-semibold text-center">Limited Offer on <span className="font-bold text-primary">Laptops</span> <h2 className="text-2xl md:text-4xl font-bold text-primary">Upto 60%</h2></div> 
                         <div className="grid grid-flow-col gap-5 text-center auto-cols-max">
-                            <div className="flex flex-col p-2 bg-primary rounded-box text-white">
+                            <div className="flex flex-col p-2 bg-primary rounded-box text-base-100">
                                 <span className="countdown font-mono text-xl md:text-4xl lg:text-5xl">
                                 <span style={{"--value":days}}></span>
                                 </span>
                                 days
                             </div> 
-                            <div className="flex flex-col p-2 bg-primary rounded-box text-white">
+                            <div className="flex flex-col p-2 bg-primary rounded-box text-base-100">
                                 <span className="countdown font-mono text-xl md:text-4xl lg:text-5xl">
                                 <span style={{"--value":hours}}></span>
                                 </span>
                                 hours
                             </div> 
-                            <div className="flex flex-col p-2 bg-primary rounded-box text-white">
+                            <div className="flex flex-col p-2 bg-primary rounded-box text-base-100">
                                 <span className="countdown font-mono text-xl md:text-4xl lg:text-5xl">
                                 <span style={{"--value":minutes}}></span>
                                 </span>
                                 min
                             </div> 
-                            <div className="flex flex-col p-2 bg-primary rounded-box text-white">
+                            <div className="flex flex-col p-2 bg-primary rounded-box text-base-100">
                                 <span className="countdown font-mono text-xl md:text-4xl lg:text-5xl">
                                 <span style={{"--value":seconds}}></span>
                                 </span>

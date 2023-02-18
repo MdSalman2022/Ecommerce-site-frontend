@@ -10,6 +10,10 @@ import ProductPage from '../../Pages/ProductPage/ProductPage';
 import CartPage from '../../components/CartPage/CartPage';
 import SearchPage from '../../Pages/SearchPage/SearchPage';
 import BrandPage from '../../Pages/BrandPage/BrandPage';
+import DashboardLayout from '../../Layout/DashboardLayout';
+import Dashboard from '../../Pages/Dashboard/Dashboard/Dashboard';
+import Products from '../../Pages/Dashboard/Products/Products';
+import Orders from '../../Pages/Dashboard/Orders/Orders';
 
 
 export const router = createBrowserRouter([
@@ -62,6 +66,29 @@ export const router = createBrowserRouter([
             {
                 path: '/register',
                 element: <Register></Register>
+            },
+        ],
+    },
+    {
+        path: '/dashboard',
+        element: <DashboardLayout></DashboardLayout>,
+        errorElement: <ErrorPage />,
+        children: [
+            {
+                path: '/dashboard',
+                element: <Dashboard></Dashboard>
+            },
+            {
+                path: '/dashboard/home',
+                element: <Dashboard></Dashboard>
+            },
+            {
+                path: '/dashboard/products',
+                element: <Products></Products>
+            },
+            {
+                path: '/dashboard/orders',
+                element: <Orders></Orders>
             },
         ]
     }

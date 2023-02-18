@@ -94,7 +94,7 @@ function ProductPage() {
                     </select>
                         <div className="dropdown dropdown-end">
                             <label tabIndex={0} className="btn btn-outline btn-primary m-1">Sort</label>
-                            <ul tabIndex={0} className="dropdown-content menu p-2 shadow bg-base-100 rounded-box w-52"> 
+                            <ul tabIndex={0} className="dropdown-content menu p-2 shadow bg-white rounded-box w-52"> 
                                 <li onClick={()=> handleSortTypeChange('low-to-high')}><a>Low to High</a></li>
                                 <li onClick={()=> handleSortTypeChange('high-to-low')}><a>High to Low</a></li> 
                             </ul>

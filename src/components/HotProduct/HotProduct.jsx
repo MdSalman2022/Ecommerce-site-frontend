@@ -74,12 +74,12 @@ const HotProduct = () => {
                     <div className="flex flex-col items-center md:grid h-full md:grid-cols-3 lg:grid-cols-5 gap-5">
                     {/* sidebar */}
                         <div className="col-span-1 flex flex-col gap-2">
-                            <div className=" h-72 bg-white w-full border p-5 flex flex-col rounded-xl">
+                            <div className=" h-72 bg-base-100 w-full border p-5 flex flex-col rounded-xl">
                                 <p>Get the all new</p>
                                 <p className="font-bold text-xl text-primary">Intel I5 13600K</p>
                                 <LazyLoadImage src="https://i.ibb.co/QMjtYff/i5-13th.webp" alt="i5-13th" className="w-52" />
                             </div>
-                            <div className=" h-56 bg-white w-full border py-5 flex flex-col justify-center  gap-5 rounded-xl text-sm">
+                            <div className=" h-56 bg-base-100 w-full border py-5 flex flex-col justify-center  gap-5 rounded-xl text-sm">
                                 <p className=" px-2 flex flex-nowrap items-center gap-5  "><MdMobileFriendly className="text-2xl"/> Download our App to your Phone </p>
                                 <span className="border-b"></span>
                                 <p className=" px-2 flex flex-nowrap items-center gap-5  "><MdMobileFriendly className="text-3xl "/> Order now so you dont miss the opportunities.</p>
@@ -98,7 +98,7 @@ const HotProduct = () => {
                         </div>
                             <div className="border border-primary md:h-96 rounded-lg flex flex-col  md:flex-row justify-center items-center p-5 md:p-10 gap-10">
                             <div className="relative group">
-                                <span className=" group-hover:animate-pulse md:group-hover:-translate-y-10 transition-all duration-300  absolute -left-5 -top-2 z-50 font-mono bg-red-500 h-10 w-10 md:h-10 lg:h-16 md:w-10 lg:w-16 md:text-xl lg:text-3xl font-bold  text-white flex justify-center items-center  rounded-full">60%</span>
+                                <span className=" group-hover:animate-pulse md:group-hover:-translate-y-10 transition-all duration-300  absolute -left-5 -top-2 z-50 font-mono bg-red-500 h-10 w-10 md:h-10 lg:h-16 md:w-10 lg:w-16 md:text-xl lg:text-3xl font-bold  text-base-100 flex justify-center items-center  rounded-full">60%</span>
                                 <LazyLoadImage src="https://i.ibb.co/JqbDVkt/airpulse-a300-001-500x500.jpg" alt="airpulse" className="w-40 md:w-96 lg:w-56 group-hover:scale-125 transition-all duration-300 "/>
                             </div>
                             <div className="flex flex-col w-full max-w-5xl z-50 gap-2">
@@ -111,25 +111,25 @@ const HotProduct = () => {
                                 </div>
                                 
                                 <div className="flex gap-5 text-center auto-cols-max mt-5">
-                                    <div className="flex flex-col p-2 bg-neutral rounded-box text-white">
+                                    <div className="flex flex-col p-2 bg-neutral rounded-box text-base-100">
                                         <span className="countdown font-mono text-2xl">
                                         <span style={{"--value":days}}></span>
                                         </span>
                                         days
                                     </div> 
-                                    <div className="flex flex-col p-2 bg-neutral rounded-box text-white">
+                                    <div className="flex flex-col p-2 bg-neutral rounded-box text-base-100">
                                         <span className="countdown font-mono text-2xl">
                                         <span style={{"--value":hours}}></span>
                                         </span>
                                         hours
                                     </div> 
-                                    <div className="flex flex-col p-2 bg-neutral rounded-box text-white">
+                                    <div className="flex flex-col p-2 bg-neutral rounded-box text-base-100">
                                         <span className="countdown font-mono text-2xl">
                                         <span style={{"--value":minutes}}></span>
                                         </span>
                                         min
                                     </div> 
-                                    <div className="flex flex-col p-2 bg-neutral rounded-box text-white">
+                                    <div className="flex flex-col p-2 bg-neutral rounded-box text-base-100">
                                         <span className="countdown font-mono text-2xl">
                                         <span style={{"--value":seconds}}></span>
                                         </span>

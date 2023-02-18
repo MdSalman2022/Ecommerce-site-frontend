@@ -51,10 +51,10 @@ function ProductTable({ item,index }) {
                 </p>
                 <div className="flex items-start">
                 <button className={`btn-xs h-6 w-6 flex items-center btn-primary rounded-full text-xs border-none text-neutral ${count === 1 ? ' hover:bg-[#e5e7eb] bg-[#e5e7eb] ' : ''}`}
-                    onClick={() => setCount(count - 1)} disabled={count === 1}><FaMinus className="text-white" /></button>
+                    onClick={() => setCount(count - 1)} disabled={count === 1}><FaMinus className="text-base-100" /></button>
                         <input type="number" className='w-20 text-center border-none' value={count} onChange={handleChange}/>
                     <button className={`btn-xs h-6 w-6 flex items-center btn-primary rounded-full text-xs border-none text-neutral ${count === 10 ? ' hover:bg-[#e5e7eb] bg-[#e5e7eb] ' : ''}`}
-                    onClick={() => setCount(count + 1)}  disabled={count > 9}><FaPlus className="text-white"/></button>
+                    onClick={() => setCount(count + 1)}  disabled={count > 9}><FaPlus className="text-base-100"/></button>
                 </div>
                 <p>
                     ${item.price}
@@ -63,8 +63,8 @@ function ProductTable({ item,index }) {
                     ${item.price*count}
                 </p>
             <div className='flex gap-5'>
-                {active && <p onClick={()=>handleCart(count)}className='btn btn-primary  border-none text-white  flex items-center'>Confirm</p>}
-                <p onClick={()=> removeFromCart(item)} className='btn btn-circle bg-red-500 border-none text-white text-2xl flex items-center'><AiOutlineDelete /></p>
+                {active && <p onClick={()=>handleCart(count)}className='btn btn-primary  border-none text-base-100  flex items-center'>Confirm</p>}
+                <p onClick={()=> removeFromCart(item)} className='btn btn-circle bg-red-500 border-none text-base-100 text-2xl flex items-center'><AiOutlineDelete /></p>
             </div>
         </div>  
     )

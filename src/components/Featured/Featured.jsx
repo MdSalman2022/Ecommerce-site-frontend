@@ -55,11 +55,11 @@ const Featured = () => {
                     <span className="h-1 w-20 bg-primary rounded-full"></span>
                     <p className=''>These are the most highly rated product in our store <span className='underline text-secondary'>Learn More</span> </p>
 
-                    <div className="grid grid-cols-2 gap-5 md:gap-0 md:flex items-center overflow-x-auto sm:justify-center my-5 md:bg-white md:rounded-full">
-                        <button onMouseMove={()=> setTabSelect('tab1')} className={`flex items-center flex-shrink-0 px-5 py-2  text-xl rounded-full transition-all duration-300 bg-primary bg-opacity-0 border-r ${tabselect === 'tab1' ? 'bg-opacity-100 text-white font-semibold' : 'text-neutral'}`}>Featured</button>
-                        <button onMouseMove={()=> setTabSelect('tab2')} className={`flex items-center flex-shrink-0 px-5 py-2  text-xl rounded-full transition-all duration-300 bg-primary bg-opacity-0 border-r ${tabselect === 'tab2' ? 'bg-opacity-100 text-white font-semibold' : 'text-neutral'}`}>Latest</button>
-                        <button onMouseMove={()=> setTabSelect('tab3')} className={`flex items-center flex-shrink-0 px-5 py-2  text-xl rounded-full transition-all duration-300 bg-primary bg-opacity-0 border-r ${tabselect === 'tab3' ? 'bg-opacity-100 text-white font-semibold' : 'text-neutral'}`}>Bestsellers</button>
-                        <button onMouseMove={()=> setTabSelect('tab4')} className={`flex items-center flex-shrink-0 px-5 py-2  text-xl rounded-full transition-all duration-300 bg-primary bg-opacity-0 border-r ${tabselect === 'tab4' ? 'bg-opacity-100 text-white font-semibold' : 'text-neutral'}`}>Specials</button>
+                    <div className="grid grid-cols-2 gap-5 md:gap-0 md:flex items-center overflow-x-auto sm:justify-center my-5 md:bg-base-100 md:rounded-full">
+                        <button onMouseMove={()=> setTabSelect('tab1')} className={`flex items-center flex-shrink-0 px-5 py-2  text-xl rounded-full transition-all duration-300 bg-primary bg-opacity-0 border-r ${tabselect === 'tab1' ? 'bg-opacity-100 text-base-100 font-semibold' : 'text-neutral'}`}>Featured</button>
+                        <button onMouseMove={()=> setTabSelect('tab2')} className={`flex items-center flex-shrink-0 px-5 py-2  text-xl rounded-full transition-all duration-300 bg-primary bg-opacity-0 border-r ${tabselect === 'tab2' ? 'bg-opacity-100 text-base-100 font-semibold' : 'text-neutral'}`}>Latest</button>
+                        <button onMouseMove={()=> setTabSelect('tab3')} className={`flex items-center flex-shrink-0 px-5 py-2  text-xl rounded-full transition-all duration-300 bg-primary bg-opacity-0 border-r ${tabselect === 'tab3' ? 'bg-opacity-100 text-base-100 font-semibold' : 'text-neutral'}`}>Bestsellers</button>
+                        <button onMouseMove={()=> setTabSelect('tab4')} className={`flex items-center flex-shrink-0 px-5 py-2  text-xl rounded-full transition-all duration-300 bg-primary bg-opacity-0 border-r ${tabselect === 'tab4' ? 'bg-opacity-100 text-base-100 font-semibold' : 'text-neutral'}`}>Specials</button>
                     </div>
                 </div> 
 

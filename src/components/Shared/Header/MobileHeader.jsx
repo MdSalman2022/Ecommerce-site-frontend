@@ -395,7 +395,7 @@ const MobileHeader = ({ children }) => {
            <div className="navbar bg-base-100">
                 <div className="navbar-start">
                     {/* <div className="dropdown"> */}
-                        <label htmlFor="my-drawer" tabIndex={0} className="btn btn-ghost drawer-button btn-circle">
+                        <label htmlFor="my-drawer" tabIndex={0} className="btn btn-ghost drawer-button btn-circle text-2xl">
                             <HiBars3BottomLeft/>
                         </label>
                         {/* <ul tabIndex={0} className="menu menu-compact dropdown-content mt-3 p-2 shadow bg-base-100 rounded-box w-52">
@@ -406,7 +406,7 @@ const MobileHeader = ({ children }) => {
                     {/* </div> */}
                 </div>
                 <div className="navbar-center">
-                    <Link to="/" className="btn btn-ghost normal-case text-xl text-transparent bg-clip-text bg-gradient-to-r from-blue-400 to-violet-600">BestDeal</Link>
+                    <Link to="/" className="btn btn-ghost normal-case text-xl text-transparent bg-clip-text bg-gradient-to-r from-blue-400 to-blue-600 flex gap-2"><img className='w-5' src="https://i.ibb.co/xSLpY24/logo-colored.webp" alt="logo"  />BestDeal</Link>
                 </div>
                 <div className="navbar-end">
                     <button onClick={handleSearchBox} className="btn btn-ghost btn-circle">
@@ -440,14 +440,14 @@ const MobileHeader = ({ children }) => {
                         allcategories.map((category, index) => (
                             <li key={index} onMouseEnter={()=>handleOptions(category.id)} onMouseLeave={()=>handleOptions(0)} className='transition-all duration-300 cursor-pointer hover:text-primary font-semibold border-b p-2 flex flex-col '>
                                 <Link to={`/${category.cat}`}><span className='flex items-center'>{category.name} &nbsp; <FaAngleRight /></span></Link>
-                                    <div className={`flex flex-col items-start w-full bg-white ${options=== category.id ? '' : 'hidden'}`}>
-                                        <div className='w-full text-neutral hover:text-primary transition-all duration-300 bg-white p-2  '>{
+                                    <div className={`flex flex-col items-start w-full bg-base-100 ${options=== category.id ? '' : 'hidden'}`}>
+                                        <div className='w-full text-neutral hover:text-primary transition-all duration-300 bg-base-100 p-2  '>{
                                             category.subcategories.map((subcategory, index) => ( 
                                                 <Link
                                                     key={index}
                                                     onMouseEnter={() => handleSubOptions(subcategory.id)}
                                                     onMouseLeave={() => handleSubOptions(0)}
-                                                    className='bg-white w-full p-3 transition-all duration-300 text-neutral flex flex-col '
+                                                    className='bg-base-100 w-full p-3 transition-all duration-300 text-neutral flex flex-col '
                                                     to={`/${category.cat}/${subcategory.subcat ? subcategory.subcat : subcategory.brand ? subcategory.brand : subcategory.type}`}>
                                                     <span className=' flex items-center p-3 border-l-2'>
                                                         {subcategory.name} &nbsp; <FaAngleRight />
@@ -455,11 +455,11 @@ const MobileHeader = ({ children }) => {
                                           
                                                     { subcategory.subcategories &&
                                                         <div className={`flex flex-col w-full px-5 py-0 p-2 ${subOptions === subcategory.id ? '' : 'hidden'}`}>
-                                                        <ul className='space-y-5 bg-white  p-2 '>
+                                                        <ul className='space-y-5 bg-base-100  p-2 '>
                                                             {
                                                                 subcategory?.subcategories?.map((s,index)=> (
                                                                     <Link key={index} className='' to={`/${category.cat}/${subcategory.subcat ? subcategory.subcat : subcategory.type}/${s.brand ? s.brand : s.type}`}>
-                                                                        <li className='transition-all duration-300 text-neutral p-3 border-l-2 hover:bg-primary hover:text-white' >
+                                                                        <li className='transition-all duration-300 text-neutral p-3 border-l-2 hover:bg-primary hover:text-base-100' >
                                                                         { s.name}
                                                                         </li>
                                                                     </Link>

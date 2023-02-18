@@ -444,7 +444,7 @@ const Header = () => {
             {/* Primary Header  */}
             <div className={`hidden md:flex border-t  `}>
                 <div className="container mx-auto grid grid-cols-4 md:justify-items-center lg:justify-items-start gap-10 lg:grid-cols-5  py-5">
-                    <div className="logo hidden md:flex items-center">
+                    <div className=" col-span-1 logo hidden md:flex items-center">
                         <Link to='/' className=" ">
                             {/* <LazyLoadImage src="https://i.ibb.co/vd3xm6V/boipaben-final.png" className='w-16' alt="logo" border="0" /> */}
                             <h1 className="text-4xl font-semibold text-transparent bg-clip-text bg-gradient-to-r from-blue-400 to-blue-600 flex items-center gap-1"><img className='w-10' src="https://i.ibb.co/xSLpY24/logo-colored.webp" alt="logo" />Best<span className='font-bold'>Deal</span></h1>
@@ -456,15 +456,13 @@ const Header = () => {
                             <button type="submit" className='bg-primary text-base-100 font-bold px-3 text-2xl'><AiOutlineSearch /></button>
                         </div>
                     </form>
-                    <div className='flex md:text-2xl lg:text-3xl gap-5 lg:justify-start items-center col-span-1'>
-                        <p className='rounded-full border p-1 hover:bg-primary hover:text-white transition-all duration-300 ease-in-out'><BsPerson  className='p-1'/></p>
-                        <p className='rounded-full border p-1 hover:bg-primary hover:text-white transition-all duration-300 ease-in-out'><MdFavoriteBorder  className=' p-1'/></p>
-                        <p className='rounded-full border p-1 hover:bg-primary hover:text-white transition-all duration-300 ease-in-out'><FaExchangeAlt className=' p-1'/></p>
-                        <p className='rounded-full border p-1 hover:bg-primary hover:text-white transition-all duration-300 ease-in-out'><IoNotificationsOutline className=' p-1'/></p>
+                    <div className='flex md:text-2xl lg:text-3xl gap-5 lg:justify-end items-center col-span-1'>
+                        <p className='rounded-full border p-1 hover:bg-primary hover:text-base-100 transition-all duration-300 ease-in-out'><BsPerson  className='p-1'/></p> 
+                        <p className='rounded-full border p-1 hover:bg-primary hover:text-base-100 transition-all duration-300 ease-in-out'><IoNotificationsOutline className=' p-1'/></p>
                         <Link to="/cart">
-                            <div className='rounded-full border p-1 hover:bg-primary hover:text-white transition-all duration-300 ease-in-out relative'>
+                            <div className='rounded-full border p-1 hover:bg-primary hover:text-base-100 transition-all duration-300 ease-in-out relative'>
                                 <BsBag className=' p-1' />
-                                {cart && <div className="absolute -top-1 -right-2  text-sm bg-green-500 text-white rounded-full border border-primary w-5 h-5 flex items-center justify-center">{cart.length}</div>}
+                                {cart && <div className="absolute -top-1 -right-2  text-sm bg-green-500 text-base-100 rounded-full border border-primary w-5 h-5 flex items-center justify-center">{cart.length}</div>}
                             </div>
                         </Link>
                     </div>
@@ -475,24 +473,24 @@ const Header = () => {
             {/* Category Header  */}
 
 
-            <div className={`hidden md:flex md:flex-wrap py-4  border-y bg-white w-full pt-2 ${isFixed ? 'transition-all duration-300 z-50 fixed top-0 rounded-md bg-clip-padding backdrop-filter backdrop-blur-sm bg-opacity-80' : ''}`}>
+            <div className={`hidden md:flex md:flex-wrap py-4  border-y bg-base-100 w-full pt-2 ${isFixed ? 'transition-all duration-300 z-50 fixed top-0 rounded-md bg-clip-padding backdrop-filter backdrop-blur-sm bg-opacity-80' : ''}`}>
                 <div className='container mx-auto'>
                     <div className="flex justify-between ">
                         <div className='relative group'>
                             <p className='flex gap-2 justify-center items-center p-3 bg-primary text-base-100 lg:   w-44 rounded-full '>All Categories <FaAngleDown /> </p>
                             <div className="hidden group-hover:flex group-hover:flex-col absolute z-50  py-5 lg:w-56  top-12 h-full ">
-                                <ul className='space-y-2 bg-white z-50 rounded-lg shadow'>
+                                <ul className='space-y-2 bg-base-100 z-50 rounded-lg shadow'>
                                     {
                                         allcategories.map((category, index) => (
                                             <li key={index} onMouseEnter={()=>handleOptions(category.id)} onMouseLeave={()=>handleOptions(0)} className='transition-all duration-300 cursor-pointer hover:text-primary font-semibold border-b p-2 flex items-start relative'>
                                                 <Link to={`/${category.cat}`}><span className='flex items-center'>{category.name} &nbsp; <FaAngleRight /></span></Link>
                                                     <div className={`w-48 absolute -right-44 top-0  px-5 py-0  ${options=== category.id ? '' : 'hidden'}`}>
-                                                        <div className='text-neutral hover:text-primary transition-all duration-300 bg-white rounded-lg'>{
+                                                        <div className='text-neutral hover:text-primary transition-all duration-300 bg-base-100 rounded-lg'>{
                                                             category.subcategories.map((subcategory,index) => ( 
                                                                 <Link key={index}
                                                                     onMouseEnter={() => handleSubOptions(subcategory.id)}
                                                                     onMouseLeave={() => handleSubOptions(0)}
-                                                                    className='p-2 pl-2 transition-all duration-300 text-neutral hover:text-white hover:bg-primary  border-b rounded-lg flex items-start relative'
+                                                                    className='p-2 pl-2 transition-all duration-300 text-neutral hover:text-base-100 hover:bg-primary  border-b rounded-lg flex items-start relative'
                                                                     to={`/${category.cat}/${subcategory.subcat ? subcategory.subcat : subcategory.brand ? subcategory.brand : subcategory.type}`}>
                                                                     <span className='flex items-center'>
                                                                         {subcategory.name} &nbsp; <FaAngleRight />
@@ -500,11 +498,11 @@ const Header = () => {
                                                           
                                                                     { subcategory.subcategories &&
                                                                         <div className={`w-48 absolute -right-44 top-0 px-5 py-0 rounded-lg ${subOptions === subcategory.id ? '' : 'hidden'}`}>
-                                                                        <ul className='space-y-5 bg-white rounded-lg'>
+                                                                        <ul className='space-y-5 bg-base-100 rounded-lg'>
                                                                             {
                                                                                 subcategory?.subcategories?.map((s,index) => (
                                                                                     <Link key={index} className='' to={`/${category.cat}/${subcategory.subcat ? subcategory.subcat : subcategory.type}/${s.brand ? s.brand : s.type}`}>
-                                                                                        <li className='transition-all duration-300 text-neutral hover:text-white hover:bg-primary py-2 pr-5 pl-2 border-b rounded-lg'>
+                                                                                        <li className='transition-all duration-300 text-neutral hover:text-base-100 hover:bg-primary py-2 pr-5 pl-2 border-b rounded-lg'>
                                                                                         { s.name}
                                                                                         </li>
                                                                                     </Link>
@@ -529,8 +527,8 @@ const Header = () => {
                                 
                                 <Link to="/monitor" className='flex items-center gap-2'>Monitor <FaAngleDown /></Link>
 
-                                <div className="absolute top-12 left-0 hidden group-hover:flex group-hover:flex-col  z-50  py-5 w-40 bg-white text-neutral rounded-lg h-full">
-                                    <ul className='space-y-2 bg-white  rounded-lg shadow'>
+                                <div className="absolute top-12 left-0 hidden group-hover:flex group-hover:flex-col  z-50  py-5 w-40 bg-base-100 text-neutral rounded-lg h-full">
+                                    <ul className='space-y-2 bg-base-100  rounded-lg shadow'>
                                         {
                                             allcategories[2].subcategories.map((subcategory, index) => (
                                                 <Link key={index} to={`/monitor/${subcategory.brand}`}><li className='transition-all duration-300 cursor-pointer hover:text-primary font-semibold p-2 '>{subcategory.name}</li></Link>
@@ -545,8 +543,8 @@ const Header = () => {
                                 
                                 <Link to="/laptop" className='flex items-center gap-2'>Laptops <FaAngleDown /></Link>
 
-                                <div className="absolute top-12 left-0 hidden group-hover:flex group-hover:flex-col  z-50  py-5 w-40 bg-white text-neutral rounded-lg h-full">
-                                    <ul className='space-y-2 bg-white  rounded-lg shadow'>
+                                <div className="absolute top-12 left-0 hidden group-hover:flex group-hover:flex-col  z-50  py-5 w-40 bg-base-100 text-neutral rounded-lg h-full">
+                                    <ul className='space-y-2 bg-base-100  rounded-lg shadow'>
                                     {
                                             allcategories[1].subcategories.map((subcategory,index) => (
                                                 <Link key={index} to={`/laptop/${subcategory.brand}`}><li className='transition-all duration-300 cursor-pointer hover:text-primary font-semibold p-2 '>{subcategory.name}</li></Link>
@@ -560,8 +558,8 @@ const Header = () => {
                                 
                                 <Link to="/smartphone" className='flex items-center gap-2'>Smartphone <FaAngleDown /></Link>
 
-                                <div className="absolute top-12 left-0 hidden group-hover:flex group-hover:flex-col  z-50  py-5 w-40 bg-white text-neutral rounded-lg h-full">
-                                    <ul className='space-y-2 bg-white  rounded-lg shadow'>
+                                <div className="absolute top-12 left-0 hidden group-hover:flex group-hover:flex-col  z-50  py-5 w-40 bg-base-100 text-neutral rounded-lg h-full">
+                                    <ul className='space-y-2 bg-base-100  rounded-lg shadow'>
                                     {
                                             allcategories[3].subcategories.map((subcategory,index) => (
                                                 <Link key={index} to={`/smartphone/${subcategory.brand}`}><li className='transition-all duration-300 cursor-pointer hover:text-primary font-semibold p-2 '>{subcategory.name}</li></Link>
@@ -577,8 +575,8 @@ const Header = () => {
                                  
                                 <Link to="/tablet" className='flex items-center gap-2'>Tablet <FaAngleDown /></Link>
                                 
-                                <div className="absolute top-12 left-0 hidden group-hover:flex group-hover:flex-col  z-50  py-5 w-40 bg-white text-neutral rounded-lg h-full">
-                                    <ul className='space-y-2 bg-white  rounded-lg shadow'>
+                                <div className="absolute top-12 left-0 hidden group-hover:flex group-hover:flex-col  z-50  py-5 w-40 bg-base-100 text-neutral rounded-lg h-full">
+                                    <ul className='space-y-2 bg-base-100  rounded-lg shadow'>
                                     {
                                             allcategories[4].subcategories.map((subcategory,index) => (
                                                 <Link key={index} to={`/tablet/${subcategory.brand}`}><li className='transition-all duration-300 cursor-pointer hover:text-primary font-semibold p-2 '>{subcategory.name}</li></Link>
@@ -592,8 +590,8 @@ const Header = () => {
                                  
                                 <Link to="/camera" className='flex items-center gap-2'>Camera <FaAngleDown /></Link>
 
-                                <div className="absolute top-12 left-0 hidden group-hover:flex group-hover:flex-col  z-50  py-5 w-40 bg-white text-neutral rounded-lg h-full">
-                                    <ul className='space-y-2 bg-white  rounded-lg shadow'>
+                                <div className="absolute top-12 left-0 hidden group-hover:flex group-hover:flex-col  z-50  py-5 w-40 bg-base-100 text-neutral rounded-lg h-full">
+                                    <ul className='space-y-2 bg-base-100  rounded-lg shadow'>
                                     {
                                             allcategories[5].subcategories.map((subcategory, index) => (
                                                 <Link key={index} to={`/camera/${subcategory.brand}`}><li className='transition-all duration-300 cursor-pointer hover:text-primary font-semibold p-2 '>{subcategory.name}</li></Link>
@@ -608,8 +606,8 @@ const Header = () => {
                                  
                                 <Link to="/accessories" className='flex items-center gap-2'>Accessories <FaAngleDown /></Link>
 
-                                <div className="absolute top-12 left-0 hidden group-hover:flex group-hover:flex-col  z-50  py-5 w-40 bg-white text-neutral rounded-lg h-full">
-                                    <ul className='space-y-2 bg-white  rounded-lg shadow'>
+                                <div className="absolute top-12 left-0 hidden group-hover:flex group-hover:flex-col  z-50  py-5 w-40 bg-base-100 text-neutral rounded-lg h-full">
+                                    <ul className='space-y-2 bg-base-100  rounded-lg shadow'>
                                         {
                                             allcategories[8].subcategories.map((subcategory, index) => (
                                                 <Link key={index} to={`/accessories/${subcategory.type}`}><li className='transition-all duration-300 cursor-pointer hover:text-primary font-semibold p-2 '>{subcategory.name}</li></Link>
@@ -622,8 +620,8 @@ const Header = () => {
                                  
                                 <Link to="/tv" className='flex items-center gap-2'>TV <FaAngleDown /></Link>
                                 
-                                <div className="absolute top-12 left-0 hidden group-hover:flex group-hover:flex-col  z-50  py-5 w-40 bg-white text-neutral rounded-lg h-full">
-                                    <ul className='space-y-2 bg-white  rounded-lg shadow'>
+                                <div className="absolute top-12 left-0 hidden group-hover:flex group-hover:flex-col  z-50  py-5 w-40 bg-base-100 text-neutral rounded-lg h-full">
+                                    <ul className='space-y-2 bg-base-100  rounded-lg shadow'>
                                     {
                                             allcategories[7].subcategories.map((subcategory, index) => (
                                                 <Link key={index} to={`/tv/${subcategory.brand}`}><li className='transition-all duration-300 cursor-pointer hover:text-primary font-semibold p-2 '>{subcategory.name}</li></Link>

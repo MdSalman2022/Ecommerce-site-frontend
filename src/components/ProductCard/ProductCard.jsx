@@ -69,9 +69,9 @@ const ProductCard = ({ item }) => {
                 <LazyLoadImage className='object-contain group-hover:scale-110 transition-all duration-300 p-2  h-64' src={item.image} alt={item?.cat}/>
                 
                     <div className='absolute top-5 right-0 w-14 flex flex-col items-center gap-3'>
-                        <FiHeart className='p-2 bg-white hover:scale-110 hover:border-error transition-all duration-300 text-4xl border rounded-full text-error'/>
-                        <MdOutlineCompareArrows className='p-2 bg-white hover:scale-110 hover:border-success transition-all duration-300 text-4xl border rounded-full'/>
-                        {item?.featured && <div className="badge bg-white border-none text-4xl text-yellow-400"><MdStars className=''/></div>}
+                        <FiHeart className='p-2 bg-base-100 hover:scale-110 hover:border-error transition-all duration-300 text-4xl border rounded-full text-error'/>
+                        <MdOutlineCompareArrows className='p-2 bg-base-100 hover:scale-110 hover:border-success transition-all duration-300 text-4xl border rounded-full'/>
+                        {item?.featured && <div className="badge bg-base-100 border-none text-4xl text-yellow-400"><MdStars className=''/></div>}
                     </div>
 
                
@@ -80,7 +80,7 @@ const ProductCard = ({ item }) => {
             <div className="card-body items-center md:items-start h-80">
                     <h2 className={`card-title text-center md:text-left ${item?.featured && 'justify-between'}`}> 
                         <span className='card-title text-lg'>
-                            <Link preventScrollReset={false}  onClick={scrolltop} className='hover:text-primary transition-all' to={`/productDetails/${item._id}/${encodedProductName}`}>{item?.name}  {item?.bestseller ? <div className="badge bg-green-600 border-0 text-white top-40 right-3">{item?.sells}+</div> : ''}</Link>
+                            <Link preventScrollReset={false}  onClick={scrolltop} className='hover:text-primary transition-all' to={`/productDetails/${item._id}/${encodedProductName}`}>{item?.name}  {item?.bestseller ? <div className="badge bg-green-600 border-0 text-base-100 top-40 right-3">{item?.sells}+</div> : ''}</Link>
                             {item?.latest && <div className="badge-md border rounded-lg">NEW</div>}
                        </span>
                        
@@ -96,13 +96,13 @@ const ProductCard = ({ item }) => {
                     <div className="card-actions flex-col items-center justify-center gap-3">
                         <div className='w-full flex flex-col gap-3 justify-center items-center'>
                             <div className="flex items-center">
-                                <button className='btn btn-primary rounded-full h-5 w-12 text-xl' onClick={() => setCount(count - 1)} disabled={count === 0}><FaMinus className="text-white"/></button>
+                                <button className='btn btn-primary rounded-full h-5 w-12 text-xl' onClick={() => setCount(count - 1)} disabled={count === 0}><FaMinus className="text-base-100"/></button>
                                 <input type="number" className='w-full md:w-60 text-center border-none'  value={count} onChange={handleChange}/>
                                 <button className={`btn btn-primary rounded-full h-8 w-12 text-xl border-none text-neutral${count === 10 ? ' hover:bg-[#e5e7eb] bg-[#e5e7eb] ' : ''}`}
                                     onClick={() => setCount(count + 1)}  disabled={count > 9}
-                                ><FaPlus className="text-white"/></button>
+                                ><FaPlus className="text-base-100"/></button>
                             </div>
-                        <button onClick={()=>handleCart(item, count)} className="btn rounded-full btn-primary text-white w-full">Add to cart</button>                                    
+                        <button onClick={()=>handleCart(item, count)} className="btn rounded-full btn-primary text-base-100 w-full">Add to cart</button>                                    
                         </div>                               
                     </div>
                     

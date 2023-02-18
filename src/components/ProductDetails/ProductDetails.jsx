@@ -78,15 +78,15 @@ function ProductDetails() {
                         <hr className='border-2'/>
                         <div className='w-full flex flex-col gap-3 items-center'>
                             <div className="flex">
-                                <button className='btn btn-primary rounded-full h-5 w-12 text-xl' onClick={() => setCount(count - 1)} disabled={count === 0}><FaMinus className="text-white"/></button>
+                                <button className='btn btn-primary rounded-full h-5 w-12 text-xl' onClick={() => setCount(count - 1)} disabled={count === 0}><FaMinus className="text-base-100"/></button>
                                 <input type="number" className='w-60 text-center border-none'  value={count} onChange={handleChange} />
                                 <button className={`btn btn-primary rounded-full h-8 w-12 text-xl border-none text-neutral${count === 10 ? ' hover:bg-[#e5e7eb] bg-[#e5e7eb] ' : ''}`}
                                     onClick={() => setCount(count + 1)}  disabled={count === 10}
-                                ><FaPlus className="text-white"/></button>
+                                ><FaPlus className="text-base-100"/></button>
                             </div>
-                            <button className="btn rounded-full btn-primary text-white w-full">Add to cart</button>                                    
+                            <button className="btn rounded-full btn-primary text-base-100 w-full">Add to cart</button>                                    
                         </div>        
-                        <button className='btn btn-primary rounded-full btn-outline border-2 hover:text-white'>Buy Now</button>
+                        <button className='btn btn-primary rounded-full btn-outline border-2 hover:text-base-100'>Buy Now</button>
                     </div>
 
                 </div>

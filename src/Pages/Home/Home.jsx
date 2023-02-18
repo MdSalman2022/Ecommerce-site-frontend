@@ -11,7 +11,6 @@ import OfferBanner from '../../components/OfferBanner/OfferBanner';
 import PopulerProducts from '../../components/PopulerProducts/PopulerProducts'; 
 import ProductGrid from '../../components/ProductGrid/ProductGrid';
 import Review from '../../components/Review/Review';
-import FromBlog from '../../components/FromBlog/FromBlog';
 import MostSold from '../../components/MostSold/MostSold';
 import BackInStore from '../../components/BackInStore/BackInStore';
 import HotProduct from '../../components/HotProduct/HotProduct';
@@ -27,18 +26,17 @@ const Home = () => {
             <AdvertisedProducts></AdvertisedProducts>
             <LazyLoadComponent><Featured /></LazyLoadComponent>           
             <LazyLoadComponent><FeaturedCategory /></LazyLoadComponent>      
-            <Brand /> 
-            <ProductGrid />
-            <MostSold/>
+            <LazyLoadComponent><Brand /> </LazyLoadComponent>
+            <LazyLoadComponent><ProductGrid /></LazyLoadComponent>
+            <LazyLoadComponent><MostSold /></LazyLoadComponent>
             <LazyLoadComponent><BackInStore /></LazyLoadComponent>
             <LazyLoadComponent><PopulerProducts /></LazyLoadComponent>            
-            <DiscountCode/>
-            <HotProduct/>
-            <OfferBanner/>
-            <LimitedOffer />
-            <DealOfTheDay />
-            <GridDiscount/>
-            {/* <FromBlog/> */}
+            <LazyLoadComponent><DiscountCode /></LazyLoadComponent>
+            <LazyLoadComponent><HotProduct /></LazyLoadComponent>
+            <LazyLoadComponent><OfferBanner /></LazyLoadComponent>
+            <LazyLoadComponent><LimitedOffer /></LazyLoadComponent>
+            <LazyLoadComponent><DealOfTheDay /></LazyLoadComponent>
+            <LazyLoadComponent><GridDiscount /></LazyLoadComponent>
             <LazyLoadComponent><Review/></LazyLoadComponent>
             
         </div>

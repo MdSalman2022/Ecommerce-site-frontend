@@ -17,12 +17,12 @@ const Brand = () => {
         <div className='bg-accent'>
             <div className="container mx-auto py-10">
                 <div className="text-center flex flex-col items-center justify-center my-10 gap-5">
-                    <h1 className="text-4xl font-bold">Shop By Brand</h1>
+                    <h1 className="text-4xl font-bold text-black">Shop By Brand</h1>
                     <span className="h-1 w-20 bg-primary rounded-full"></span>
                 </div>
                 <section className="">
                     <div className="container p-6 mx-auto space-y-6 text-center lg:p-8 lg:space-y-8">
-                        <div className="h-full grid grid-cols-2 md:grid-cols-3 lg:grid-cols-6 justify-items-center gap-5">
+                        <div className="h-full grid grid-cols-2 md:grid-cols-3 lg:grid-cols-6 justify-items-center gap-5 text-gray-500">
                             <Link onClick={scrolltop} to={`/brand/apple`}><FaApple className='p-5 text-9xl transition-all duration-300 hover:text-black '/></Link>
                         
                             <Link onClick={scrolltop} to="/brand/samsung"><SiSamsung className='p-0 text-9xl transition-all duration-300 hover:text-primary '/></Link>                            

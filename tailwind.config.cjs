@@ -3,6 +3,19 @@ module.exports = {
   content: [
     "./src/**/*.{js,jsx,ts,tsx}",
   ],
+  theme: {
+    extend: {
+      animation: {
+        "scrolling-text": "scroll-left 10s linear infinite",
+      },
+      keyframes: {
+        "scroll-left": {
+          "0%": { transform: "translateX(0)" },
+          "100%": { transform: "translateX(-100%)" },
+        },
+      },
+    },
+  },
   daisyui: {
     themes: [
       {
@@ -20,7 +33,7 @@ module.exports = {
 
           "info": "#ACC8E7",
 
-          "success": "#04342C",
+          "success": "#19C332",
 
           "warning": "#E27E03",
 
@@ -29,5 +42,5 @@ module.exports = {
       },
     ],
   },
-  plugins: [require("daisyui"), "prettier-plugin-organize-imports", "prettier-plugin-tailwindcss"], "pluginSearchDirs": false
+  plugins: [require("daisyui"), "prettier-plugin-organize-imports", "prettier-plugin-tailwindcss", ], "pluginSearchDirs": false
 }
