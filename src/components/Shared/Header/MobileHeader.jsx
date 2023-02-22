@@ -5,13 +5,14 @@ import { AuthContext } from '../../../contexts/AuthProvider/AuthProvider';
 import { FaAngleRight, FaExchangeAlt,FaSearch } from 'react-icons/fa'
 import { HiBars3BottomLeft } from 'react-icons/hi2'
 import { IoIosNotificationsOutline } from 'react-icons/io'
+import {BsBag} from 'react-icons/bs'
 
 
 const MobileHeader = ({ children }) => {
 
 
     const navigate = useNavigate();
-    let { searchText, setSearchText, searchedItems,setSearchedItems , loading } = useContext(AuthContext)
+    let { searchText, setSearchText,cart, searchedItems,setSearchedItems , loading } = useContext(AuthContext)
 
     const { register, handleSubmit, formState: { errors } } = useForm();
 
@@ -410,12 +411,15 @@ const MobileHeader = ({ children }) => {
                 </div>
                 <div className="navbar-end">
                     <button onClick={handleSearchBox} className="btn btn-ghost btn-circle">
-                  {/*search*/}<FaSearch/>
+                  {/*search*/}<FaSearch className='text-xl'/>
                     </button>
                     <button className="btn btn-ghost btn-circle">
-                    <div className="indicator">
-                        <IoIosNotificationsOutline className="text-2xl"/> 
-                    </div>
+                    <Link to="/cart">
+                            <div className='rounded-full border p-1 hover:bg-primary hover:text-base-100 transition-all duration-300 ease-in-out relative'>
+                                <BsBag className='text-xl p-0 md:p-1' />
+                                {cart && <div className="absolute -top-1 -right-2  text-sm bg-green-500 text-base-100 rounded-full border border-primary w-3 h-3 p-2 flex items-center justify-center">{cart.length}</div>}
+                            </div>
+                        </Link>
                     </button>
                 </div>
               </div>

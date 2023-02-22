@@ -447,7 +447,7 @@ const Header = () => {
                     <div className=" col-span-1 logo hidden md:flex items-center">
                         <Link to='/' className=" ">
                             {/* <LazyLoadImage src="https://i.ibb.co/vd3xm6V/boipaben-final.png" className='w-16' alt="logo" border="0" /> */}
-                            <h1 className="text-4xl font-semibold text-transparent bg-clip-text bg-gradient-to-r from-blue-400 to-blue-600 flex items-center gap-1"><img className='w-10' src="https://i.ibb.co/xSLpY24/logo-colored.webp" alt="logo" />Best<span className='font-bold'>Deal</span></h1>
+                            <h1 className="text-xl md:text-2xl lg:text-4xl font-semibold text-transparent bg-clip-text bg-gradient-to-r from-blue-400 to-blue-600 flex items-center gap-1"><img className='w-10' src="https://i.ibb.co/xSLpY24/logo-colored.webp" alt="logo" />Best<span className='font-bold'>Deal</span></h1>
                         </Link>
                     </div>
                     <form onSubmit={handleSubmit(onSubmit)} className="pl-3 lg:pl-0 w-full search col-span-3">
@@ -473,16 +473,16 @@ const Header = () => {
             {/* Category Header  */}
 
 
-            <div className={`hidden md:flex md:flex-wrap py-4  border-y bg-base-100 w-full pt-2 ${isFixed ? 'transition-all duration-300 z-50 fixed top-0 rounded-md bg-clip-padding backdrop-filter backdrop-blur-sm bg-opacity-80' : ''}`}>
+            <div className={`hidden md:flex md:flex-wrap py-4  border-y bg-base-100 w-full  ${isFixed ? 'transition-all duration-300 z-50 fixed top-0 rounded-md bg-clip-padding backdrop-filter backdrop-blur-sm bg-opacity-80' : ''}`}>
                 <div className='container mx-auto'>
-                    <div className="flex justify-between ">
+                    <div className="flex justify-between md:gap-2 lg:gap-0">
                         <div className='relative group'>
                             <p className='flex gap-2 justify-center items-center p-3 bg-primary text-base-100 lg:   w-44 rounded-full '>All Categories <FaAngleDown /> </p>
                             <div className="hidden group-hover:flex group-hover:flex-col absolute z-50  py-5 lg:w-56  top-12 h-full ">
                                 <ul className='space-y-2 bg-base-100 z-50 rounded-lg shadow'>
                                     {
                                         allcategories.map((category, index) => (
-                                            <li key={index} onMouseEnter={()=>handleOptions(category.id)} onMouseLeave={()=>handleOptions(0)} className='transition-all duration-300 cursor-pointer hover:text-primary font-semibold border-b p-2 flex items-start relative'>
+                                            <li key={index} onMouseEnter={()=>handleOptions(category.id)} onMouseLeave={()=>handleOptions(0)} className='transition-all duration-300 cursor-pointer hover:text-base-100 rounded-lg hover:bg-primary font-semibold border-b p-2 flex items-start relative'>
                                                 <Link to={`/${category.cat}`}><span className='flex items-center'>{category.name} &nbsp; <FaAngleRight /></span></Link>
                                                     <div className={`w-48 absolute -right-44 top-0  px-5 py-0  ${options=== category.id ? '' : 'hidden'}`}>
                                                         <div className='text-neutral hover:text-primary transition-all duration-300 bg-base-100 rounded-lg'>{
@@ -525,7 +525,7 @@ const Header = () => {
                         <div className='flex flex-wrap gap-3'>
                             <div className={`relative group flex gap-1 justify-center items-center transition-all duration-300 text-primary bg-accent hover:text-primary  w-32 cursor-pointer text-sm font-semibold rounded-full ${isFixed && 'border-primary border'}`}>
                                 
-                                <Link to="/monitor" className='flex items-center gap-2'>Monitor <FaAngleDown /></Link>
+                                <Link to="/monitor" className='flex items-center gap-2 p-2'>Monitor <FaAngleDown /></Link>
 
                                 <div className="absolute top-12 left-0 hidden group-hover:flex group-hover:flex-col  z-50  py-5 w-40 bg-base-100 text-neutral rounded-lg h-full">
                                     <ul className='space-y-2 bg-base-100  rounded-lg shadow'>
@@ -541,7 +541,7 @@ const Header = () => {
                             </div>
                             <div className='group relative flex gap-1 justify-center items-center transition-all duration-300 text-neutral hover:bg-accent hover:text-primary w-32 cursor-pointer text-sm font-semibold rounded-full'>
                                 
-                                <Link to="/laptop" className='flex items-center gap-2'>Laptops <FaAngleDown /></Link>
+                                <Link to="/laptop" className='flex items-center gap-2 p-2'>Laptops <FaAngleDown /></Link>
 
                                 <div className="absolute top-12 left-0 hidden group-hover:flex group-hover:flex-col  z-50  py-5 w-40 bg-base-100 text-neutral rounded-lg h-full">
                                     <ul className='space-y-2 bg-base-100  rounded-lg shadow'>
@@ -556,7 +556,7 @@ const Header = () => {
                             </div>
                             <div className='group relative flex gap-1 justify-center items-center transition-all duration-300 text-neutral hover:bg-accent hover:text-primary w-32 cursor-pointer text-sm font-semibold rounded-full'>
                                 
-                                <Link to="/smartphone" className='flex items-center gap-2'>Smartphone <FaAngleDown /></Link>
+                                <Link to="/smartphone" className='flex items-center gap-2 p-2'>Smartphone <FaAngleDown /></Link>
 
                                 <div className="absolute top-12 left-0 hidden group-hover:flex group-hover:flex-col  z-50  py-5 w-40 bg-base-100 text-neutral rounded-lg h-full">
                                     <ul className='space-y-2 bg-base-100  rounded-lg shadow'>
@@ -573,7 +573,7 @@ const Header = () => {
                             </div>
                             <div className='group relative flex gap-1 justify-center items-center transition-all duration-300 text-neutral hover:bg-accent hover:text-primary w-32 cursor-pointer text-sm font-semibold rounded-full'>
                                  
-                                <Link to="/tablet" className='flex items-center gap-2'>Tablet <FaAngleDown /></Link>
+                                <Link to="/tablet" className='flex items-center gap-2 p-2'>Tablet <FaAngleDown /></Link>
                                 
                                 <div className="absolute top-12 left-0 hidden group-hover:flex group-hover:flex-col  z-50  py-5 w-40 bg-base-100 text-neutral rounded-lg h-full">
                                     <ul className='space-y-2 bg-base-100  rounded-lg shadow'>
@@ -588,7 +588,7 @@ const Header = () => {
                             </div>
                             <div className='group relative flex gap-1 justify-center items-center transition-all duration-300 text-neutral hover:bg-accent hover:text-primary w-32 cursor-pointer text-sm font-semibold rounded-full'>
                                  
-                                <Link to="/camera" className='flex items-center gap-2'>Camera <FaAngleDown /></Link>
+                                <Link to="/camera" className='flex items-center gap-2 p-2'>Camera <FaAngleDown /></Link>
 
                                 <div className="absolute top-12 left-0 hidden group-hover:flex group-hover:flex-col  z-50  py-5 w-40 bg-base-100 text-neutral rounded-lg h-full">
                                     <ul className='space-y-2 bg-base-100  rounded-lg shadow'>
@@ -604,7 +604,7 @@ const Header = () => {
                             </div>
                             <div className='group relative flex gap-1 justify-center items-center transition-all duration-300 text-neutral hover:bg-accent hover:text-primary w-32 cursor-pointer text-sm font-semibold rounded-full'>
                                  
-                                <Link to="/accessories" className='flex items-center gap-2'>Accessories <FaAngleDown /></Link>
+                                <Link to="/accessories" className='flex items-center gap-2 p-2'>Accessories <FaAngleDown /></Link>
 
                                 <div className="absolute top-12 left-0 hidden group-hover:flex group-hover:flex-col  z-50  py-5 w-40 bg-base-100 text-neutral rounded-lg h-full">
                                     <ul className='space-y-2 bg-base-100  rounded-lg shadow'>
@@ -618,7 +618,7 @@ const Header = () => {
                             </div>
                             <div className='group relative flex gap-1 justify-center items-center transition-all duration-300 text-neutral hover:bg-accent hover:text-primary w-32 cursor-pointer text-sm font-semibold rounded-full'>
                                  
-                                <Link to="/tv" className='flex items-center gap-2'>TV <FaAngleDown /></Link>
+                                <Link to="/tv" className='flex items-center gap-2 p-2'>TV <FaAngleDown /></Link>
                                 
                                 <div className="absolute top-12 left-0 hidden group-hover:flex group-hover:flex-col  z-50  py-5 w-40 bg-base-100 text-neutral rounded-lg h-full">
                                     <ul className='space-y-2 bg-base-100  rounded-lg shadow'>

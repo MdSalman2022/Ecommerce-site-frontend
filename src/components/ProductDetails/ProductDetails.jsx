@@ -91,7 +91,7 @@ function ProductDetails() {
 
                 </div>
                 <div className="bg-accent px-2 py-10 md:px-0"> 
-                    <div className="container mx-auto grid lg:grid-cols-4 gap-5 "> 
+                    <div className="container mx-auto grid md:grid-cols-2 lg:grid-cols-4 gap-5 "> 
                         {
                             suggestion.map((item, index) => (
                                 <ProductCard key={index} item={item} />

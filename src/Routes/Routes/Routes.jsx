@@ -14,6 +14,9 @@ import DashboardLayout from '../../Layout/DashboardLayout';
 import Dashboard from '../../Pages/Dashboard/Dashboard/Dashboard';
 import Products from '../../Pages/Dashboard/Products/Products';
 import Orders from '../../Pages/Dashboard/Orders/Orders';
+import Shipments from '../../Pages/Dashboard/Shipments/Shipments';
+import CheckoutPage from '../../components/CheckoutPage/CheckoutPage';
+import OrderConfirm from '../../components/OrderConfirm/OrderConfirm';
 
 
 export const router = createBrowserRouter([
@@ -50,6 +53,14 @@ export const router = createBrowserRouter([
             {
                 path: '/cart',
                 element: <CartPage></CartPage>
+            },  
+            {
+                path: '/checkout',
+                element: <CheckoutPage></CheckoutPage>
+            },  
+            {
+                path: '/order-confirm',
+                element: <OrderConfirm></OrderConfirm>
             },  
             {
                 path: '/search/:name',
@@ -89,6 +100,10 @@ export const router = createBrowserRouter([
             {
                 path: '/dashboard/orders',
                 element: <Orders></Orders>
+            },
+            {
+                path: '/dashboard/shipments',
+                element: <Shipments></Shipments>
             },
         ]
     }

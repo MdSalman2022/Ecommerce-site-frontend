@@ -47,13 +47,13 @@ function MiniCard({ item }) {
                     <div className="card-actions flex-col gap-3">
                         <div className='w-full flex flex-col gap-3 justify-center items-center'>
                             <div className="flex">
-                                <button className='btn btn-primary rounded-full h-5 w-12 text-xl' onClick={() => setCount(count - 1)} disabled={count === 0}><FaMinus className="text-base-100"/></button>
+                                <button className='btn btn-secondary rounded-full h-5 w-12 text-xl' onClick={() => setCount(count - 1)} disabled={count === 0}><FaMinus className="text-base-100"/></button>
                                 <input type="number" className=' text-center border-none'  value={count} onChange={handleChange}/>
-                                <button className={`btn btn-primary rounded-full h-8 w-12 text-xl border-none text-neutral${count === 10 ? ' hover:bg-[#e5e7eb] bg-[#e5e7eb] ' : ''}`}
+                                <button className={`btn btn-secondary rounded-full h-8 w-12 text-xl border-none text-neutral${count === 10 ? ' hover:bg-[#e5e7eb] bg-[#e5e7eb] ' : ''}`}
                                     onClick={() => setCount(count + 1)}  disabled={count === 10}
                                 ><FaPlus className="text-base-100"/></button>
                             </div>
-                        <button className="btn rounded-full btn-primary text-base-100 w-full md:w-48 lg:w-80">Add to cart</button>                                    
+                        <button className="btn rounded-full btn-secondary text-base-100 w-full md:w-48 lg:w-80">Add to cart</button>                                    
                         </div>                               
                     </div>
                 </div>

@@ -55,12 +55,12 @@ function BigCard({ products }) {
                                 <div className="">
                                     <div className=' flex flex-col gap-3 items-center'>
                                         <div className="flex w-full justify-center items-center">
-                                            <button className='btn btn-primary rounded-full ' onClick={() => setCount(count - 1)} disabled={count === 0}><FaMinus className="text-base-100"/></button>
+                                            <button className='btn btn-secondary rounded-full ' onClick={() => setCount(count - 1)} disabled={count === 0}><FaMinus className="text-base-100"/></button>
                                             <input type="number" className='w-full text-center border-none' value={count} onChange={handleChange} />
-                                            <button className={`btn btn-primary rounded-full border-none text-neutral ${count === 10 ? ' hover:bg-[#e5e7eb] bg-[#e5e7eb] ' : ''}`}
+                                            <button className={`btn btn-secondary rounded-full border-none text-neutral ${count === 10 ? ' hover:bg-[#e5e7eb] bg-[#e5e7eb] ' : ''}`}
                                             onClick={() => setCount(count + 1)}  disabled={count === 10}><FaPlus className="text-base-100"/></button>
                                         </div>
-                                    <button className="btn rounded-full btn-primary text-base-100 w-full">Add to cart</button>                                    
+                                    <button className="btn rounded-full btn-secondary text-base-100 w-full">Add to cart</button>                                    
                                     </div>                               
                                 </div>                                    
                             </div>

@@ -20,7 +20,7 @@ import { LazyLoadComponent } from 'react-lazy-load-image-component';
 
 const Home = () => {
     return (
-        <div className="">
+        <div className="overflow-x-hidden">
             <Banner></Banner>
             <OurService/>
             <AdvertisedProducts></AdvertisedProducts>

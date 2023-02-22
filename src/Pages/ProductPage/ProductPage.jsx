@@ -103,7 +103,7 @@ function ProductPage() {
                 }
                 {
                     productsPerPage.length>0 || products.length > 0 ?
-                        <div className="grid md:grid-cols-4 gap-8 p-5 md:p-0">
+                        <div className="grid md:grid-cols-2 lg:grid-cols-4 gap-8 p-5 md:p-0">
 
                             {sortType === '' &&
                                 productsPerPage.map((item, index) => (

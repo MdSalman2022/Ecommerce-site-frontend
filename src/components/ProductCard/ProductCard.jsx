@@ -77,8 +77,8 @@ const ProductCard = ({ item }) => {
                
             </figure>
                
-            <div className="card-body items-center md:items-start h-80">
-                    <h2 className={`card-title text-center md:text-left ${item?.featured && 'justify-between'}`}> 
+            <div className="card-body items-center  lg:items-center h-80">
+                    <h2 className={`card-title text-left md:text-left ${item?.featured && 'justify-between'}`}> 
                         <span className='card-title text-lg'>
                             <Link preventScrollReset={false}  onClick={scrolltop} className='hover:text-primary transition-all' to={`/productDetails/${item._id}/${encodedProductName}`}>{item?.name}  {item?.bestseller ? <div className="badge bg-green-600 border-0 text-base-100 top-40 right-3">{item?.sells}+</div> : ''}</Link>
                             {item?.latest && <div className="badge-md border rounded-lg">NEW</div>}
@@ -88,21 +88,21 @@ const ProductCard = ({ item }) => {
                     {item?.rating && <span className='font-semibold flex gap-2 text-yellow-300'>{stars}</span>}      
                     <div className="flex items-center gap-3">
                        {item?.special ? <span className='font-semibold text-2xl '>${specialprice}</span> : ''}
-                        <span className={`text-2xl ${item?.special ? 'line-through' : ''}`}>${item?.price}</span>
+                        <span className={`text-2xl text-left ${item?.special ? 'line-through' : ''}`}>${item?.price}</span>
                         {item?.special && <span className={`text-lg text-error`}>-{item?.discount}%</span>}
                     </div>
               
                 <div className="absolute bottom-4">
                     <div className="card-actions flex-col items-center justify-center gap-3">
                         <div className='w-full flex flex-col gap-3 justify-center items-center'>
-                            <div className="flex items-center">
-                                <button className='btn btn-primary rounded-full h-5 w-12 text-xl' onClick={() => setCount(count - 1)} disabled={count === 0}><FaMinus className="text-base-100"/></button>
-                                <input type="number" className='w-full md:w-60 text-center border-none'  value={count} onChange={handleChange}/>
-                                <button className={`btn btn-primary rounded-full h-8 w-12 text-xl border-none text-neutral${count === 10 ? ' hover:bg-[#e5e7eb] bg-[#e5e7eb] ' : ''}`}
+                            <div className="flex items-center px-2">
+                                <button className='btn btn-secondary rounded-full h-5 w-12 text-xl' onClick={() => setCount(count - 1)} disabled={count === 0}><FaMinus className="text-base-100"/></button>
+                                <input type="number" className='w-[70%] text-center border-none'  value={count} onChange={handleChange}/>
+                                <button className={`btn btn-secondary rounded-full h-8 w-12 text-xl border-none text-neutral${count === 10 ? ' hover:bg-[#e5e7eb] bg-[#e5e7eb] ' : ''}`}
                                     onClick={() => setCount(count + 1)}  disabled={count > 9}
                                 ><FaPlus className="text-base-100"/></button>
                             </div>
-                        <button onClick={()=>handleCart(item, count)} className="btn rounded-full btn-primary text-base-100 w-full">Add to cart</button>                                    
+                        <button onClick={()=>handleCart(item, count)} className="btn rounded-full btn-secondary text-base-100 w-full">Add to cart</button>                                    
                         </div>                               
                     </div>
                     

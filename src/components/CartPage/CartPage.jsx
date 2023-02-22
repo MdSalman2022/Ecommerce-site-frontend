@@ -3,19 +3,21 @@ import {HiArrowNarrowLeft} from 'react-icons/hi'
 import { AuthContext } from '../../contexts/AuthProvider/AuthProvider'
 import ProductTable from './ProductTable/ProductTable'
 import { Link } from 'react-router-dom';
+import { loadStripe } from '@stripe/stripe-js';
+import CheckoutForm from './CheckoutForm/CheckoutForm';
+
+const stripePromise = loadStripe(import.meta.env.VITE_STRIP_PK)
+import { Elements } from '@stripe/react-stripe-js';
+import { FaAngleDown, FaAngleRight } from 'react-icons/fa';
+
+console.log(stripePromise)
 
 function CartPage() {
 
 
-    const {cart, setCart} = useContext(AuthContext)
+    const {cart, setCart, subTotal, setSubPrice} = useContext(AuthContext)
 
- 
-
-
-// console.log(cart)
-    let [subTotal, setSubPrice] = useState(0)
     console.log(subTotal)
-    // let totalPrice = 0;
     
     useEffect(() => {
         let price = 0;
@@ -29,14 +31,14 @@ function CartPage() {
     if (cart.length > 0) {
         return (
             <div className='container mx-auto h-full py-5 md:py-20'>
-                <div className="grid grid-cols-4 gap-5">
-                    <div className='col-span-3'>
+                <div className="grid lg:grid-cols-4 gap-5">
+                    <div className='col-span-4'>
                         <h1 className="text-3xl font-semibold mb-5">Shopping Cart</h1>
-                        <div className="grid grid-cols-5 gap-5 border-b-2 mb-5">
+                        <div className="grid grid-cols-4 lg:grid-cols-5 gap-1 md:gap-5 border-b-2 mb-5">
                             <div className='col-span-5 bg-gray-100  grid grid-cols-5 place-items-center  h-12 rounded-lg'>
                                 <p className=''>Items</p>
                                 <p className=''>Quantity</p>
-                                <p className=''>Unit Price</p>
+                                <p className=' '>Unit Price</p>
                                 <p className=''>Total Price</p>
                                 <p className=''></p>
                             </div>
@@ -49,9 +51,10 @@ function CartPage() {
                         <div className="grid grid-cols-5">
                             <p className='col-span-3 flex items-center gap-3 text-primary cursor-pointer'><HiArrowNarrowLeft/> <p className='font-bold'>Continue Shopping</p></p>
                             <span className='flex items-center gap-5'>Subtotal: <p className='text-2xl font-bold'>${subTotal}</p></span>
+                            <Link to="/checkout" className='btn btn-secondary flex items-center '>Checkout <FaAngleRight className='text-lg md:text-2xl'/></Link>
                         </div>
                     </div>
-                    <div className='bg-gray-100 col-span-1 w-80 flex flex-col p-5 gap-2 rounded-xl'>
+                    {/* <div className='bg-gray-100 col-span-1 w-80 flex flex-col p-5 gap-2 rounded-xl'>
                         <h1 className="text-2xl">Card details</h1>
     
                         <p>Card Type</p>
@@ -62,7 +65,15 @@ function CartPage() {
                         <input type="text" />
                         <p>Expiration Date</p>
                         <input type="text" />
-                    </div>
+                        
+
+                        <Elements stripe={stripePromise}>
+                            <CheckoutForm
+                            subTotal={subTotal}
+                            />
+                        </Elements>
+
+                    </div> */}
                 </div>
             </div>
         )

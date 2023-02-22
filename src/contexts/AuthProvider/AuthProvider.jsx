@@ -18,6 +18,10 @@ const AuthProvider = ({ children }) => {
     //         setCart(JSON.parse(shoppingCart));
     //     }
     // }, []);
+
+    let [subTotal, setSubPrice] = useState(0)
+    let [paymentDetails, setPaymentDetails] = useState({})
+ 
     
     const [allUsers, setAllUsers] = useState('')
 
@@ -119,7 +123,11 @@ const AuthProvider = ({ children }) => {
         setSearchedItems,
         searchedItems,
         setSearchText,
-        searchText
+        searchText,
+        setSubPrice,
+        subTotal,
+        setPaymentDetails,
+        paymentDetails
         
     }
 
