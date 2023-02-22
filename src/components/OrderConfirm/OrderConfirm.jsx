@@ -1,36 +1,68 @@
 import { Elements } from '@stripe/react-stripe-js'
 import { loadStripe } from '@stripe/stripe-js'
-import React, { useContext } from 'react'
+import React, { useContext, useEffect } from 'react'
 import { AiFillCreditCard } from 'react-icons/ai'
 import { AuthContext } from '../../contexts/AuthProvider/AuthProvider'
 import CheckoutForm from '../CartPage/CheckoutForm/CheckoutForm'
 
 const stripePromise = loadStripe(import.meta.env.VITE_STRIP_PK)
+import { useState } from 'react';
+import { Link } from 'react-router-dom'
 
 
 function OrderConfirm() {
+    
+    
+    const { cart,subTotal, paymentDetails, setCart,setPaymentDetails } = useContext(AuthContext)    
 
+    const [orderPlaced, setOrderPlaced] = useState(false)
+
+    const handleOrder = () => {
+        setOrderPlaced(true);
+    };
     
-    
-    const { cart,subTotal, paymentDetails } = useContext(AuthContext)    
+    useEffect(() => {
+        if (orderPlaced) {
+            setCart([]);
+            setPaymentDetails({});
+        }
+    }, [orderPlaced]);
 
     return (
 
         <div>
-            <div className="h-screen container mx-auto py-10">
+            {
+                orderPlaced ?
+                <div className='flex flex-col items-center justify-center h-96 '>
+                    <AiFillCreditCard className='text-5xl text-primary mb-5' />
+                    <h1 className='text-2xl font-semibold mb-5'>Order Placed</h1>
+                    <p className='text-lg text-gray-500 mb-5'>Thank you for shopping with us. Your order will be delivered in 3-5 business days.</p>
+                    <Link to="/" className='btn btn-secondary'>Continue Shopping</Link>
+                </div>
+                    : 
+                    <div className="h-screen container mx-auto py-10">
 
                 <div className="grid md:grid-cols-4 gap-10 py-5">
                     <div className='col-span-1 space-y-10 border p-5 rounded-xl'>
                         <h2 className="text-4xl font-bold">Payment Method</h2>
                         <div className='flex items-center gap-3'>
-                            <input type="radio" name="radio-1" className="radio" checked />
+                            <input type="radio" name="radio-1" className="radio radio-secondary" checked />
                             <AiFillCreditCard className='text-3xl'/>
                         </div>            
                         <Elements stripe={stripePromise}>
                             <CheckoutForm
                             subTotal={subTotal}
                             />
-                        </Elements>
+                                </Elements>
+                                
+                                {
+                                    paymentDetails.id && <div className='flex flex-col gap-2'>
+                                        <p className='text-2xl font-semibold text-success '>Paid</p>
+                                        <p className='text-lg font-semibold'>Payment Details</p>
+                                        <p className='text-sm text-secondary font-bold'>Transaction id: <span className="text-neutral font-normal">{paymentDetails.id}</span></p>
+                                        <p className='text-sm text-secondary font-bold'>Amount: <span className="text-neutral font-normal">${paymentDetails.amount/100}</span></p>
+                                    </div>
+                        }
                     </div>      
                     
                     <div className="col-span-3 space-y-10 bg-base-100 rounded-xl border p-5">
@@ -85,11 +117,14 @@ function OrderConfirm() {
                 <div className='space-y-5'>    
                     <hr />
                     <div className="flex justify-end">
-                        <button className="btn btn-secondary" disabled={paymentDetails.id ? false : true}>Place Order</button>
+                        <button onClick={handleOrder} className="btn btn-secondary" disabled={paymentDetails.id ? false : true}>Place Order</button>
                     </div>
                 </div>
                     
             </div>
+                    
+                        
+            }
         </div>
     )
 }

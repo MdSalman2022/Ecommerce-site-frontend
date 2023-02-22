@@ -8,7 +8,14 @@ const auth = getAuth(app)
 
 const AuthProvider = ({ children }) => {
  
-    let [cart, setCart] = useState([]);
+    // let [cart, setCart] = useState([]);
+
+    const [cart, setCart] = useState(() => {
+        const savedCart = JSON.parse(localStorage.getItem('cart'));
+        return savedCart ? savedCart : [];
+      });
+
+    
     // useEffect(() => {
     //     const shoppingCart = localStorage.getItem("cart");
     //     if (!shoppingCart) {
@@ -46,9 +53,11 @@ const AuthProvider = ({ children }) => {
     }, [cart.length]);
 
     useEffect(() => {
-        let carts = localStorage.getItem('cart', JSON.stringify(cart));
-        setCart(JSON.parse(carts));
-    }, [cart.length]);
+        const cartFromLocalStorage = JSON.parse(localStorage.getItem('cart'));
+        if (cartFromLocalStorage && JSON.stringify(cartFromLocalStorage) !== JSON.stringify(cart)) {
+          setCart(cartFromLocalStorage);
+        }
+      }, [cart]);
 
     
 

@@ -3,25 +3,26 @@ import {loadStripe} from '@stripe/stripe-js';
 import { CardElement, Elements, useElements, useStripe } from '@stripe/react-stripe-js';
 import { useState } from 'react';
 import { AuthContext } from '../../../contexts/AuthProvider/AuthProvider';
+import toast, { Toaster } from 'react-hot-toast';
 
 
 function CheckoutForm({ subTotal }) {
     
     const {setPaymentDetails} = useContext(AuthContext)
-
+console.log(typeof(subTotal), subTotal)
     const [cardError, setCardError] = useState('')
     const [clientSecret, setClientSecret] = useState("");
 
     const stripe = useStripe();
     const elements = useElements();
 
-    const price = 15;
+    const price = subTotal;
 
     console.log(typeof(price))
     
     useEffect(() => {
         // Create PaymentIntent as soon as the page loads
-        fetch("http://localhost:5000/create-payment-intent", {
+        fetch("https://bestdeal-ecommerce-server.vercel.app/create-payment-intent", {
           method: "POST",
             headers: {
                 "Content-Type": "application/json",
@@ -76,6 +77,7 @@ function CheckoutForm({ subTotal }) {
         }
         console.log('paymentIntent', paymentIntent)
         setPaymentDetails(paymentIntent)
+        toast.success(`Payment successfully`)
 
 
     }

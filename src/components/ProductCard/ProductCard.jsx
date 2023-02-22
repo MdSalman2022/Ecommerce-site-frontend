@@ -46,21 +46,34 @@ const ProductCard = ({ item }) => {
     const scrolltop = () => {
         scroll.scrollToTop();
     }
-
     const handleCart = (data, count) => {
-        console.log(data,count)
-        let cartItem = cart.find((cartItem) => cartItem._id === data._id);
+        const cartItem = cart.find((item) => item._id === data._id);
+      
         if (cartItem) {
-            cartItem.quantity += count ? count : 1;
-            cartItem.totalPrice = cartItem.quantity * cartItem.price;
-            setCart([...cart, cartItem]);
+          const updatedCart = cart.map((item) => {
+            if (item._id === data._id) {
+              return {
+                ...item,
+                quantity: count ? count : item.quantity + 1,
+                totalPrice: item.price * (count ? count : item.quantity + 1)
+              }
+            } else {
+              return item;
+            }
+          });
+          setCart(updatedCart);
+          localStorage.setItem('cart', JSON.stringify(updatedCart));
         } else {
-            cartItem = { ...data, quantity: count ? count : 1 };
-            cartItem.totalPrice = cartItem.quantity * cartItem.price;
-            setCart([...cart, cartItem]); 
+          const newCartItem = {
+            ...data,
+            quantity: count ? count : 1,
+            totalPrice: data.price * (count ? count : 1)
+          };
+          setCart([...cart, newCartItem]);
+          localStorage.setItem('cart', JSON.stringify([...cart, newCartItem]));
         }
-        localStorage.setItem('cart', JSON.stringify(cart));
-    }
+      }
+      
 
 
     return (

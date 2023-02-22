@@ -25,10 +25,18 @@ function ProductTable({ item,index }) {
     const handleCart = (count) => { 
         cartItem.quantity = count;
         cartItem.totalPrice = cartItem.price * cartItem.quantity;
-        localStorage.setItem('cart', JSON.stringify(cart)); 
-        setCart([...cart])
+        const updatedCart = [...cart];
+        const itemIndex = updatedCart.findIndex((item) => item._id === cartItem._id);
+        if (itemIndex >= 0) {
+            updatedCart[itemIndex] = cartItem;
+        } else {
+            updatedCart.push(cartItem);
+        }
+        setCart(updatedCart);
+        localStorage.setItem('cart', JSON.stringify(updatedCart)); 
         setActive(false)
     }
+    
     useEffect(() => {
         if (cartItem?.quantity === count ) {            
             setActive(false)
@@ -37,11 +45,14 @@ function ProductTable({ item,index }) {
         }
     }, [count]) 
 
-    const removeFromCart = data => {
-        console.log(data)
-        setCart(cart.filter(data => JSON.stringify(data._id) !== JSON.stringify(item._id)));
-    }  
-
+    // const removeFromCart = data => {
+    //     console.log(data)
+    //     setCart(cart.filter(data => JSON.stringify(data._id) !== JSON.stringify(item._id)));
+    // }  
+    const removeFromCart = (data) => {
+        setCart(cart.filter((item) => item._id !== data._id));
+      };
+      
 
     return (
         <div className="col-span-5 grid grid-cols-5 gap-4 place-items-center  h-32 p-3" key={index}>
