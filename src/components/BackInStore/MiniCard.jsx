@@ -1,5 +1,4 @@
-import React, { useState } from 'react'
-import { animateScroll as scroll } from 'react-scroll'
+import React, { useContext, useState } from 'react' 
 import { LazyLoadImage } from 'react-lazy-load-image-component';
 import { MdStars } from 'react-icons/md';
 import { FaStar } from 'react-icons/fa';
@@ -8,11 +7,13 @@ import { MdOutlineCompareArrows } from 'react-icons/md';
 import { FaMinus } from 'react-icons/fa';
 import { FaPlus } from 'react-icons/fa';
 import { Link } from 'react-router-dom';
+import { AuthContext } from '../../contexts/AuthProvider/AuthProvider';
 
 function MiniCard({ item }) {
     
 
     const [count, setCount] = useState(0)
+    const {scrolltop} = useContext(AuthContext)
 
 
     const handleChange = (e) => {
@@ -21,12 +22,6 @@ function MiniCard({ item }) {
           setCount(newCount);
         }
     }
-
-    const scrolltop = () => {
-        scroll.scrollToTop();
-    }
-
-
 
     return (
         <div className="card card-compact bg-base-100 shadow-lg shadow-blue-50 h-[500px] group relative">

@@ -1,17 +1,13 @@
-import React from 'react';
+import React, { useContext } from 'react';
 import { FaApple } from 'react-icons/fa';
 import { SiSamsung, SiAsus,SiRazer,SiIntel,SiAmd, SiNvidia, SiLogitech,SiDell,SiCorsair,SiMicrosoft,SiXiaomi } from 'react-icons/si';
-import { Link } from 'react-router-dom';
-import { animateScroll as scroll } from 'react-scroll'
+import { Link } from 'react-router-dom'; 
+import { AuthContext } from '../../contexts/AuthProvider/AuthProvider';
 
 const Brand = () => {
 
-
-    
-    
-    const scrolltop = () => {
-        scroll.scrollToTop();
-    }
+    const {scrolltop} = useContext(AuthContext)
+   
 
     return (
         <div className='bg-accent'>

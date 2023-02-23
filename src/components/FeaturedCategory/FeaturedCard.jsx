@@ -1,5 +1,4 @@
-import React, { useState } from 'react'
-import { animateScroll as scroll } from 'react-scroll'
+import React, { useContext, useState } from 'react' 
 
 import { Link } from 'react-router-dom';
 import { FaStar } from 'react-icons/fa'
@@ -8,8 +7,13 @@ import { MdOutlineCompareArrows } from 'react-icons/md'
 import {FaPlus, FaMinus,FaArrowRight} from 'react-icons/fa'
 import { MdStars } from 'react-icons/md'
 import { LazyLoadImage } from 'react-lazy-load-image-component';
+import { AuthContext } from '../../contexts/AuthProvider/AuthProvider';
 
-function FeaturedCard({item}) {
+function FeaturedCard({ item }) {
+    
+    let {cart, setCart, scrolltop} = useContext(AuthContext)
+
+    cart = JSON.parse(localStorage.getItem('cart')) || [];
     
     const [count, setCount] = useState(0)
 
@@ -19,9 +23,36 @@ function FeaturedCard({item}) {
           setCount(newCount);
         }
     }
-    const scrolltop = () => {
-        scroll.scrollToTop();
-    }
+ 
+
+    const handleCart = (data, count) => {
+        const cartItem = cart.find((item) => item._id === data._id);
+      
+        if (cartItem) {
+          const updatedCart = cart.map((item) => {
+            if (item._id === data._id) {
+              return {
+                ...item,
+                quantity: count ? count : item.quantity + 1,
+                totalPrice: item.price * (count ? count : item.quantity + 1)
+              }
+            } else {
+              return item;
+            }
+          });
+          setCart(updatedCart);
+          localStorage.setItem('cart', JSON.stringify(updatedCart));
+        } else {
+          const newCartItem = {
+            ...data,
+            quantity: count ? count : 1,
+            totalPrice: data.price * (count ? count : 1)
+          };
+          setCart([...cart, newCartItem]);
+          localStorage.setItem('cart', JSON.stringify([...cart, newCartItem]));
+        }
+      }
+      
 
     return (
         <div className="card px-5 md:px-0 lg:w-64 card-compact bg-white shadow-lg md:h-[550px] group relative">
@@ -47,7 +78,7 @@ function FeaturedCard({item}) {
                             <button className={`btn btn-secondary rounded-full border-none text-neutral ${count === 10 ? ' hover:bg-[#e5e7eb] bg-[#e5e7eb] ' : ''}`}
                             onClick={() => setCount(count + 1)}  disabled={count === 10}><FaPlus className="text-base-100"/></button>
                         </div>
-                    <button className="btn rounded-full btn-secondary text-base-100 w-full md:w-56">Add to cart</button>                                    
+                    <button onClick={()=>handleCart(item, count)}  className="btn rounded-full btn-secondary text-base-100 w-full md:w-56">Add to cart</button>                                    
                     </div>                               
                 </div>
                 

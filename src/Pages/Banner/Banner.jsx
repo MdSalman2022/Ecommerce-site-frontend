@@ -1,5 +1,5 @@
 import React, { useRef, useContext, useEffect, useState } from 'react' 
-import { Navigate, useNavigate } from 'react-router-dom';
+import { Link, Navigate, useNavigate } from 'react-router-dom';
 import ProductCard from '../../components/ProductCard/ProductCard';
 import { useForm } from 'react-hook-form';
 import { LazyLoadImage } from 'react-lazy-load-image-component';
@@ -37,9 +37,9 @@ function Banner() {
                                     }} 
                                     className="mySwiper w-screen md:w-[750px] lg:w-[1200px] md:rounded-2xl border border-primary"
                                     >
-                                    <SwiperSlide><img className='w-full h-full' src="https://i.ibb.co/6yk3vbS/Apple-Mac-Book-Pro-Late-2021-Banner2-1674277405.webp" alt="image" /></SwiperSlide>
-                                    <SwiperSlide><LazyLoadImage className='w-full h-full' src="https://i.ibb.co/6FW5G2d/MSI-MPG-Z690-EDGE-Wi-Fi-6-Gaming-Motherboard-Slider-1675861274.webp" alt="image" /></SwiperSlide>
-                                    <SwiperSlide><LazyLoadImage className='w-full h-full' src="https://i.ibb.co/qF5Kd6H/Ben-Q-ZOWIE-XL2546-245-inch-Gaming-Monitor-Main-Slider-1675937487.webp" alt="image" /></SwiperSlide>
+                                    <SwiperSlide><Link to="/laptop"><img className='w-full h-full' src="https://i.ibb.co/6yk3vbS/Apple-Mac-Book-Pro-Late-2021-Banner2-1674277405.webp" alt="image" /></Link></SwiperSlide>
+                                    <SwiperSlide><Link to="/components/motherboard"><LazyLoadImage className='w-full h-full' src="https://i.ibb.co/6FW5G2d/MSI-MPG-Z690-EDGE-Wi-Fi-6-Gaming-Motherboard-Slider-1675861274.webp" alt="image" /></Link></SwiperSlide>
+                                    <SwiperSlide><Link to="/monitor"><LazyLoadImage className='w-full h-full' src="https://i.ibb.co/qF5Kd6H/Ben-Q-ZOWIE-XL2546-245-inch-Gaming-Monitor-Main-Slider-1675937487.webp" alt="image" /></Link></SwiperSlide>
                                     
 
                                 </Swiper>

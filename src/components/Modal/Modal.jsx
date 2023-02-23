@@ -66,7 +66,7 @@ const Modal = ({ product }) => {
                         <div className="mb-8 text-center">
                             <h1 className="my-3 text-4xl font-bold">Confirm Order!</h1>
                         </div>
-                        <form onSubmit={handleBooking} novalidate="" action="" className="space-y-12 ng-untouched ng-pristine ng-valid">
+                        <form onSubmit={handleBooking} noValidate="" action="" className="space-y-12 ng-untouched ng-pristine ng-valid">
                             <div className="space-y-4">
                                 <div>
                                     <label for="email" className="block mb-2 text-sm">User Name</label>

@@ -1,10 +1,12 @@
-import React from 'react';
+import React, { useContext } from 'react';
 import {FaArrowRight} from 'react-icons/fa';
 import { LazyLoadImage } from 'react-lazy-load-image-component';
-import { Link } from 'react-router-dom';
-import { animateScroll as scroll } from 'react-scroll'
+import { Link } from 'react-router-dom'; 
+import { AuthContext } from '../../contexts/AuthProvider/AuthProvider';
 
 const LimitedOffer = () => {
+
+    const {scrolltop} = useContext(AuthContext)
 
     // countdown hook 
 
@@ -37,11 +39,7 @@ const LimitedOffer = () => {
     React.useEffect(() => {
         startCountdown();
     }, []);
-
-
-    const scrolltop = () => {
-        scroll.scrollToTop();
-    }
+ 
     
     return (
         <div className='py-5 lg:py-20'>

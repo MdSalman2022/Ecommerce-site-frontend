@@ -5,14 +5,13 @@ import { MdOutlineCompareArrows } from 'react-icons/md'
 import {FaPlus, FaMinus,FaArrowRight} from 'react-icons/fa'
 import { MdStars } from 'react-icons/md'
 import { LazyLoadImage } from 'react-lazy-load-image-component';
-import { Link } from 'react-router-dom';  
-import { animateScroll as scroll } from 'react-scroll'
+import { Link } from 'react-router-dom';   
 import { AuthContext } from '../../contexts/AuthProvider/AuthProvider';
  
 
 const ProductCard = ({ item }) => {
 
-    let { cart, setCart } = useContext(AuthContext)
+    let { cart, setCart,scrolltop } = useContext(AuthContext)
 
     cart = JSON.parse(localStorage.getItem('cart')) || [];
     
@@ -43,9 +42,6 @@ const ProductCard = ({ item }) => {
      
 
 
-    const scrolltop = () => {
-        scroll.scrollToTop();
-    }
     const handleCart = (data, count) => {
         const cartItem = cart.find((item) => item._id === data._id);
       

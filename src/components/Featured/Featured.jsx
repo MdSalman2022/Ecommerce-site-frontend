@@ -8,9 +8,7 @@ import {FaPlus, FaMinus,FaArrowRight} from 'react-icons/fa'
 import { MdStars } from 'react-icons/md'
 import ProductCard from '../ProductCard/ProductCard';
 import { Link } from 'react-router-dom';
-import { AuthContext } from '../../contexts/AuthProvider/AuthProvider';
-import { animateScroll as scroll } from 'react-scroll'
-
+import { AuthContext } from '../../contexts/AuthProvider/AuthProvider'; 
 
 const Featured = () => {
 
@@ -19,7 +17,7 @@ const Featured = () => {
 
     const [count, setCount] = useState(0)
 
-    const {products} = useContext(AuthContext)
+    const {products,scrolltop} = useContext(AuthContext)
 
 
 
@@ -44,9 +42,7 @@ const Featured = () => {
  
     // console.log(special)
     
-    const scrolltop = () => {
-        scroll.scrollToTop();
-    }
+ 
     
     return (
         <div className='bg-primary py-20'>

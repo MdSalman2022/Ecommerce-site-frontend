@@ -12,7 +12,8 @@ import { BiHomeAlt, BiMessageMinus } from 'react-icons/bi'
 import { BsFillPersonFill,BsMenuButtonWideFill } from 'react-icons/bs'
 import { FaQuestion } from 'react-icons/fa'
 import { IoLanguage } from 'react-icons/io5'
-import {TbTruckDelivery} from 'react-icons/tb'
+import { TbTruckDelivery } from 'react-icons/tb'
+import {RxDashboard} from 'react-icons/rx'
 import {FaAngleDown} from 'react-icons/fa'   
 
 const Header = () => {
@@ -20,8 +21,7 @@ const Header = () => {
     const { user, logOut,cart } = useContext(AuthContext)
     let { searchText, setSearchText, searchedItems,setSearchedItems , loading } = useContext(AuthContext)
 
-    const { register, handleSubmit, formState: { errors } } = useForm();
-
+    const { register, handleSubmit, formState: { errors } } = useForm(); 
     
     const onSubmit = data => {
         setSearchText(data.name);
@@ -418,12 +418,13 @@ const Header = () => {
     }, []);
   
 
+
     return (
-        <div >
+        <div>
             {/* top header  */}
             <div className={`hidden h-8 md:grid grid-cols-3 container mx-auto lg:gap-80 text-sm place-items-center  bg-base-100 `}>
                 <div className='flex gap-5'>
-                    <p className='flex items-center gap-2'><BiHomeAlt/> Home</p>
+                    <Link to="/" className='flex items-center gap-2'><BiHomeAlt/> Home</Link>
                     <p className='flex items-center gap-2'><BsFillPersonFill/> About Us</p>
                     <p className='flex items-center gap-2'><BiMessageMinus/> Contact</p>
                     {/* <p><FaQuestion/> FAQ</p> */}
@@ -435,7 +436,7 @@ const Header = () => {
                 </div>
 
                 <div className='flex gap-5 border-l pl-3 '>
-                    <p className='flex items-center gap-2'><BsMenuButtonWideFill/> More Menus</p>
+                    <Link to="/dashboard" className='transition-all duration-300 flex items-center gap-2 hover:text-primary'><RxDashboard/> Dashboard</Link>
                     <p className='flex items-center gap-2'><TbTruckDelivery/> Delivery</p>
                 </div>
 
@@ -443,11 +444,11 @@ const Header = () => {
 
             {/* Primary Header  */}
             <div className={`hidden md:flex border-t  `}>
-                <div className="container mx-auto grid grid-cols-4 md:justify-items-center lg:justify-items-start gap-10 lg:grid-cols-5  py-5">
+                <div className="container mx-auto grid grid-cols-4 md:justify-items-center lg:justify-items-stretch gap-10 lg:grid-cols-5  py-5">
                     <div className=" col-span-1 logo hidden md:flex items-center">
                         <Link to='/' className=" ">
                             {/* <LazyLoadImage src="https://i.ibb.co/vd3xm6V/boipaben-final.png" className='w-16' alt="logo" border="0" /> */}
-                            <h1 className="text-xl md:text-2xl lg:text-4xl font-semibold text-transparent bg-clip-text bg-gradient-to-r from-blue-400 to-blue-600 flex items-center gap-1"><img className='w-10' src="https://i.ibb.co/xSLpY24/logo-colored.webp" alt="logo" />Best<span className='font-bold'>Deal</span></h1>
+                            <h1 className="text-xl md:text-2xl lg:text-4xl font-semibold text-transparent bg-clip-text bg-gradient-to-r from-blue-400 to-blue-600 flex items-center gap-1"><img className='w-10' src="https://i.ibb.co/xSLpY24/logo-colored.webp" alt="logo" />BestDeal</h1>
                         </Link>
                     </div>
                     <form onSubmit={handleSubmit(onSubmit)} className="pl-3 lg:pl-0 w-full search col-span-3">
@@ -457,14 +458,78 @@ const Header = () => {
                         </div>
                     </form>
                     <div className='flex md:text-2xl lg:text-3xl gap-5 lg:justify-end items-center col-span-1'>
-                        <p className='rounded-full border p-1 hover:bg-primary hover:text-base-100 transition-all duration-300 ease-in-out'><BsPerson  className='p-1'/></p> 
-                        <p className='rounded-full border p-1 hover:bg-primary hover:text-base-100 transition-all duration-300 ease-in-out'><IoNotificationsOutline className=' p-1'/></p>
+                        {/* <p className='cursor-pointer rounded-full border p-1 hover:bg-primary hover:text-base-100 transition-all duration-300 ease-in-out'><BsPerson  className='p-1'/></p>  */}
+                        
+                        
+                        {
+                            user ?
+                                <div className="flex items-center gap-4">
+                                    <div className="flex    ">
+                                        <label className='text-sm text-right'>{user.displayName}</label>   
+                                    </div>
+                                    {
+                                        user.photoURL ?
+                                            
+                                            <div className="dropdown dropdown-end">
+                                                <label tabIndex={0} className="btn btn-sm btn-ghost border border-gray-200 mb-1 cursor-pointer rounded-full h-10 w-10 p-0  "><img src={user.photoURL} alt="" className='w-10 rounded-full' /></label>
+                                                <ul tabIndex={0} className="dropdown-content menu p-2 shadow bg-base-100 rounded-box w-52 text-sm gap-1">
+                                                    <li ><Link to="/orderhistory">Order History</Link></li>
+                                                    <li onClick={handleLogOut}><a href="#">Logout</a></li>
+                                                </ul>
+                                            </div>
+                                            :
+                                            <div className="dropdown dropdown-end">
+                                                <label tabIndex={0} className="btn btn-sm btn-ghost border border-gray-200 mb-1 cursor-pointer rounded-full h-10 w-10 p-0 text-2xl hover:bg-primary hover:border-none hover:text-base-100 transition-all duration-300 ease-in-out"><BsPerson/></label>
+                                                <ul tabIndex={0} className="dropdown-content menu p-2 shadow bg-base-100 rounded-box w-52 text-sm gap-1">
+                                                    <li ><Link to="/orderhistory">Order History</Link></li>
+                                                    <li onClick={handleLogOut}><a href="#">Logout</a></li>
+                                                </ul>
+                                            </div>
+                                    }
+                                </div>
+                                
+                                :
+                                <div className="dropdown dropdown-end">
+                                    <label tabIndex={0} className="btn btn-sm btn-ghost border border-gray-200 mb-1 cursor-pointer rounded-full h-10 w-10 p-0 text-2xl hover:bg-primary hover:border-none hover:text-base-100 transition-all duration-300 ease-in-out"><BsPerson/></label>
+                                    <ul tabIndex={0} className="dropdown-content menu p-2 shadow bg-base-100 rounded-box w-52 text-sm gap-1">
+                                        <li><Link to="/login">Login</Link></li>
+                                        <li><Link to="/register">Signup</Link></li>
+                                    </ul>
+                                </div>
+
+                        }
+                      
+                        <div className="dropdown dropdown-end">
+                            <label tabIndex={0} className="btn btn-sm btn-ghost border border-gray-200 mb-1 cursor-pointer rounded-full h-10 w-10 p-0 text-2xl hover:bg-primary hover:border-none hover:text-base-100 transition-all duration-300 ease-in-out"><IoNotificationsOutline /></label>
+                            <ul tabIndex={0} className="dropdown-content menu p-2 shadow bg-base-100 rounded-box w-52 text-sm gap-1">
+                                <li><Link to="/laptop" className='text-sm bg-accent'>
+                                    <div className='flex flex-col'>
+                                        <p><span className='text-red-500'>30% </span> discount on <span className='text-secondary font-bold p-0'>Laptops</span>  </p>
+                                        <span className='text-xs '>1 hour</span>
+                                    </div>
+                                </Link></li>
+                                <li><Link to="/laptop" className='text-sm  bg-accent'>
+                                    <div className='flex flex-col'>
+                                        <p><span className='text-red-500'>50% </span> discount on <span className='text-secondary font-bold p-0'>Accessories</span>  </p>
+                                        <span className='text-xs '>2 hour</span>
+                                    </div>
+                                </Link></li>
+                            </ul>
+                        </div>
                         <Link to="/cart">
                             <div className='rounded-full border p-1 hover:bg-primary hover:text-base-100 transition-all duration-300 ease-in-out relative'>
-                                <BsBag className=' p-1' />
+                                <BsBag className='cursor-pointer  p-1' />
                                 {cart && <div className="absolute -top-1 -right-2  text-sm bg-green-500 text-base-100 rounded-full border border-primary w-5 h-5 flex items-center justify-center">{cart.length}</div>}
                             </div>
                         </Link>
+                        {/* <div className="dropdown dropdown-end">
+                            <label tabIndex={0} className="btn btn-sm btn-ghost border border-gray-200 mb-1 cursor-pointer rounded-full h-10 w-10 p-0 text-2xl hover:bg-primary hover:border-none hover:text-base-100 transition-all duration-300 ease-in-out"><BsPerson/></label>
+                            <ul tabIndex={0} className="dropdown-content menu p-2 shadow bg-base-100 rounded-box w-52 text-sm gap-1">
+                                <li><Link to="/login">Login</Link></li>
+                                <li><Link to="/register">Signup</Link></li>
+                            </ul>
+                        </div> */}
+ 
                     </div>
                 </div>
             </div>

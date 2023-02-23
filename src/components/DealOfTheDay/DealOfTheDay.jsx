@@ -1,11 +1,13 @@
 import React, { useState } from 'react';
+import { useContext } from 'react';
 import { FaArrowRight } from 'react-icons/fa';
 import { LazyLoadImage } from 'react-lazy-load-image-component';
 import { Link } from 'react-router-dom';
-import { animateScroll as scroll } from 'react-scroll'
+import { AuthContext } from '../../contexts/AuthProvider/AuthProvider';
 
 const DealOfTheDay = () => {
 
+    const {scrolltop} = useContext(AuthContext)
         
     const [imageSrc, setImageSrc] = useState('https://i.ibb.co/K0QmRyb/ps5.webp');
 
@@ -13,9 +15,7 @@ const DealOfTheDay = () => {
       setImageSrc(image);
     };
 
-    const scrolltop = () => {
-        scroll.scrollToTop();
-    }
+  
     return (
         <div className='pb-20'>
             <div className='container mx-auto border rounded-2xl '>

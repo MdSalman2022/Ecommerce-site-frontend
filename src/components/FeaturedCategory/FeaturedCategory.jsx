@@ -7,8 +7,7 @@ import { MdStars } from 'react-icons/md'
 import { LazyLoadImage } from 'react-lazy-load-image-component';
 import { AuthContext } from '../../contexts/AuthProvider/AuthProvider';
 import { Link } from 'react-router-dom';
-
-import { animateScroll as scroll } from 'react-scroll'
+ 
 import FeaturedCard from './FeaturedCard';
 
 const FeaturedCategory = () => {

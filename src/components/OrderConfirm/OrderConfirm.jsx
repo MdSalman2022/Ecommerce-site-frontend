@@ -3,7 +3,7 @@ import { loadStripe } from '@stripe/stripe-js'
 import React, { useContext, useEffect } from 'react'
 import { AiFillCreditCard } from 'react-icons/ai'
 import { AuthContext } from '../../contexts/AuthProvider/AuthProvider'
-import CheckoutForm from '../CartPage/CheckoutForm/CheckoutForm'
+import CheckoutForm from '../CheckoutPage/CheckoutForm/CheckoutForm'
 
 const stripePromise = loadStripe(import.meta.env.VITE_STRIP_PK)
 import { useState } from 'react';
@@ -13,20 +13,50 @@ import { Link } from 'react-router-dom'
 function OrderConfirm() {
     
     
-    const { cart,subTotal, paymentDetails, setCart,setPaymentDetails } = useContext(AuthContext)    
+    const { cart,subTotal, paymentDetails, setCart,setPaymentDetails, user } = useContext(AuthContext)    
 
     const [orderPlaced, setOrderPlaced] = useState(false)
 
-    const handleOrder = () => {
-        setOrderPlaced(true);
-    };
     
+    let userInfo = JSON.parse(localStorage.getItem('userInfo')) || [];
+
+
+    const handleOrder = () => {
+        const orderData = {
+            userInfo,
+            email: user.email,
+            paymentDetails,
+            items: cart,
+            date: new Date().toDateString(),
+        };
+      
+        fetch('https://bestdeal-ecommerce-server.vercel.app/orderhistory', {
+          method: 'POST',
+          headers: {
+            'Content-Type': 'application/json'
+          },
+          body: JSON.stringify(orderData)
+        })
+        .then(response => {
+          if (!response.ok) {
+            throw new Error('Failed to post order');
+          }
+          setOrderPlaced(true);
+        })
+        .catch(error => {
+          console.error(error);
+          // Handle the error as appropriate (e.g. show an error message to the user)
+        });
+      };
+      
     useEffect(() => {
         if (orderPlaced) {
             setCart([]);
             setPaymentDetails({});
         }
     }, [orderPlaced]);
+
+
 
     return (
 

@@ -3,9 +3,7 @@ import { FaStar,FaPlus,FaMinus } from 'react-icons/fa';
 import {FiHeart} from 'react-icons/fi';
 import {MdOutlineCompareArrows} from 'react-icons/md';
 import { LazyLoadImage } from 'react-lazy-load-image-component'; 
-import { AuthContext } from '../../contexts/AuthProvider/AuthProvider';
-import {FaRegHandPointRight} from 'react-icons/fa';
-import { animateScroll as scroll } from 'react-scroll'
+import { AuthContext } from '../../contexts/AuthProvider/AuthProvider'; 
 import { Link } from 'react-router-dom';
 import BigCard from './BigCard';
 import SmallCard from './SmallCard';
@@ -13,7 +11,7 @@ import SmallCard from './SmallCard';
 
 const ProductGrid = () => {
 
-    let {products} = useContext(AuthContext)
+    let {products,scrolltop} = useContext(AuthContext)
 
     const [count, setCount] = useState(0)
 
@@ -25,12 +23,7 @@ const ProductGrid = () => {
     }
     
 
-    
-    const scrolltop = () => {
-        scroll.scrollToTop();
-    }
-
-
+   
     return (
         <div className='py-5 md:py-20'>
             <div className="container mx-auto">

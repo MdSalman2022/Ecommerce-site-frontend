@@ -2,6 +2,8 @@ import React, { createContext, useEffect, useState } from 'react'
 import { createUserWithEmailAndPassword, onAuthStateChanged, getAuth, signInWithEmailAndPassword, signInWithPopup, signOut, updateProfile } from "firebase/auth";
 import app from '../../firebase/firebase.config';
 import { useQuery } from '@tanstack/react-query';
+import { animateScroll as scroll } from 'react-scroll'
+
 
 export const AuthContext = createContext();
 const auth = getAuth(app)
@@ -14,7 +16,11 @@ const AuthProvider = ({ children }) => {
         const savedCart = JSON.parse(localStorage.getItem('cart'));
         return savedCart ? savedCart : [];
       });
-
+     
+    const scrolltop = () => {
+        scroll.scrollToTop();
+    }
+    
     
     // useEffect(() => {
     //     const shoppingCart = localStorage.getItem("cart");
@@ -136,7 +142,8 @@ const AuthProvider = ({ children }) => {
         setSubPrice,
         subTotal,
         setPaymentDetails,
-        paymentDetails
+        paymentDetails,
+        scrolltop
         
     }
 

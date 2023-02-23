@@ -11,43 +11,33 @@ const Footer = () => {
                 </div> 
                 <div className=" p-6 bg-gray-800 text-gray-100 ">
                         <div className="container grid grid-cols-1 mx-auto gap-x-40 gap-y-8 sm:grid-cols-3 md:grid-cols-4">
-                            <div className="flex flex-col space-y-4 md:items-start items-center justify-center">
-                                <h2 className="font-medium">Getting started</h2>
+                            <div className="flex flex-col space-y-4 md:items-start md:justify-start items-center justify-center">
+                                <h2 className="font-medium">About Us</h2>
                                 <div className="flex flex-col space-y-2  md:items-start items-center justify-center text-sm text-gray-400">
-                                    <a rel="noopener noreferrer" href="#">Installation</a>
-                                    <a rel="noopener noreferrer" href="#">Release Notes</a>
-                                    <a rel="noopener noreferrer" href="#">Upgrade Guide</a>
-                                    <a rel="noopener noreferrer" href="#">Using with Preprocessors</a>
-                                    <a rel="noopener noreferrer" href="#">Optimizing for Production</a>
-                                    <a rel="noopener noreferrer" href="#">Browser Support</a>
-                                    <a rel="noopener noreferrer" href="#">IntelliSense</a>
+                                    <a rel="noopener noreferrer" href="#">EMI Terms</a>
+                                    <a rel="noopener noreferrer" href="#">Privacy Policy</a>
+                                    <a rel="noopener noreferrer" href="#">Brands</a> 
                                 </div>
                             </div>
-                            <div className="flex flex-col space-y-4 md:items-start items-center justify-center">
-                                <h2 className="font-medium">Core Concepts</h2>
+                            <div className="flex flex-col space-y-4 md:items-start md:justify-start items-center justify-center">
+                                <h2 className="font-medium">Contact Us</h2>
+                                <div className="flex flex-col space-y-2  md:items-start items-center md:justify-start text-sm text-gray-400">
+                                    <a rel="noopener noreferrer" href="#">+8801860222102</a>
+                                </div>
+                            </div>
+                            <div className="flex flex-col space-y-4 md:items-start  md:justify-start items-center justify-center">
+                                <h2 className="font-medium">General</h2>
                                 <div className="flex flex-col space-y-2  md:items-start items-center md:justify-center text-sm text-gray-400">
-                                    <a rel="noopener noreferrer" href="#">Utility-First</a>
-                                    <a rel="noopener noreferrer" href="#">Responsive Design</a>
-                                    <a rel="noopener noreferrer" href="#">Hover, Focus, &amp; Other States</a>
-                                    <a rel="noopener noreferrer" href="#">Mode</a>
-                                    <a rel="noopener noreferrer" href="#">Adding Base Styles</a>
-                                    <a rel="noopener noreferrer" href="#">Extracting Components</a>
-                                    <a rel="noopener noreferrer" href="#">Adding New Utilities</a>
+                                <a rel="noopener noreferrer" href="#">Terms and Conditions</a>
+                                    <a rel="noopener noreferrer" href="#">Blogs</a>
+                                    <a rel="noopener noreferrer" href="#">Online Service Support</a>
+                                    <a rel="noopener noreferrer" href="#">Online Delivery</a>
+                                    <a rel="noopener noreferrer" href="#">Refund and Return Policy</a>
+                                    <a rel="noopener noreferrer" href="#">Contact Us</a>
+                                    <a rel="noopener noreferrer" href="#">Complain / Advice</a>
                                 </div>
                             </div>
-                            <div className="flex flex-col space-y-4 md:items-start items-center justify-center">
-                                <h2 className="font-medium">Customization</h2>
-                                <div className="flex flex-col space-y-2  md:items-start items-center md:justify-center text-sm text-gray-400">
-                                    <a rel="noopener noreferrer" href="#">Configuration</a>
-                                    <a rel="noopener noreferrer" href="#">Theme Configuration</a>
-                                    <a rel="noopener noreferrer" href="#">Breakpoints</a>
-                                    <a rel="noopener noreferrer" href="#">Customizing Colors</a>
-                                    <a rel="noopener noreferrer" href="#">Customizing Spacing</a>
-                                    <a rel="noopener noreferrer" href="#">Configuring Variants</a>
-                                    <a rel="noopener noreferrer" href="#">Plugins</a>
-                                </div>
-                            </div>
-                            <div className="flex flex-col space-y-4 md:items-start items-center justify-center">
+                            <div className="flex flex-col space-y-4 md:items-start md:justify-start items-center justify-center">
                                 <h2 className="font-medium">Community</h2>
                                 <div className="flex flex-col space-y-2  md:items-start items-center md:justify-center text-sm text-gray-400">
                                     <a rel="noopener noreferrer" href="#">GitHub</a>

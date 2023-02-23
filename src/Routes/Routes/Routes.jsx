@@ -17,6 +17,8 @@ import Orders from '../../Pages/Dashboard/Orders/Orders';
 import Shipments from '../../Pages/Dashboard/Shipments/Shipments';
 import CheckoutPage from '../../components/CheckoutPage/CheckoutPage';
 import OrderConfirm from '../../components/OrderConfirm/OrderConfirm';
+import PrivateRoute from '../PrivateRoute/PrivateRoute';
+import OrderHistory from '../../components/OrderHistory/OrderHistory';
 
 
 export const router = createBrowserRouter([
@@ -56,11 +58,15 @@ export const router = createBrowserRouter([
             },  
             {
                 path: '/checkout',
-                element: <CheckoutPage></CheckoutPage>
+                element: <PrivateRoute><CheckoutPage></CheckoutPage></PrivateRoute>
             },  
             {
                 path: '/order-confirm',
-                element: <OrderConfirm></OrderConfirm>
+                element: <PrivateRoute><OrderConfirm></OrderConfirm></PrivateRoute>
+            },  
+            {
+                path: '/orderhistory',
+                element: <OrderHistory></OrderHistory> 
             },  
             {
                 path: '/search/:name',

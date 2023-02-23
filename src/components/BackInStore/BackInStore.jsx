@@ -13,7 +13,6 @@ import { MdOutlineCompareArrows } from 'react-icons/md';
 import { FaMinus } from 'react-icons/fa';
 import { FaPlus } from 'react-icons/fa';
 import { AuthContext } from '../../contexts/AuthProvider/AuthProvider'; 
-import { animateScroll as scroll } from 'react-scroll'
 import MiniCard from './MiniCard';
 
 const BackInStore = () => {
