@@ -8,21 +8,7 @@ function Products() {
 
     const { products } = useContext(AuthContext)
     
-
-    function formatDate(timestamp) {
-        const date = new Date(timestamp);
-        
-        const months = [
-          "Jan", "Feb", "Mar", "Apr", "May", "Jun",
-          "Jul", "Aug", "Sep", "Oct", "Nov", "Dec"
-        ];
-      
-        const formattedDate = months[date.getMonth()] + " " + date.getDate() + ", " + date.getFullYear();
-      
-        return formattedDate;
-    }
-    
-
+ 
     let productsPerPage;
       //pagination
     const [currentPage, setCurrentPage] = useState(1)
@@ -112,10 +98,18 @@ function Products() {
                                         <th>{index + 1}</th>
                                         <td className='text-sm'><p className='tooltip tooltip-accent' data-tip={item.name}>{item.name}</p></td>
                                         <td>{item._id}</td>
-                                        <td>{formatDate(item.date)}</td>
+                                        <td>{item.date}</td>
                                         <td><div className='flex items-center'>{item.stock ? <p className='flex items-center'><BsDot className='text-4xl text-success' />In Stock</p> : <p className='flex items-center'><BsDot className='text-4xl text-error' />Out of Stock</p>}</div></td>
                                         <td>${item.price}</td>
-                                        <td><button className='btn btn-ghost text-2xl'><BsThreeDots /></button></td>
+                                        <td className='dropdown dropdown-end'>
+                                            <button className='btn btn-ghost text-2xl'>
+                                                <BsThreeDots />
+                                            </button>
+                                            <ul tabIndex={0} className="dropdown-content menu p-2 shadow bg-base-100 rounded-box w-52 mb-1">
+                                                <li><a>Delete</a></li>
+                                                <li><a>Edit</a></li>
+                                            </ul>
+                                        </td>
                                     </tr>
                                 ))
                             }
@@ -126,7 +120,7 @@ function Products() {
                                             <th>{index+1}</th>
                                             <td className='text-sm'><p className='tooltip tooltip-accent' data-tip={item.name}>{item.name}</p></td>
                                             <td>{item._id}</td>
-                                            <td>{formatDate(item.date)}</td>
+                                            <td>{item.date}</td>
                                             <td><div className='flex items-center'>{item.stock ?  <p className='flex items-center'><BsDot className='text-4xl text-success'/>In Stock</p> : <p className='flex items-center'><BsDot className='text-4xl text-error'/>Out of Stock</p>}</div></td>
                                             <td>${item.price}</td>
                                             <td><button className='btn btn-ghost text-2xl'><BsThreeDots/></button></td>
@@ -138,7 +132,7 @@ function Products() {
                     </div>
             </div>
             <div className="flex justify-center">
-            <div className="btn-group items-center">                   
+                <div className="btn-group items-center">                   
                     { pageNumbers.length > 1 &&
                         pageNumbers.map((number, index) => (
                             <button key={index} onClick={() => paginate(number)} className={`btn btn-neutral hover:btn-primary ${currentPage === number && 'btn-active'}`}>{number}</button>
@@ -147,7 +141,7 @@ function Products() {
 
                     
                 </div>
-       </div>
+            </div>
         </div>
     )
 }

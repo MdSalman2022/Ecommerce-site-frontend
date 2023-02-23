@@ -28,6 +28,8 @@ function OrderConfirm() {
             paymentDetails,
             items: cart,
             date: new Date().toDateString(),
+            orderStatus: true,
+            shipment: 'picked',
         };
       
         fetch('https://bestdeal-ecommerce-server.vercel.app/orderhistory', {

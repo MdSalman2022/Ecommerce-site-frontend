@@ -482,7 +482,7 @@ const Header = () => {
                                                 <label tabIndex={0} className="btn btn-sm btn-ghost border border-gray-200 mb-1 cursor-pointer rounded-full h-10 w-10 p-0 text-2xl hover:bg-primary hover:border-none hover:text-base-100 transition-all duration-300 ease-in-out"><BsPerson/></label>
                                                 <ul tabIndex={0} className="dropdown-content menu p-2 shadow bg-base-100 rounded-box w-52 text-sm gap-1">
                                                     <li ><Link to="/orderhistory">Order History</Link></li>
-                                                    <li onClick={handleLogOut}><a href="#">Logout</a></li>
+                                                    <li onClick={handleLogOut}><a>Logout</a></li>
                                                 </ul>
                                             </div>
                                     }

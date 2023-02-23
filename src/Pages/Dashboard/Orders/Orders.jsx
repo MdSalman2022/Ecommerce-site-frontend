@@ -65,10 +65,9 @@ function Orders() {
                                             <ul tabIndex={0} className="dropdown-content menu p-2 shadow bg-base-100 rounded-box w-52">
                                                 <li><a>Delete</a></li>
                                                 <li><a>Edit</a></li>
-                                                <li><a>Cancel</a></li>
                                                 <li><a>Completed</a></li>
                                                 <li><a>Pending</a></li>
-                                                <li><a>Unpaid</a></li>
+                                                <li><a>Canceled</a></li>
                                             </ul>
                                         </td>
                                     </tr>
@@ -90,7 +89,7 @@ function Orders() {
                                         <td>Feb 18, 2023</td>
                                         <td>Arnab Rahman</td>
                                         <td><p className='flex items-center gap-5'><HiOutlineMail className='text-2xl'/> james@gmail.com</p></td>
-                                        <td><div className="btn border-none bg-[#FF606B] bg-opacity-10 text-[#FF606B] flex gap-2 w-40"><BsQuestionCircle className='text-2xl'/> Unpaid</div></td>
+                                        <td><div className="btn border-none bg-[#FF606B] bg-opacity-10 text-[#FF606B] flex gap-2 w-40"><BsQuestionCircle className='text-2xl'/> Canceled</div></td>
                                         <td className='font-bold text-primary'>$1150.00</td>
                                         <td><button className='btn btn-ghost text-2xl'><BsThreeDots/></button></td>
                                     </tr>

@@ -23,8 +23,8 @@ const GridDiscount = () => {
                     </div>
                     <div className="absolute bg-accent h-48 md:h-40 w-full bottom-0 flex flex-col justify-between text-neutral md:justify-center md:items-center border-t rounded-b-lg p-5 md:p-0">
                         <div>
-                        <p className="font-bold md:text-3xl">10% sale on Watch accessories</p>
-                        <p className="flex">Extra because you deserve some class. Use code: <div className="font-mono text-primary select-text"> 10WATCH</div></p>
+                        <p className="font-bold md:text-3xl text-primary">10% sale on Watch accessories</p>
+                        <p className="flex">Extra because you deserve some class. Use code: <div className="font-mono text-secondary select-text"> 10WATCH</div></p>
                        </div>
                         <div className="btn btn-primary md:mt-5">Shop Now</div>
                     </div>

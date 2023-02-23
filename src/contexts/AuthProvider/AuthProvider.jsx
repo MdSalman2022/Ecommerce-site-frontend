@@ -74,7 +74,12 @@ const AuthProvider = ({ children }) => {
     },[])
  
     const [user, setUser] = useState(null)
-
+    
+    const { data: orders = [] } = useQuery({
+        queryKey: ['orderhistory'],
+        queryFn: () => fetch('https://bestdeal-ecommerce-server.vercel.app/orderhistory')
+            .then(res => res.json())
+    }, [])
 
     const createUser = (name, email, password) => {
         setLoading(true)
@@ -143,7 +148,8 @@ const AuthProvider = ({ children }) => {
         subTotal,
         setPaymentDetails,
         paymentDetails,
-        scrolltop
+        scrolltop,
+        orders
         
     }
 

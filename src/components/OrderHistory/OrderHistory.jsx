@@ -1,24 +1,26 @@
 import { useQuery } from '@tanstack/react-query'
-import React from 'react'
+import React, { useContext } from 'react'
 import { Link } from 'react-router-dom'
+import { AuthContext } from '../../contexts/AuthProvider/AuthProvider'
 
 function OrderHistory() {
 
-    const { data: orders = [] } = useQuery({
-        queryKey: ['orderhistory'],
-        queryFn: () => fetch('https://bestdeal-ecommerce-server.vercel.app/orderhistory')
-            .then(res => res.json())
-    }, [])
+    const { user, orders } = useContext(AuthContext)
+
     
-console.log(orders)
+    console.log(orders)
+    
+    const filteredOrders = orders.filter(order => order.email === user.email)
+    
+    console.log(filteredOrders)
 
     return (
         <div className='py-10'>
             <div className="container mx-auto">
                 <div className="flex flex-col">
                     <h2 className='text-4xl font-semibold text-center my-10'>Order History</h2>
-                    {
-                        orders.map(order => (
+                    { filteredOrders.length > 0 ?
+                        filteredOrders.map(order => (
                             <div className='mb-5' key={order._id}>
                                 <div className="flex justify-between items-center border p-5 rounded-t-xl">
                                     <div>
@@ -44,6 +46,13 @@ console.log(orders)
                                 
                             </div>
                         ))
+                        : 
+                        <div className='text-center'>
+                            <p className='text-2xl font-bold'>No orders found</p>
+                            <Link to='/'>
+                                <button className='btn btn-secondary'>Continue Shopping</button>
+                            </Link>
+                        </div>
                     }
 
                     

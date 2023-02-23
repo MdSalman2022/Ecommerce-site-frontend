@@ -2,6 +2,7 @@ import React, { useContext } from 'react';
 import { FaApple } from 'react-icons/fa';
 import { SiSamsung, SiAsus,SiRazer,SiIntel,SiAmd, SiNvidia, SiLogitech,SiDell,SiCorsair,SiMicrosoft,SiXiaomi } from 'react-icons/si';
 import { Link } from 'react-router-dom'; 
+import useShowAtThreshold from '../../../hooks/useShowAtThreshold/useShowAtThreshold';
 import { AuthContext } from '../../contexts/AuthProvider/AuthProvider';
 
 const Brand = () => {
@@ -9,12 +10,15 @@ const Brand = () => {
     const {scrolltop} = useContext(AuthContext)
    
 
+    const showBorder = useShowAtThreshold(3200);
+
+
     return (
         <div className='bg-accent'>
             <div className="container mx-auto py-10">
                 <div className="text-center flex flex-col items-center justify-center my-10 gap-5">
-                    <h1 className="text-4xl font-bold text-black">Shop By Brand</h1>
-                    <span className="h-1 w-20 bg-primary rounded-full"></span>
+                    <h1 className="text-4xl font-bold text-secondary">Shop By Brand</h1>
+                    <span className={`h-1 w-20 bg-primary rounded-full transition-width duration-500 ${showBorder ? "lg:w-20" : "lg:w-0"}`}></span>
                 </div>
                 <section className="">
                     <div className="container p-6 mx-auto space-y-6 text-center lg:p-8 lg:space-y-8">

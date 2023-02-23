@@ -127,14 +127,14 @@ function Dashboard() {
                 tools: {},
             },
             fill: {
-                colors: ['#2bbef9']
+                colors: ['#4E7AEF']
               },
           dataLabels: {
             enabled: false
           },
           stroke: {
             curve: "smooth", 
-            colors: ['#2bbef9']
+            colors: ['#4E7AEF']
           },
           xaxis: {
             type: 'datetime',

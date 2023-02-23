@@ -56,7 +56,7 @@ function BigCard({ products }) {
       
  
     return (
-            <div className="card card-compact lg:card-side bg-base-100 relative border">
+            <div className="card card-compact lg:card-side bg-base-100 relative drop-shadow-md">
                         <figure className='w-full object-cover p-5'><LazyLoadImage src={products[products.length-1]?.image} alt="Album"/></figure>
                         <div className="card-body flex flex-col justify-between w-full">
                             <div className='card-title flex-col justify-start items-start'>

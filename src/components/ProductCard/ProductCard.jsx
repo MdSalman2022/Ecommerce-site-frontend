@@ -73,8 +73,9 @@ const ProductCard = ({ item }) => {
 
 
     return (
-        <div className="transition-all duration-300 card card-compact bg-base-100 shadow-md  h-full group">
-            <figure className='relative'>
+        <div className="transition-all duration-300 card card-compact w-11/12 bg-base-100 shadow-md  h-full group">
+        <Link onClick={scrolltop} to={`/productDetails/${item._id}/${encodedProductName}`}>
+        <figure className='relative'>
                 <LazyLoadImage className='object-contain group-hover:scale-110 transition-all duration-300 p-2  h-64' src={item.image} alt={item?.cat}/>
                 
                     <div className='absolute top-5 right-0 w-14 flex flex-col items-center gap-3'>
@@ -85,6 +86,7 @@ const ProductCard = ({ item }) => {
 
                
             </figure>
+        </Link>
                
             <div className="card-body items-center  lg:items-center h-80">
                     <h2 className={`card-title text-left md:text-left ${item?.featured && 'justify-between'}`}> 
@@ -111,7 +113,7 @@ const ProductCard = ({ item }) => {
                                     onClick={() => setCount(count + 1)}  disabled={count > 9}
                                 ><FaPlus className="text-base-100"/></button>
                             </div>
-                        <button onClick={()=>handleCart(item, count)} className="btn rounded-full btn-secondary text-base-100 w-full">Add to cart</button>                                    
+                        <button onClick={()=>handleCart(item, count)} className="btn rounded-full btn-secondary text-base-100 w-[90%] lg:w-full">Add to cart</button>                                    
                         </div>                               
                     </div>
                     

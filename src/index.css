@@ -13,5 +13,6 @@ body {
   font-family: "Roboto", sans-serif;
 }
 .table :where(thead, tfoot) :where(th, td) {
-  background-color: #daf5ff;
+  background-color: #4E7AEF;
+  color:white;
 }

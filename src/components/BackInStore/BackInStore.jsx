@@ -17,7 +17,7 @@ import MiniCard from './MiniCard';
 
 const BackInStore = () => {
 
-    let { products } = useContext(AuthContext)
+    let { products,scrolltop } = useContext(AuthContext)
       
     let backinstore = products.slice(products.length-20, products.length);
     // console.log(backinstore)
@@ -37,10 +37,10 @@ const BackInStore = () => {
         <div className=' py-5 md:py-20'>
             <div className="container mx-auto  grid grid-cols-1 lg:grid-cols-3">
                 <div className='flex flex-col justify-center gap-3'>
-                    <h3 className="font-bold text-xl md:text-3xl">Back In Store this week</h3>
-                    <p className='w-96'>Finally these fast selling products are back in stock.
+                    <h3 className="font-bold text-xl md:text-4xl text-secondary">Back In Store this week</h3>
+                    <p className='w-96 text-neutral'>Finally these fast selling products are back in stock.
                         What's in it for you? Be quick or be...</p>
-                    <Link className='flex items-center gap-3 text-primary font-semibold'>View all products <FaAngleRight/></Link>
+                    <Link onClick={scrolltop} to="/products" className='flex items-center gap-3 text-primary font-semibold'>View all products <FaAngleRight/></Link>
 
                 </div>
                 <div className='col-span-2'>

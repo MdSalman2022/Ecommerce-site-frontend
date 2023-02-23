@@ -23,7 +23,7 @@ function Banner() {
         <div className="hero bg-transparent md:rounded-xl lg:mx-auto">
             <div className="container mx-auto flex flex-col flex-wrap overflow-hidden">
                 <div className="flex justify-center "> 
-                    <div className="flex flex-col lg:flex-row md:gap-12">
+                    <div className="flex flex-col md:flex-col lg:flex-row md:gap-12">
                         <div className="card w-full object-cover my-5 md:my-10 md:px-0">
                                 <Swiper 
                                     modules={[Pagination,Autoplay]}
@@ -47,7 +47,7 @@ function Banner() {
                         </div> 
                         <div className="my-2 md:my-10 gap-3 px-2 md:gap-5 lg:gap-0 md:px-0 lg:space-y-12 h-full flex items-start lg:items-end md:items-center justify-around lg:justify-start lg:flex-col ">
                                 <div className="card lg:card-side bg-white">
-                                    <LazyLoadImage className='rounded-2xl  object-cover border-primary border w-52 h-40 md:w-96 md:h-72' src="https://i.ibb.co/Pc9jLbR/speaker.webp" alt="image" />
+                                    <LazyLoadImage className='rounded-2xl  object-cover border-primary border w-full h-40 lg:w-96 md:h-72' src="https://i.ibb.co/Pc9jLbR/speaker.webp" alt="image" />
                                 </div>                          
                             
                                 <div className="card lg:card-side bg-white">

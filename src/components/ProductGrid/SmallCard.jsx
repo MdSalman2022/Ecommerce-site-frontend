@@ -57,7 +57,7 @@ function SmallCard({products, len}) {
  
 
     return (
-        <div className="card items-center card-compact lg:card-side bg-base-100 relative border h-full w-full">
+        <div className="card items-center card-compact lg:card-side bg-base-100 relative drop-shadow-md h-full w-full">
             <figure className='w-80 object-cover'><LazyLoadImage src={products[products.length-len]?.image} alt="Album" className='w-60 object-cover'/></figure>
             <div className="card-body flex flex-col w-full">
                 <div className='card-title flex-col justify-start items-start w-[90%]'>

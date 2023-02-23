@@ -7,6 +7,7 @@ import { AuthContext } from '../../contexts/AuthProvider/AuthProvider';
 import { Link } from 'react-router-dom';
 import BigCard from './BigCard';
 import SmallCard from './SmallCard';
+import useShowAtThreshold from '../../../hooks/useShowAtThreshold/useShowAtThreshold';
 
 
 const ProductGrid = () => {
@@ -22,14 +23,15 @@ const ProductGrid = () => {
         }
     }
     
+    const showBorder = useShowAtThreshold(3800);
 
    
     return (
         <div className='py-5 md:py-20'>
             <div className="container mx-auto">
                 <div className="flex flex-col items-center justify-center mb-14">
-                     <h1 className="md:text-5xl font-bold">Recent Products</h1>
-                    <span className="h-1 w-20 bg-primary rounded-full"></span> 
+                     <h1 className="text-3xl md:text-5xl font-bold text-secondary">Recent Products</h1>
+                     <span className={`h-1 w-20 bg-primary rounded-full transition-width duration-500 ${showBorder ? "lg:w-20" : "lg:w-0"}`}></span>
                 </div>
                 <div className="grid grid-cols-1 lg:grid-cols-2 gap-5 p-5 md:p-0">
                     <BigCard products={products}/>

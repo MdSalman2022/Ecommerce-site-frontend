@@ -5,6 +5,7 @@ import { useQuery } from '@tanstack/react-query';
 import { RiAdvertisementFill } from 'react-icons/ri';
 import { LazyLoadImage } from 'react-lazy-load-image-component';
 import { AuthContext } from '../../contexts/AuthProvider/AuthProvider';
+import useShowAtThreshold from '../../../hooks/useShowAtThreshold/useShowAtThreshold';
 
 
 const AdvertisedProducts = () => {
@@ -16,15 +17,8 @@ const AdvertisedProducts = () => {
         <progress className="progress w-56"></progress>
     }
 
-
-    // const [product, SetProduct] = useState('')
-
-    // const handleSetProduct = data => {
-    //     SetProduct(data)
-    // }
-
-
-    // setLoading(false)
+    
+    const showBorder = useShowAtThreshold(500);
 
     const [tabselect, setTabSelect] = useState('tab1')
 
@@ -32,14 +26,16 @@ const AdvertisedProducts = () => {
             <div className='py-5 md:py-10 lg:py-0 lg:min-h-[800px] flex flex-col justify-center'>
                 <div className="container mx-auto flex flex-col items-center gap-5 text-center ">
                     <h1 className="md:text-5xl font-bold text-primary">Why Buy From Us</h1>
-                    <span className="h-1 w-20 bg-primary rounded-full"></span>
+                    <span className={`h-1 w-20 bg-primary rounded-full transition-width duration-500 ${showBorder ? "lg:w-20" : "lg:w-0"}`}></span>
+
+
                     <p className='text-sm'>We have a wide selection of products from top brands and a knowledgeable staff to help you find exactly what you need. Plus, our fast delivery ensures that you receive your purchase as soon as possible. Choose us for all your electronic needs and experience the difference. <span className='underline text-secondary'>Learn More</span> </p>
 
                     <div className="grid grid-cols-2 gap-5 md:gap-0 md:flex items-center overflow-x-auto sm:justify-center my-5 md:bg-accent md:rounded-full">
-                        <button onMouseMove={()=> setTabSelect('tab1')} className={`flex justify-center items-center flex-shrink-0 px-5 py-2 text-xl rounded-full transition-all duration-300 bg-primary bg-opacity-0 md:border-r ${tabselect === 'tab1' ? 'bg-opacity-100 text-base-100 font-semibold' : 'text-neutral'}`}>Top Categories</button>
-                        <button onMouseMove={()=> setTabSelect('tab2')} className={`flex justify-center items-center flex-shrink-0 px-5 py-2 text-xl rounded-full transition-all duration-300 bg-primary bg-opacity-0 md:border-r ${tabselect === 'tab2' ? 'bg-opacity-100 text-base-100 font-semibold' : 'text-neutral'}`}>Mobile</button>
-                        <button onMouseMove={()=> setTabSelect('tab3')} className={`flex justify-center items-center flex-shrink-0 px-5 py-2 text-xl rounded-full transition-all duration-300 bg-primary bg-opacity-0 md:border-r ${tabselect === 'tab3' ? 'bg-opacity-100 text-base-100 font-semibold' : 'text-neutral'}`}>Laptop</button>
-                        <button onMouseMove={()=> setTabSelect('tab4')} className={`flex justify-center items-center flex-shrink-0 px-5 py-2 text-xl rounded-full transition-all duration-300 bg-primary bg-opacity-0 md:border-r ${tabselect === 'tab4' ? 'bg-opacity-100 text-base-100 font-semibold' : 'text-neutral'}`}>Components</button>
+                        <button onMouseMove={()=> setTabSelect('tab1')} className={`flex justify-center items-center flex-shrink-0 px-5 py-2 text-xl rounded-full transition-all duration-300 md:border-r-2 ${tabselect === 'tab1' ? 'bg-primary bg-opacity-100 text-base-100 font-semibold' : 'bg-opacity-0 text-neutral'}`}>Top Categories</button>
+                        <button onMouseMove={()=> setTabSelect('tab2')} className={`flex justify-center items-center flex-shrink-0 px-5 py-2 text-xl rounded-full transition-all duration-300 md:border-r-2 ${tabselect === 'tab2' ? 'bg-primary bg-opacity-100 text-base-100 font-semibold' : 'bg-opacity-0 text-neutral'}`}>Mobile</button>
+                        <button onMouseMove={()=> setTabSelect('tab3')} className={`flex justify-center items-center flex-shrink-0 px-5 py-2 text-xl rounded-full transition-all duration-300 md:border-r-2 ${tabselect === 'tab3' ? 'bg-primary bg-opacity-100 text-base-100 font-semibold' : 'bg-opacity-0 text-neutral'}`}>Laptop</button>
+                        <button onMouseMove={()=> setTabSelect('tab4')} className={`flex justify-center items-center flex-shrink-0 px-5 py-2 text-xl rounded-full transition-all duration-300 md:border-r-2 ${tabselect === 'tab4' ? 'bg-primary bg-opacity-100 text-base-100 font-semibold' : 'bg-opacity-0 text-neutral'}`}>Components</button>
                     </div>
                 </div> 
                

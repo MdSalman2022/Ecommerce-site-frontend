@@ -95,10 +95,10 @@ export const router = createBrowserRouter([
                 path: '/dashboard',
                 element: <Dashboard></Dashboard>
             },
-            {
-                path: '/dashboard/home',
-                element: <Dashboard></Dashboard>
-            },
+            // {
+            //     path: '/dashboard/home',
+            //     element: <Dashboard></Dashboard>
+            // },
             {
                 path: '/dashboard/products',
                 element: <Products></Products>

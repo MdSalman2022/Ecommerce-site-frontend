@@ -72,7 +72,7 @@ const PopulerProducts = () => {
             <div className='container mx-auto p-5 md:p-0'>
                 
                 <div className="flex flex-col md:flex-row justify-between gap-2 py-5">
-                        <p className="text-2xl xl text-primary font-bold py-2">Populer Products</p>                     
+                        <p className="text-xl md:text-4xl xl text-primary font-bold py-2">Populer Products</p>                     
                         <div className='flex justify-center items-center gap-5'>
                             <div className='flex flex-wrap gap-3'>
                                 <button onClick={() => handleType(0)} className={`btn rounded-3xl btn-primary transition-all duration-300 border ${type !== '' ? 'btn-outline' : 'text-base-100'}`}>All</button>
