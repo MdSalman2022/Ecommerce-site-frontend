@@ -1,19 +1,48 @@
-import React from 'react'
+import React, { useContext, useEffect, useState } from 'react'
 import { BiMessageDetail } from 'react-icons/bi'
 import { IoIosNotificationsOutline } from 'react-icons/io'
 import {AiOutlineSearch} from 'react-icons/ai'
+import { useForm } from 'react-hook-form';
+import { useNavigate } from 'react-router-dom';
+import { AuthContext } from '../../../contexts/AuthProvider/AuthProvider';
+// import Fuse from 'fuse.js';
 
 function DashboardHeader() {
+
+
+let { dashboardSearch, setDashBoardSearch,products } = useContext(AuthContext)
+
+    
+    const navigate = useNavigate();
+
+    const { register, handleSubmit, formState: { errors } } = useForm(); 
+    
+    const onSubmit = data => {
+        setDashBoardSearch(data.name);
+        navigate(`/dashboard/products`);
+    }
+
+
+    const handleReset = data => {
+        location.reload();
+      }
+    
+    
     return (
         <div className='flex items-center justify-between py-3'>
-            <div className="form-control">
+
+            <form onSubmit={handleSubmit(onSubmit)} className="form-control">
                 <div className="input-group">
-                    <input type="text" placeholder="Search…" className="input input-bordered w-96 focus:border-b focus:outline-none" />
-                    <button className="btn bg-transparent btn-square border-primary">
-                    <AiOutlineSearch className='text-3xl text-primary'/>
-                    </button>
+                    <input defaultValue={dashboardSearch} type="text" placeholder="Search…" className="input input-bordered w-96 focus:border-b focus:outline-none"   {...register("name", { required: true, maxLength: 80 })} />
+                    <button type="submit" className="btn bg-transparent btn-square border-primary"><AiOutlineSearch className='text-3xl text-primary'/></button>
                 </div>
-            </div>
+                {
+                    dashboardSearch &&
+                    <div className="flex mt-1">
+                        <button onClick={()=>handleReset(products)} className="btn btn-sm btn-ghost">Reset Search</button>
+                    </div>
+                }
+            </form>
 
             <div className='flex items-center gap-5'>
                 <div className='relative'>

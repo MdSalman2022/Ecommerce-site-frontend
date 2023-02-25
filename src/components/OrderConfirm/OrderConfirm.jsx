@@ -13,7 +13,15 @@ import { Link } from 'react-router-dom'
 function OrderConfirm() {
     
     
-    const { cart,subTotal, paymentDetails, setCart,setPaymentDetails, user } = useContext(AuthContext)    
+    const { cart, subTotal,setSubPrice, paymentDetails, setCart, setPaymentDetails, user } = useContext(AuthContext)    
+    
+    useEffect(() => {
+        let price = 0;
+        cart.forEach((item) => {
+            price += item.totalPrice
+        })
+        setSubPrice(price+10)
+    }, [cart])
 
     const [orderPlaced, setOrderPlaced] = useState(false)
 
@@ -124,7 +132,7 @@ function OrderConfirm() {
                                         <th></th>
                                         <td></td>
                                         <td>Sub Total:</td>
-                                        <td className='text-secondary font-bold'>${subTotal}</td>
+                                        <td className='text-secondary font-bold'>${subTotal-10}</td>
                                     </tr>
                                      <tr>
                                         <th></th>
@@ -136,7 +144,7 @@ function OrderConfirm() {
                                         <th></th>
                                         <td></td>
                                         <td>Total</td>
-                                        <td className='text-secondary font-bold'>${subTotal+10}</td>
+                                        <td className='text-secondary font-bold'>${subTotal}</td>
                                     </tr>
                                     
                                 </tbody>

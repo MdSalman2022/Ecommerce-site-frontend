@@ -15,7 +15,7 @@ function ProductDetails() {
 
     const [count, setCount] = useState(0)
 
-    const {products} = useContext(AuthContext)
+    let {products, cart, setCart } = useContext(AuthContext)
 
     const handleChange = (e) => {
         const newCount = Number(e.target.value);
@@ -24,7 +24,8 @@ function ProductDetails() {
         }
     }
 
-    const { _id, name, cat,subcat,brand,image, spec, price, rating, featured, latest, bestseller, sells, special, discount } = useLoaderData();
+    const item = useLoaderData();
+    const { _id, name, cat,subcat,brand,image, spec, price, rating, featured, latest, bestseller, sells, special, discount } = item
  
     
 
@@ -36,6 +37,69 @@ function ProductDetails() {
     let suggestion = products;
 
     suggestion = suggestion.filter((item) => item.cat === cat && item._id !== _id);
+
+
+    
+    cart = JSON.parse(localStorage.getItem('cart')) || [];
+
+
+    const handleCart = (data, count) => {
+        const cartItem = cart.find((item) => item._id === data._id);
+      
+        if (cartItem) {
+          const updatedCart = cart.map((item) => {
+            if (item._id === data._id) {
+              return {
+                ...item,
+                quantity: count ? count : item.quantity + 1,
+                totalPrice: item.price * (count ? count : item.quantity + 1)
+              }
+            } else {
+              return item;
+            }
+          });
+          setCart(updatedCart);
+          localStorage.setItem('cart', JSON.stringify(updatedCart));
+        } else {
+          const newCartItem = {
+            ...data,
+            quantity: count ? count : 1,
+            totalPrice: data.price * (count ? count : 1)
+          };
+          setCart([...cart, newCartItem]);
+          localStorage.setItem('cart', JSON.stringify([...cart, newCartItem]));
+        }
+    }
+
+
+    const handlePurchase = (data, count) => {
+        const cartItem = cart.find((item) => item._id === data._id);
+      
+        if (cartItem) {
+          const updatedCart = cart.map((item) => {
+            if (item._id === data._id) {
+              return {
+                ...item,
+                quantity: count ? count : item.quantity + 1,
+                totalPrice: item.price * (count ? count : item.quantity + 1)
+              }
+            } else {
+              return item;
+            }
+          });
+          setCart(updatedCart);
+          localStorage.setItem('cart', JSON.stringify(updatedCart));
+        } else {
+          const newCartItem = {
+            ...data,
+            quantity: count ? count : 1,
+            totalPrice: data.price * (count ? count : 1)
+          };
+          setCart([...cart, newCartItem]);
+          localStorage.setItem('cart', JSON.stringify([...cart, newCartItem]));
+        }
+    }
+    
 
 
     return (
@@ -84,9 +148,9 @@ function ProductDetails() {
                                     onClick={() => setCount(count + 1)}  disabled={count === 10}
                                 ><FaPlus className="text-base-100"/></button>
                             </div>
-                            <button className="btn rounded-full btn-primary text-base-100 w-full">Add to cart</button>                                    
+                            <button onClick={()=>handleCart(item, count)}  className="btn rounded-full btn-primary text-base-100 w-full">Add to cart</button>                                    
                         </div>        
-                        <button className='btn btn-primary rounded-full btn-outline border-2 hover:text-base-100'>Buy Now</button>
+                        <Link to='/checkout' onClick={()=>handlePurchase(item, count)} className='btn btn-primary rounded-full btn-outline border-2 hover:text-base-100'>Buy Now</Link>
                     </div>
 
                 </div>

@@ -1,4 +1,4 @@
-import React from 'react';
+import React, { useContext } from 'react';
 import AdvertisedProducts from '../AdvertisedProducts/AdvertisedProducts'; 
 import Banner from '../Banner/Banner';
 import OurService from '../../components/OurService/OurService';
@@ -19,8 +19,10 @@ import GridDiscount from '../../components/GridDiscount/GridDiscount';
 import { LazyLoadComponent } from 'react-lazy-load-image-component';
 
 const Home = () => {
+
     return (
         <div className="overflow-x-hidden">
+
             <Banner></Banner>
             <OurService/>
             <AdvertisedProducts></AdvertisedProducts>

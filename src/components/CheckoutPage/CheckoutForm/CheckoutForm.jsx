@@ -8,7 +8,7 @@ import toast, { Toaster } from 'react-hot-toast';
 
 function CheckoutForm({ subTotal }) {
     
-    const {setPaymentDetails} = useContext(AuthContext)
+    const {setPaymentDetails, user} = useContext(AuthContext)
 console.log(typeof(subTotal), subTotal)
     const [cardError, setCardError] = useState('')
     const [clientSecret, setClientSecret] = useState("");
@@ -64,8 +64,8 @@ console.log(typeof(subTotal), subTotal)
               payment_method: {
                 card: card,
                 billing_details: {
-                    name: 'Jenny Rosen',
-                    email: 'john.doe@gmail.com'
+                    name: user.displayName,
+                    email: user.email,
                 },
               },
             },

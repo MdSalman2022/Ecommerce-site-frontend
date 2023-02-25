@@ -14,7 +14,10 @@ import ProductCard from '../ProductCard/ProductCard';
 const MostSold = () => {
 
     const { products } = useContext(AuthContext)
-    
+
+    const mostsells = products.sort((a, b) => b.sells - a.sells)
+
+    console.log(mostsells)
     let bestseller = products.filter(product => product.bestseller === true)
     bestseller = bestseller.slice(0,4) 
     

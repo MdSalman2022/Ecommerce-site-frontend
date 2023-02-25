@@ -31,7 +31,6 @@ const BackInStore = () => {
         return window.innerWidth;
       }
     const deviceWidth = getDeviceWidth();
-    console.log(deviceWidth)
  
     return (
         <div className=' py-5 md:py-20'>

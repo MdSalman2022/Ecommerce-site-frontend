@@ -41,17 +41,48 @@ const AuthProvider = ({ children }) => {
     const [loading, setLoading] = useState(true)
 
     const [title, setTitle] = useState('home')
-
     
+
+    const { data: products = [] } = useQuery({
+        queryKey: ['products'],
+        queryFn: () => fetch('https://bestdeal-ecommerce-server.vercel.app/products')
+            .then(res => res.json())
+    }, [])
+    
+
+    /*
+    !Search for users starts 
+    */
     let [searchText, setSearchText] = useState("")
+
+    let [searchResult, setSearchResult] = useState("")
 
     let [searchedItems, setSearchedItems] = useState("")
 
-    useEffect(() => {
-        fetch(`https://bestdeal-ecommerce-server.vercel.app/search?name=${searchText}`)
-            .then(res => res.json())
-            .then(data => setSearchedItems(data))
-    }, [searchText])
+    // useEffect(() => {
+    //     fetch(`https://bestdeal-ecommerce-server.vercel.app/search?name=${searchText}`)
+    //         .then(res => res.json())
+    //         .then(data => setSearchedItems(data))
+    // }, [searchText])
+
+    /* 
+    !Search for users ends 
+    */
+
+
+    /* 
+    ! Search for dashboard starts 
+    */
+
+    let [dashboardSearch, setDashBoardSearch] = useState("")
+
+    
+    const [results, setResults] = useState([]);
+
+
+    /* 
+    !Search for dashboard ends 
+    */
 
 
     useEffect(() => {
@@ -65,13 +96,7 @@ const AuthProvider = ({ children }) => {
         }
       }, [cart]);
 
-    
 
-    const { data: products = [] } = useQuery({
-        queryKey: ['products'],
-        queryFn: () => fetch('https://bestdeal-ecommerce-server.vercel.app/products')
-            .then(res => res.json())
-    },[])
  
     const [user, setUser] = useState(null)
     
@@ -149,7 +174,14 @@ const AuthProvider = ({ children }) => {
         setPaymentDetails,
         paymentDetails,
         scrolltop,
-        orders
+        orders,
+        //dashboard search
+        dashboardSearch,
+        setDashBoardSearch,
+        setResults,
+        results,
+        setSearchResult,
+        searchResult
         
     }
 

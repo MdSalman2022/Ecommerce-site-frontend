@@ -1,17 +1,25 @@
-import React, { useState } from 'react'
+import React, { useContext, useState } from 'react'
 import { FaAngleRight } from 'react-icons/fa';
 import { Link } from 'react-router-dom';
 import { useForm } from 'react-hook-form';
+import { AuthContext } from '../../contexts/AuthProvider/AuthProvider';
 
 
 function CheckoutPage() {
+
+    const {user} = useContext(AuthContext)
 
     const { register, formState: { errors }, handleSubmit } = useForm();
     //save data to local storage
 
     const [active, setActive] = useState(false);
 
-    const handleLogin = data => {
+    let info = JSON.parse(localStorage.getItem('userInfo')) || [];
+    console.log(info)
+
+    const { name, address, contact, city } = info;
+
+    const handleDelivery = data => {
         console.log(data)
         localStorage.setItem('userInfo', JSON.stringify(data))
         setActive(true)
@@ -22,12 +30,13 @@ function CheckoutPage() {
             <div className="container mx-auto my-10">
                     <div className="flex flex-col items-center">
                         <h2 className="text-4xl font-bold text-center">Shipping</h2>
-                        <form onSubmit={handleSubmit(handleLogin)} className="form-control w-full max-w-xl">
+                        <form onSubmit={handleSubmit(handleDelivery)} className="form-control w-full max-w-xl">
                             <label className="label">
                                 <span className="label-text">Name</span>
                             </label>
-                            <input type="text"
-                                    {...register("name", {
+                            <input type="text" defaultValue={name ? name : user?.displayName}
+                            {...register("name", {
+                                        validate: value => value !== "" || value === (name ? name : user?.displayName),
                                         required: "Name is required"
                                     })}
                                     className="input input-bordered w-full max-w-xl" />
@@ -35,8 +44,9 @@ function CheckoutPage() {
                             <label className="label">
                                 <span className="label-text">Address</span>
                             </label>
-                            <input type="text"
-                                    {...register("address", {
+                            <input type="text" defaultValue={address}
+                            {...register("address", {
+                                validate: value => value !== "" || value === (address),
                                         required: "Shipping Address is required"
                                     })}
                                     className="input input-bordered w-full max-w-xl" />
@@ -44,8 +54,9 @@ function CheckoutPage() {
                             <label className="label">
                                 <span className="label-text">Contact</span>
                             </label>
-                            <input type="number"
-                                    {...register("contact", {
+                            <input type="number" defaultValue={contact}
+                            {...register("contact", {
+                                        validate: value => value !== "" || value === (contact),
                                         required: "Contact number is required"
                                     })}
                                     className="input input-bordered w-full max-w-xl" />
@@ -55,8 +66,9 @@ function CheckoutPage() {
                             <label className="label">
                                 <span className="label-text">City</span>
                             </label>
-                            <input type="text"
-                                    {...register("city", {
+                            <input type="text" defaultValue={city}
+                            {...register("city", {
+                                        validate: value => value !== "" || value === (city),
                                         required: "City Name is required"
                                     })}
                                     className="input input-bordered w-full max-w-xl" />

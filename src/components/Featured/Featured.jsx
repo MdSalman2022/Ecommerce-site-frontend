@@ -23,8 +23,8 @@ const Featured = () => {
 
 
     let featured = products.filter(product => product.featured === true) 
-
-    featured = featured.slice(3,8)
+    
+    featured = featured.slice(0,4)
     
     
     // console.log(featured)

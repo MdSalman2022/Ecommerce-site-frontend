@@ -6,6 +6,7 @@ import { BiError } from 'react-icons/bi'
 import { HiOutlineMail, HiSortAscending } from 'react-icons/hi'
 import { AuthContext } from '../../../contexts/AuthProvider/AuthProvider'
 import { FaAngleDown } from 'react-icons/fa';
+import { IoIosCall } from 'react-icons/io'
 
 function Shipments() {
 
@@ -51,6 +52,82 @@ function Shipments() {
             return productsPerPage;
         }}; 
 
+    
+    
+        const [ids, setIds] = useState([])
+    
+        console.log(ids)
+        const handleCheckboxClick = (item) => {
+            if (ids.includes(item)) {
+              setIds(prevItems => prevItems.filter(i => i !== item));
+            } else {
+              setIds(prevItems => [...prevItems, item]);
+            }
+        }
+        
+        
+        
+        const handleDelete = ids => {
+                console.log(ids)
+                fetch('https://bestdeal-ecommerce-server.vercel.app/deleteOrder', {
+                  method: 'DELETE',
+                  headers: {
+                    'Content-Type': 'application/json'
+                  },
+                  body: JSON.stringify({ ids })
+                })
+                  .then(res => res.json())
+                  .then(data => {
+                    console.log(data)
+                    if (data.deletedCount > 0) {
+                        alert('Ids deleted successfully')
+                        setIds([])
+                        location.reload();
+                    }
+                  })
+                  .catch(err => console.error(err))
+              }
+        
+        const handleOrder = (ids, status) => {
+                console.log(ids)
+                fetch('https://bestdeal-ecommerce-server.vercel.app/orderstatus', {
+                  method: 'PUT',
+                  headers: {
+                    'Content-Type': 'application/json'
+                  },
+                  body: JSON.stringify({ ids, status })
+                })
+                  .then(res => res.json())
+                  .then(data => {
+                    console.log(data)
+                    if (data.modifiedCount > 0) {
+                        alert('Ids Updated successfully')
+                        setIds([])
+                        location.reload();
+                    }
+                  })
+                  .catch(err => console.error(err))
+              }
+        const handleCancelOrder = ids => {
+                console.log(ids)
+                fetch('https://bestdeal-ecommerce-server.vercel.app/orderCancel', {
+                  method: 'PUT',
+                  headers: {
+                    'Content-Type': 'application/json'
+                  },
+                  body: JSON.stringify({ ids })
+                })
+                  .then(res => res.json())
+                  .then(data => {
+                    console.log(data)
+                    if (data.modifiedCount > 0) {
+                        alert('Ids Updated successfully')
+                        setIds([])
+                        location.reload();
+                    }
+                  })
+                  .catch(err => console.error(err))
+              }
 
 
     return (
@@ -83,10 +160,10 @@ function Shipments() {
                        <span className='flex items-center gap-2'>Options <FaAngleDown className='text-xl'/> </span>
                     </button>
                     <ul tabIndex={0} className="dropdown-content menu p-2 mt-1 shadow bg-base-100 rounded-box w-52">
-                        <li><a>Delete</a></li>
-                        <li><a>Delivered</a></li>
-                        <li><a>Picked</a></li>
-                        <li><a>Canceled</a></li>
+                        <li onClick={()=>handleDelete(ids)}><a>Delete</a></li>
+                        <li onClick={()=>handleOrder(ids, "delivered")}><a>Delivered</a></li>
+                        <li onClick={()=>handleOrder(ids, "picked")}><a>Picked</a></li>
+                        <li onClick={()=>handleCancelOrder(ids)}><a>Canceled</a></li>
                     </ul>
                 </div>
                     <select onChange={handlePostsPerPage} className="select w-20 select-bordered max-w-xs btn btn-secondary btn-outline">
@@ -98,8 +175,8 @@ function Shipments() {
                     <div className="dropdown dropdown-end">
                         <label tabIndex={0} className="btn btn-square btn-secondary btn-outline text-xl m-1"><HiSortAscending/></label>
                         <ul tabIndex={0} className="dropdown-content menu p-2 shadow bg-white rounded-box w-52"> 
-                            <li onClick={()=> handleSortTypeChange('latest')}><a>Latest</a></li> 
-                            <li onClick={()=> handleSortTypeChange('old')}><a>Old</a></li> 
+                            <li onClick={()=> handleSortTypeChange('latest')}><a>Recently Added</a></li> 
+                            <li onClick={()=> handleSortTypeChange('old')}><a>Best Match</a></li> 
                         </ul>
                     </div>
                 </div>
@@ -114,6 +191,7 @@ function Shipments() {
                                     <th>Order ID</th>
                                     <th>Date</th>
                                     <th>Customer Name</th>
+                                    {/* <th>Email</th> */}
                                     <th>Contact</th>
                                     <th>Address</th>
                                     <th>Status</th>
@@ -124,28 +202,18 @@ function Shipments() {
                             <tbody>                                
                                 
                             {sortType === '' &&
-                                orders.map((order, index) => (
+                                productsPerPage.map((order, index) => (
                                     <tr className='text-neutral' key={index} >
-                                        <th><input type="checkbox" class="appearance- checked:bg-primary" /></th>
+                                        <th><input onClick={()=>handleCheckboxClick(order._id)} type="checkbox" className="appearance checked:bg-primary" /></th>
                                         <th>{index+1}</th>
                                         <td>#{order._id}</td>
                                         <td>{order.date}</td>
                                         <td>{order.userInfo.name}</td>
-                                        <td><p className='flex items-center gap-5'><HiOutlineMail className='text-2xl' />{order.email}</p></td>
+                                        {/* <td><p className='flex items-center gap-5'><HiOutlineMail className='text-2xl' />{order.email}</p></td> */}
+                                        <td><p className='flex items-center gap-5'><IoIosCall className='text-2xl' />{order.userInfo.contact}</p></td>
                                         <td className='font-bold text-primary'>{order.userInfo.address},{order.userInfo.city}</td>
                                         <td><div className={`btn border-none bg-opacity-10 flex gap-2 w-40 ${order.orderStatus ? order.shipment === 'delivered' && 'bg-[#2ED6A3] text-[#2ED67B]' || order.shipment === 'picked' && 'bg-[#FF844B] text-[#FF844B]' : 'bg-[#FF606B] text-[#FF606B]'} `}><BsQuestionCircle className='text-2xl capitalize' />{order.orderStatus ? order.shipment : 'Canceled'}</div></td>
-                                        {/* <td className='dropdown dropdown-end'>
-                                            <button className='btn btn-ghost text-2xl'>
-                                                <BsThreeDots />
-                                            </button>
-                                            <ul tabIndex={0} className="dropdown-content menu p-2 shadow bg-base-100 rounded-box w-52">
-                                                <li><a>Delete</a></li>
-                                                <li><a>Edit</a></li>
-                                                <li><a>Delivered</a></li>
-                                                <li><a>Picked</a></li>
-                                                <li><a>Canceled</a></li>
-                                            </ul>
-                                        </td> */}
+
                                     </tr>
                                 ))
                             }
@@ -153,12 +221,12 @@ function Shipments() {
                             {sortType !== '' &&
                                 sortedItems().map((order, index) => (
                                     <tr className='text-neutral' key={index} >
-                                        <th><input type="checkbox" class="appearance- checked:bg-primary" /></th>
+                                        <th><input onClick={()=>handleCheckboxClick(order._id)} type="checkbox" className="appearance checked:bg-primary" /></th>
                                         <th>{index+1}</th>
                                         <td>#{order._id}</td>
                                         <td>{order.date}</td>
                                         <td>{order.userInfo.name}</td>
-                                        <td><p className='flex items-center gap-5'><HiOutlineMail className='text-2xl' />{order.email}</p></td>
+                                        <td><p className='flex items-center gap-5'><HiOutlineMail className='text-2xl' />{order.userInfo.contact}</p></td>
                                         <td className='font-bold text-primary'>{order.userInfo.address},{order.userInfo.city}</td>
                                         <td><div className={`btn border-none bg-opacity-10 flex gap-2 w-40 ${order.orderStatus ? order.shipment === 'delivered' && 'bg-[#2ED6A3] text-[#2ED67B]' || order.shipment === 'picked' && 'bg-[#FF844B] text-[#FF844B]' : 'bg-[#FF606B] text-[#FF606B]'} `}><BsQuestionCircle className='text-2xl capitalize' />{order.orderStatus ? order.shipment : 'Canceled'}</div></td>
                                         {/* <td className='dropdown dropdown-end'>
@@ -180,16 +248,16 @@ function Shipments() {
                         </table>
                 </div>
                 <div className="col-span-3 flex justify-center">
-                <div className="btn-group items-center">                   
-                    { pageNumbers.length > 1 &&
-                        pageNumbers.map((number, index) => (
-                            <button key={index} onClick={() => paginate(number)} className={`btn btn-neutral hover:btn-primary ${currentPage === number && 'btn-active'}`}>{number}</button>
-                        ))
-                    }
+                    <div className="btn-group items-center">                   
+                        { pageNumbers.length > 1 &&
+                            pageNumbers.map((number, index) => (
+                                <button key={index} onClick={() => paginate(number)} className={`btn btn-neutral hover:btn-primary ${currentPage === number && 'btn-active'}`}>{number}</button>
+                            ))
+                        }
 
-                    
+                        
+                    </div>
                 </div>
-            </div>
             </div>
     </div>
     )

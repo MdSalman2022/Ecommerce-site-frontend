@@ -111,6 +111,10 @@ export const router = createBrowserRouter([
                 path: '/dashboard/shipments',
                 element: <Shipments></Shipments>
             },
+            {
+                path: '/dashboard/products/search/:name',
+                element: <Products></Products>
+            },
         ]
     }
 ])

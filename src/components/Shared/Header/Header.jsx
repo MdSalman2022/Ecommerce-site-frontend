@@ -16,26 +16,48 @@ import { TbTruckDelivery } from 'react-icons/tb'
 import {RxDashboard} from 'react-icons/rx'
 import {FaAngleDown} from 'react-icons/fa'   
 
+import Fuse from 'fuse.js';
+
+
 const Header = () => {
     const navigate = useNavigate();
     const { user, logOut,cart } = useContext(AuthContext)
-    let { searchText, setSearchText, searchedItems,setSearchedItems , loading } = useContext(AuthContext)
+    let { searchText, setSearchText, searchResult,setSearchResult,products} = useContext(AuthContext)
 
     const { register, handleSubmit, formState: { errors } } = useForm(); 
     
     const onSubmit = data => {
-        setSearchText(data.name);
+        navigate(`/search/${data.name}`)
         console.log(data.name);
-        console.log(searchText);
-        if (data.name === " ") {
-            navigate(`/`)
-        }
-        else { data.name ? navigate(`/search/${data.name}`) : navigate(`/`) }
-
-        console.log(errors);
+        setSearchText(data.name);
     }
 
 
+
+    useEffect(() => {
+        if (searchText === '') {
+          setSearchResult([]);
+        } else {
+          const fuse = new Fuse(products, {
+            keys: ['name','brand', 'subcat','cat'],
+            threshold: 0.1,
+            includeScore: true,
+            location: 0,
+            distance: 100,
+            minMatchCharLength: 1,
+            shouldSort: true,
+            tokenize: true,
+            matchAllTokens: true,
+            findAllMatches: true,
+          });
+            const searchResults = fuse.search(searchText).sort((a, b) => b.score - a.score);
+            console.log(searchResults)
+          const formattedResults = searchResults.map((result) => result.item);
+          setSearchResult(formattedResults);
+        }
+      }, [searchText]);
+      
+ 
 
     const handleLogOut = () => {
         logOut()
@@ -465,7 +487,7 @@ const Header = () => {
                             user ?
                                 <div className="flex items-center gap-4">
                                     <div className="flex    ">
-                                        <label className='text-sm text-right'>{user.displayName}</label>   
+                                        {/* <label className='text-sm text-right'>{user.displayName}</label>    */}
                                     </div>
                                     {
                                         user.photoURL ?
@@ -519,7 +541,7 @@ const Header = () => {
                         <Link to="/cart">
                             <div className='rounded-full border p-1 hover:bg-primary hover:text-base-100 transition-all duration-300 ease-in-out relative'>
                                 <BsBag className='cursor-pointer  p-1' />
-                                {cart && <div className="absolute -top-1 -right-2  text-sm bg-green-500 text-base-100 rounded-full border border-primary w-5 h-5 flex items-center justify-center">{cart.length}</div>}
+                                {cart && <div className={`absolute -top-1 -right-2  text-sm  ${cart.length === 0 ? 'bg-red-500 border-error' : 'bg-green-500 border-primary'} text-base-100 rounded-full border  w-5 h-5 flex items-center justify-center`}>{cart.length}</div>}
                             </div>
                         </Link>
                         {/* <div className="dropdown dropdown-end">
