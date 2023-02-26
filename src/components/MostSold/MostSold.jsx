@@ -17,7 +17,6 @@ const MostSold = () => {
     const mostsells = products.sort((a, b) => b.sells - a.sells).slice(0, 4);
 
 
-    console.log(mostsells)
     let bestseller = products.filter(product => product.bestseller === true)
     bestseller = bestseller.slice(0,4) 
     

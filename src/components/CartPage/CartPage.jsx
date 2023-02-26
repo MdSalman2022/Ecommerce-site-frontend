@@ -7,14 +7,11 @@ import { loadStripe } from '@stripe/stripe-js';
 const stripePromise = loadStripe(import.meta.env.VITE_STRIP_PK)
 import { FaAngleDown, FaAngleRight } from 'react-icons/fa'; 
 
-console.log(stripePromise)
-
 function CartPage() {
 
 
     const {cart, setCart, subTotal, setSubPrice, user,scrolltop} = useContext(AuthContext)
 
-    console.log(subTotal)
     
     useEffect(() => {
         let price = 0;

@@ -27,18 +27,15 @@ const Login = () => {
 
 
     const handleLogin = data => {
-        console.log(data);
         setLoginError('')
         signIn(data.email, data.password)
             .then(result => {
 
                 navigate('/')
                 const user = result.user
-                console.log(user)
                 setLoginUserEmail(data.email)
             })
             .catch(error => {
-                console.log(error.message)
                 setLoginError(error.message)
             })
     }

@@ -16,7 +16,6 @@ function DashboardLayout() {
     const segments = location.pathname.split('/');
     const lastSegment = segments.pop(); 
 
-    console.log(lastSegment)
 
     const [isOpen, setIsOpen] = useState(true)
     const [activeTab, setActiveTab] = useState(lastSegment)

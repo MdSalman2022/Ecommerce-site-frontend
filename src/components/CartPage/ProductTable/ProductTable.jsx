@@ -44,11 +44,7 @@ function ProductTable({ item,index }) {
             setActive(true)
         }
     }, [count]) 
-
-    // const removeFromCart = data => {
-    //     console.log(data)
-    //     setCart(cart.filter(data => JSON.stringify(data._id) !== JSON.stringify(item._id)));
-    // }  
+ 
     const removeFromCart = (data) => {
         setCart(cart.filter((item) => item._id !== data._id));
       };

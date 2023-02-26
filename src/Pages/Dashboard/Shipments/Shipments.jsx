@@ -32,7 +32,6 @@ function Shipments() {
     const [sortType, setSortType] = useState('');
 
     const handleSortTypeChange = data => {
-        console.log(data)
         setSortType(data);
     };
     
@@ -56,7 +55,6 @@ function Shipments() {
     
         const [ids, setIds] = useState([])
     
-        console.log(ids)
         const handleCheckboxClick = (item) => {
             if (ids.includes(item)) {
               setIds(prevItems => prevItems.filter(i => i !== item));
@@ -68,7 +66,6 @@ function Shipments() {
         
         
         const handleDelete = ids => {
-                console.log(ids)
                 fetch('https://bestdeal-ecommerce-server.vercel.app/deleteOrder', {
                   method: 'DELETE',
                   headers: {
@@ -78,7 +75,6 @@ function Shipments() {
                 })
                   .then(res => res.json())
                   .then(data => {
-                    console.log(data)
                     if (data.deletedCount > 0) {
                         alert('Ids deleted successfully')
                         setIds([])
@@ -89,7 +85,6 @@ function Shipments() {
               }
         
         const handleOrder = (ids, status) => {
-                console.log(ids)
                 fetch('https://bestdeal-ecommerce-server.vercel.app/orderstatus', {
                   method: 'PUT',
                   headers: {
@@ -99,7 +94,6 @@ function Shipments() {
                 })
                   .then(res => res.json())
                   .then(data => {
-                    console.log(data)
                     if (data.modifiedCount > 0) {
                         alert('Ids Updated successfully')
                         setIds([])
@@ -109,7 +103,6 @@ function Shipments() {
                   .catch(err => console.error(err))
               }
         const handleCancelOrder = ids => {
-                console.log(ids)
                 fetch('https://bestdeal-ecommerce-server.vercel.app/orderCancel', {
                   method: 'PUT',
                   headers: {
@@ -119,7 +112,6 @@ function Shipments() {
                 })
                   .then(res => res.json())
                   .then(data => {
-                    console.log(data)
                     if (data.modifiedCount > 0) {
                         alert('Ids Updated successfully')
                         setIds([])

@@ -26,12 +26,10 @@ const Register = () => {
     const navigate = useNavigate();
 
     const handleSignUp = data => {
-        console.log(data);
         setSignUpError('')
         createUser(data.email, data.password)
             .then(result => {
                 const user = result.user;
-                console.log(user);
                 toast.success("Successfuuly Registered")
                 const userInfo = {
                     displayName: data.name,

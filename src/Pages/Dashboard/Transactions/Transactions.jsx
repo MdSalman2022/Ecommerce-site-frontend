@@ -32,7 +32,6 @@ function Transactions() {
     const [sortType, setSortType] = useState('');
 
     const handleSortTypeChange = data => {
-        console.log(data)
         setSortType(data);
     };
     

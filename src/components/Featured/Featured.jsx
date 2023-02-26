@@ -27,7 +27,6 @@ const Featured = () => {
     featured = featured.slice(0,4)
     
     
-    // console.log(featured)
 
 
     // const latest = products.filter(product => product.latest === true)
@@ -36,12 +35,10 @@ const Featured = () => {
     
     let bestseller = products.filter(product => product.bestseller === true)
     bestseller = bestseller.slice(0,4)
-    // console.log(bestseller)
     
     let special = products.filter(product => product.special === true)
     special = special.slice(0,4)
  
-    // console.log(special)
     
     
     const showBorder = useShowAtThreshold(1300);

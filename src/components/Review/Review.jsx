@@ -53,7 +53,7 @@ const Review = () => {
             {
                 reviews.map((review, index) => (
                     
-                    <div className="container h-52 flex flex-col w-full max-w-lg p-6 mx-5 divide-y rounded-md divide-sky-500 border-primary border">
+                    <div key={index} className="container h-52 flex flex-col w-full max-w-lg p-6 mx-5 divide-y rounded-md divide-sky-500 border-primary border">
                         <div className="flex justify-between p-4">
                             <div className="flex space-x-4">
                                 <div>

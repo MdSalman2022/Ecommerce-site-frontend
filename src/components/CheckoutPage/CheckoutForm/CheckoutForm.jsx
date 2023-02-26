@@ -9,7 +9,6 @@ import toast, { Toaster } from 'react-hot-toast';
 function CheckoutForm({ subTotal }) {
     
     const {setPaymentDetails, user} = useContext(AuthContext)
-console.log(typeof(subTotal), subTotal)
     const [cardError, setCardError] = useState('')
     const [clientSecret, setClientSecret] = useState("");
 
@@ -18,7 +17,6 @@ console.log(typeof(subTotal), subTotal)
 
     const price = subTotal;
 
-    console.log(typeof(price))
     
     useEffect(() => {
         // Create PaymentIntent as soon as the page loads

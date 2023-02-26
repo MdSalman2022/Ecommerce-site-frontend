@@ -12,7 +12,6 @@ const auth = getAuth(app)
 
 const AuthProvider = ({ children }) => {
  
-    console.log(auth)
     // let [cart, setCart] = useState([]);
 
     const [cart, setCart] = useState(() => {
@@ -37,33 +36,33 @@ const AuthProvider = ({ children }) => {
     const [title, setTitle] = useState('home')
     
 
-    const { data: products = [] } = useQuery({
-        queryKey: ['products'],
-        queryFn: () => fetch('https://bestdeal-ecommerce-server.vercel.app/products')
-            .then(res => res.json())
-    }, [])
+    // const { data: products = [] } = useQuery({
+    //     queryKey: ['products'],
+    //     queryFn: () => fetch('https://bestdeal-ecommerce-server.vercel.app/products')
+    //         .then(res => res.json())
+    // }, [])
 
-    // const { data: products = [], isLoading, isError } = useQuery({
-    //     queryKey: ['products', { sort: 'price', page: 1 }],
-    //     queryFn: async (params) => {
-    //       const query = new URLSearchParams(params).toString();
-    //       const response = await fetch(`https://bestdeal-ecommerce-server.vercel.app/products?${query}`);
-    //       if (!response.ok) {
-    //         throw new Error('Failed to fetch products');
-    //       }
-    //       return response.json();
-    //     },
-    //     staleTime: 60000, // 1 minute
-    //     cacheTime: 3600000, // 1 hour
-    //   });
+    const { data: products = [], isLoading, isError } = useQuery({
+        queryKey: ['products', { sort: 'price', page: 1 }],
+        queryFn: async (params) => {
+          const query = new URLSearchParams(params).toString();
+          const response = await fetch(`https://bestdeal-ecommerce-server.vercel.app/products?${query}`);
+          if (!response.ok) {
+            throw new Error('Failed to fetch products');
+          }
+          return response.json();
+        },
+        staleTime: 60000, // 1 minute
+        cacheTime: 3600000, // 1 hour
+      });
     
-    //   if (isLoading) {
-    //     console.log('Loading...')
-    //   }
+      if (isLoading) {
+        console.log('Loading...')
+      }
     
-    //   if (isError) {
-    //     console.log('Error')
-    // }
+      if (isError) {
+        console.log('Error')
+    }
     
     /*
     !Search for users starts 
@@ -110,20 +109,35 @@ const AuthProvider = ({ children }) => {
  
     const [user, setUser] = useState(null)
     
+    // const { data: orders = [] } = useQuery({
+    //     queryKey: ['orderhistory'],
+    //     queryFn: () => fetch('https://bestdeal-ecommerce-server.vercel.app/orderhistory')
+    //         .then(res => res.json())
+    // }, [])
+
     const { data: orders = [] } = useQuery({
         queryKey: ['orderhistory'],
-        queryFn: () => fetch('https://bestdeal-ecommerce-server.vercel.app/orderhistory')
-            .then(res => res.json())
-    }, [])
-
-    // const { data: orders = [] } = useQuery('orderhistory', async () => {
-    //     const response = await fetch('https://bestdeal-ecommerce-server.vercel.app/orderhistory');
-    //     const data = await response.json();
-    //     return data;
-    //   }, {
-    //     staleTime: 60000, // 1 minute
-    //     cacheTime: 3600000, // 1 hour
-    //   });
+        queryFn: async () => {
+          const response = await fetch('https://bestdeal-ecommerce-server.vercel.app/orderhistory')
+          const data = await response.json()
+          return data
+        },
+        staleTime: 60000, // cache for 1 minute
+        cacheTime: 600000, // keep cache for 10 minutes
+        refetchOnMount: false, // don't refetch on mount
+        refetchOnWindowFocus: false // don't refetch on window focus
+      })
+      
+    if (isLoading) {
+          console.log('Loading...')
+        // render loading state
+    } else if (isError) {
+        console.log('Error')
+        // render error state
+    } else {
+        // render orders data
+      }
+      
 
     const createUser = (name, email, password) => {
         setLoading(true)
@@ -158,7 +172,6 @@ const AuthProvider = ({ children }) => {
 
     useEffect(() => {
         const unsubscribe = onAuthStateChanged(auth, (currentUser) => {
-            console.log(currentUser)
             setUser(currentUser)
             setLoading(false)
         });

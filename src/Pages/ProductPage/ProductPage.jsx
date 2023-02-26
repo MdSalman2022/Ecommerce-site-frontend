@@ -12,9 +12,6 @@ function ProductPage() {
     
     let { category, brand, subcategory } = useParams();
 
-    console.log('cat '+ category)
-    console.log('brand ' + brand)
-    console.log('subcat ' + subcategory)
 
     if (category && subcategory && brand) {
         products = products.filter(product => product.cat === category && (product.brand === brand || product.type === brand) && product.subcat === subcategory)

@@ -15,12 +15,10 @@ function CheckoutPage() {
     const [active, setActive] = useState(false);
 
     let info = JSON.parse(localStorage.getItem('userInfo')) || [];
-    console.log(info)
 
     const { name, address, contact, city } = info;
 
     const handleDelivery = data => {
-        console.log(data)
         localStorage.setItem('userInfo', JSON.stringify(data))
         setActive(true)
     }

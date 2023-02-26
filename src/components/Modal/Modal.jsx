@@ -43,17 +43,13 @@ const Modal = ({ product }) => {
         })
             .then(res => res.json())
             .then(result => {
-                console.log(result);
                 toast.success(`${booking.pname} is booked successfully`)
             })
 
-        console.log(booking)
 
     }
     const { user } = useContext(AuthContext)
 
-    // console.log(item)
-    // console.log(item._id);
 
     return (
         <div>

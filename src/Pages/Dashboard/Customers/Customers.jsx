@@ -15,11 +15,9 @@ function Customers() {
         }
       });
       
-    console.log(groupedOrders)
 
     const { email } = groupedOrders
     
-    console.log(email)
 
 
     return (

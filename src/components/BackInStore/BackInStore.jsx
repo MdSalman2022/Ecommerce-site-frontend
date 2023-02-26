@@ -20,8 +20,6 @@ const BackInStore = () => {
     let { products,scrolltop } = useContext(AuthContext)
       
     let backinstore = products.slice(products.length-20, products.length);
-    // console.log(backinstore)
-
 
     const [count, setCount] = useState(0)
 

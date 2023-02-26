@@ -31,7 +31,6 @@ function Orders() {
     const [sortType, setSortType] = useState('');
 
     const handleSortTypeChange = data => {
-        console.log(data)
         setSortType(data);
     };
     
@@ -55,7 +54,6 @@ function Orders() {
     
     const [ids, setIds] = useState([])
     
-    console.log(ids)
     const handleCheckboxClick = (item) => {
         if (ids.includes(item)) {
           setIds(prevItems => prevItems.filter(i => i !== item));
@@ -67,7 +65,6 @@ function Orders() {
     
     
     const handleDelete = ids => {
-            console.log(ids)
             fetch('https://bestdeal-ecommerce-server.vercel.app/deleteOrder', {
               method: 'DELETE',
               headers: {
@@ -77,7 +74,6 @@ function Orders() {
             })
               .then(res => res.json())
               .then(data => {
-                console.log(data)
                 if (data.deletedCount > 0) {
                     alert('Ids deleted successfully')
                     setIds([])
@@ -88,7 +84,6 @@ function Orders() {
           }
     
     const handleOrder = (ids, status) => {
-            console.log(ids)
             fetch('https://bestdeal-ecommerce-server.vercel.app/orderstatus', {
               method: 'PUT',
               headers: {
@@ -98,7 +93,6 @@ function Orders() {
             })
               .then(res => res.json())
               .then(data => {
-                console.log(data)
                 if (data.modifiedCount > 0) {
                     alert('Ids Updated successfully')
                     setIds([])
@@ -108,7 +102,6 @@ function Orders() {
               .catch(err => console.error(err))
           }
     const handleCancelOrder = ids => {
-            console.log(ids)
             fetch('https://bestdeal-ecommerce-server.vercel.app/orderCancel', {
               method: 'PUT',
               headers: {
@@ -118,7 +111,6 @@ function Orders() {
             })
               .then(res => res.json())
               .then(data => {
-                console.log(data)
                 if (data.modifiedCount > 0) {
                     alert('Ids Updated successfully')
                     setIds([])

@@ -45,7 +45,6 @@ function Products() {
         products = products
         
     } else if(results.length > 0) {
-        console.log(results)
         products = results
     }
 
@@ -70,7 +69,6 @@ function Products() {
     const [sortType, setSortType] = useState('');
 
     const handleSortTypeChange = data => {
-        console.log(data)
         setSortType(data);
     };
     
@@ -98,7 +96,6 @@ function Products() {
 
     const [ids, setIds] = useState([])
     
-    console.log(ids)
     const handleCheckboxClick = (item) => {
         if (ids.includes(item)) {
           setIds(prevItems => prevItems.filter(i => i !== item));
@@ -118,7 +115,6 @@ function Products() {
 
 
     const handleDelete = ids => {
-        console.log(ids)
         fetch('https://bestdeal-ecommerce-server.vercel.app/delete', {
           method: 'DELETE',
           headers: {
@@ -128,7 +124,6 @@ function Products() {
         })
           .then(res => res.json())
           .then(data => {
-            console.log(data)
             if (data.deletedCount > 0) {
                 alert('Ids deleted successfully')
                 setIds([])
@@ -162,10 +157,8 @@ function Products() {
         })
             .then(res => res.json())
             .then(data => {
-                console.log(data)
                 if (data.modifiedCount > 0) {
                     alert('product updated successfully')
-                    console.log(data)
                     navigate('/dashboard/products')
                 }
             })
@@ -179,7 +172,6 @@ function Products() {
     // }
 
     const [page, setPage] = useState('overview')
-console.log(page)
     
     return (
         <div className='flex flex-col gap-5 py-10'>

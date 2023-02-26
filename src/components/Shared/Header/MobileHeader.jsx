@@ -21,8 +21,6 @@ const MobileHeader = ({ children }) => {
     const onSubmit = data => {
         setIsOpen(!isOpen);
         setSearchText(data.name);
-        console.log(data.name);
-        console.log(searchText);
         if (data.name === " ") {
             navigate(`/`)
         }

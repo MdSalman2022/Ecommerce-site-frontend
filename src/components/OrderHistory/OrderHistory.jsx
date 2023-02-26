@@ -8,11 +8,9 @@ function OrderHistory() {
     const { user, orders } = useContext(AuthContext)
 
     
-    console.log(orders)
     
     const filteredOrders = orders.filter(order => order.email === user.email)
     
-    console.log(filteredOrders)
 
     return (
         <div className='py-10'>

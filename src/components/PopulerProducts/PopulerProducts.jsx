@@ -65,7 +65,6 @@ const PopulerProducts = () => {
 
  
  
-    // console.log(allProducts)
 
     return (
         <div className='md:py-20 bg-accent'>

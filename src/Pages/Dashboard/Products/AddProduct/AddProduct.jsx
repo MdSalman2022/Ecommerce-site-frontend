@@ -11,7 +11,6 @@ function AddProduct() {
 
     const imageHostKey = import.meta.env.VITE_IMGBB_KEY;
 
-    console.log(imageHostKey)
 
     const navigate = useNavigate();
 

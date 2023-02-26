@@ -28,7 +28,6 @@ const Header = () => {
     
     const onSubmit = data => {
         navigate(`/search/${data.name}`)
-        console.log(data.name);
         setSearchText(data.name);
     }
 
@@ -51,7 +50,6 @@ const Header = () => {
             findAllMatches: true,
           });
             const searchResults = fuse.search(searchText).sort((a, b) => b.score - a.score);
-            console.log(searchResults)
           const formattedResults = searchResults.map((result) => result.item);
           setSearchResult(formattedResults);
         }
