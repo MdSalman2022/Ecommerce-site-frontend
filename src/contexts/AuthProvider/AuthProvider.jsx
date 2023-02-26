@@ -5,11 +5,14 @@ import { useQuery } from '@tanstack/react-query';
 import { animateScroll as scroll } from 'react-scroll'
 
 
+
+
 export const AuthContext = createContext();
 const auth = getAuth(app)
 
 const AuthProvider = ({ children }) => {
  
+    console.log(auth)
     // let [cart, setCart] = useState([]);
 
     const [cart, setCart] = useState(() => {
@@ -21,17 +24,8 @@ const AuthProvider = ({ children }) => {
         scroll.scrollToTop();
     }
     
+  
     
-    // useEffect(() => {
-    //     const shoppingCart = localStorage.getItem("cart");
-    //     if (!shoppingCart) {
-    //       // If not, create an empty array and store it in localStorage
-    //       localStorage.setItem("cart", JSON.stringify([]));
-    //     } else {
-    //         setCart(JSON.parse(shoppingCart));
-    //     }
-    // }, []);
-
     let [subTotal, setSubPrice] = useState(0)
     let [paymentDetails, setPaymentDetails] = useState({})
  
@@ -48,8 +42,29 @@ const AuthProvider = ({ children }) => {
         queryFn: () => fetch('https://bestdeal-ecommerce-server.vercel.app/products')
             .then(res => res.json())
     }, [])
-    
 
+    // const { data: products = [], isLoading, isError } = useQuery({
+    //     queryKey: ['products', { sort: 'price', page: 1 }],
+    //     queryFn: async (params) => {
+    //       const query = new URLSearchParams(params).toString();
+    //       const response = await fetch(`https://bestdeal-ecommerce-server.vercel.app/products?${query}`);
+    //       if (!response.ok) {
+    //         throw new Error('Failed to fetch products');
+    //       }
+    //       return response.json();
+    //     },
+    //     staleTime: 60000, // 1 minute
+    //     cacheTime: 3600000, // 1 hour
+    //   });
+    
+    //   if (isLoading) {
+    //     console.log('Loading...')
+    //   }
+    
+    //   if (isError) {
+    //     console.log('Error')
+    // }
+    
     /*
     !Search for users starts 
     */
@@ -59,11 +74,6 @@ const AuthProvider = ({ children }) => {
 
     let [searchedItems, setSearchedItems] = useState("")
 
-    // useEffect(() => {
-    //     fetch(`https://bestdeal-ecommerce-server.vercel.app/search?name=${searchText}`)
-    //         .then(res => res.json())
-    //         .then(data => setSearchedItems(data))
-    // }, [searchText])
 
     /* 
     !Search for users ends 
@@ -105,6 +115,15 @@ const AuthProvider = ({ children }) => {
         queryFn: () => fetch('https://bestdeal-ecommerce-server.vercel.app/orderhistory')
             .then(res => res.json())
     }, [])
+
+    // const { data: orders = [] } = useQuery('orderhistory', async () => {
+    //     const response = await fetch('https://bestdeal-ecommerce-server.vercel.app/orderhistory');
+    //     const data = await response.json();
+    //     return data;
+    //   }, {
+    //     staleTime: 60000, // 1 minute
+    //     cacheTime: 3600000, // 1 hour
+    //   });
 
     const createUser = (name, email, password) => {
         setLoading(true)

@@ -1,167 +1,12 @@
 import React, { useState } from 'react'
-import {BsThreeDots} from 'react-icons/bs'
-import ReactApexChart from 'react-apexcharts'
-import {FaArrowUp} from 'react-icons/fa'
-import moment from "moment";
+import {BsThreeDots} from 'react-icons/bs' 
+import {FaArrowUp} from 'react-icons/fa' 
+import AreaCharts from './AreaCharts';
 
 
 function Dashboard() {
 
-    const [state, setState] = useState({        
-        series: [{
-          name: 'sales',
-            data: [{
-                x: new Date("02/01/2022").getTime(),
-                y: [5]
-            }, {
-                x: new Date("02/02/2022").getTime(),
-                y: [10]
-                }, {
-                x: new Date("02/03/2022").getTime(),
-                y: [2]
-                }, {
-                x: new Date("02/04/2022").getTime(),
-                y: [7]
-                }, {
-                x: new Date("02/05/2022").getTime(),
-                y: [3]
-                }, {
-                x: new Date("02/06/2022").getTime(),
-                y: [9]
-                }, {
-                x: new Date("02/07/2022").getTime(),
-                y: [9]
-                }, {
-                x: new Date("02/08/2022").getTime(),
-                y: [8]
-                }, {
-                x: new Date("02/09/2022").getTime(),
-                y: [8]
-                }, {
-                x: new Date("02/10/2022").getTime(),
-                y: [7]
-                }, {
-                x: new Date("02/11/2022").getTime(),
-                y: [7]
-                }, {
-                x: new Date("02/12/2022").getTime(),
-                y: [7]
-                }, {
-                x: new Date("02/13/2022").getTime(),
-                y: [3]
-                }, {
-                x: new Date("02/14/2022").getTime(),
-                y: [7]
-                }, {
-                x: new Date("02/15/2022").getTime(),
-                y: [2]
-                }, {
-                x: new Date("02/16/2022").getTime(),
-                y: [1]
-                }, {
-                x: new Date("02/17/2022").getTime(),
-                y: [0]
-                }, {
-                x: new Date("02/18/2022").getTime(),
-                y: [5]
-                }, {
-                x: new Date("02/19/2022").getTime(),
-                y: [5]
-                }, {
-                x: new Date("02/20/2022").getTime(),
-                y: [6]
-                }, {
-                x: new Date("02/21/2022").getTime(),
-                y: [6]
-                }, {
-                x: new Date("02/22/2022").getTime(),
-                y: [2]
-                }, {
-                x: new Date("02/23/2022").getTime(),
-                y: [4]
-                }, {
-                x: new Date("02/24/2022").getTime(),
-                y: [9]
-                }, {
-                x: new Date("02/25/2022").getTime(),
-                y: [10]
-                }, {
-                x: new Date("02/26/2022").getTime(),
-                y: [8]
-                }, {
-                x: new Date("02/27/2022").getTime(),
-                y: [5]
-                }, {
-                x: new Date("02/28/2022").getTime(),
-                y: [2]
-                }
-            ]
-        },],
-        
-        options: {
-            chart:          
-            {
-                animation: {
-                    enabled: false,
-                },
-            height: 350,
-                type: 'area',
-                toolbar: {
-                    show: false,
-                }
-            },
-            grid: {
-                borderColor: '#f7f8fd', 
-                xaxis: {
-                  lines: {
-                    show: false
-                  }
-                },
-                yaxis: {
-                  lines: {
-                    show: true
-                  }
-                }
-              },
-            toolbar: {
-                tools: {},
-            },
-            fill: {
-                colors: ['#4E7AEF']
-              },
-          dataLabels: {
-            enabled: false
-          },
-          stroke: {
-            curve: "smooth", 
-            colors: ['#4E7AEF']
-          },
-          xaxis: {
-            type: 'datetime',
-            tickAmount: 12,
-            min: new Date("02/01/2022").getTime(),
-            max: new Date("02/28/2022").getTime(),
-            labels: {
-                rotate: -15,
-                rotateAlways: true,
-                formatter: function(val, timestamp) {
-                  return moment(new Date(timestamp)).format("DD MMM YYYY")
-              }
-            }
-            },
-          yaxis: {
-                tickAmount: 6,
-            },
-          tooltip: {
-            x: {
-               format: 'dd MMM yyyy'
-            },
-          },
-        },
-      
-      
-    }); 
-
+   
 
     return (
         <div className='py-10'>
@@ -198,14 +43,8 @@ function Dashboard() {
                                     <div className="text-2xl font-bold">$75000</div>
                                     <div className="stat-desc text-success flex items-center"><FaArrowUp/> 5% than last month</div>
                                 </div>
-                                <ReactApexChart 
-                                options={state.options}
-                                series={state.series}
-                                type="area"
-                                height={350}
-                                className="w-full overflow-hidden"
-                            /> 
-                            
+                         
+                            <AreaCharts/>
                         </div>                
                     </div>
                     <div className="stats shadow">  

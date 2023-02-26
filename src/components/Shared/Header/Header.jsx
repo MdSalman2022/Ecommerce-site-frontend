@@ -470,7 +470,7 @@ const Header = () => {
                     <div className=" col-span-1 logo hidden md:flex items-center">
                         <Link to='/' className=" ">
                             {/* <LazyLoadImage src="https://i.ibb.co/vd3xm6V/boipaben-final.png" className='w-16' alt="logo" border="0" /> */}
-                            <h1 className="text-xl md:text-2xl lg:text-4xl font-semibold text-transparent bg-clip-text bg-gradient-to-r from-blue-400 to-blue-600 flex items-center gap-1"><img className='w-10' src="https://i.ibb.co/xSLpY24/logo-colored.webp" alt="logo" />BestDeal</h1>
+                            <h1 className="text-xl md:text-2xl lg:text-4xl font-semibold text-transparent bg-clip-text bg-gradient-to-r from-blue-400 to-blue-600 flex items-center gap-1"><img className='w-10' src="https://i.ibb.co/xSLpY24/logo-colored.webp" alt="logo" width={50} height={50}/>BestDeal</h1>
                         </Link>
                     </div>
                     <form onSubmit={handleSubmit(onSubmit)} className="pl-3 lg:pl-0 w-full search col-span-3">

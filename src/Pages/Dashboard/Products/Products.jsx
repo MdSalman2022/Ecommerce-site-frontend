@@ -8,6 +8,7 @@ import { useForm } from 'react-hook-form';
 import {FiEdit} from 'react-icons/fi'
 import { Link, useNavigate } from 'react-router-dom';
 import Fuse from 'fuse.js';
+import AddProduct from './AddProduct/AddProduct';
 
 
 function Products() {
@@ -178,8 +179,8 @@ function Products() {
     // }
 
     const [page, setPage] = useState('overview')
-
-
+console.log(page)
+    
     return (
         <div className='flex flex-col gap-5 py-10'>
             <p className="text-3xl font-bold">Products</p>
@@ -188,6 +189,7 @@ function Products() {
                     <div onClick={()=>setPage("add")} className={`btn btn-ghost text-neutral !bg-transparent btn-outline border-y-0 border-x-0 hover:border-b-2 hover:text-secondary hover:border-secondary  rounded-none gap-2 ${page === 'add' && 'border-b-2 border-secondary'}`}><FaPlus/> Add Product</div>
                 </div>
             <div className="bg-white rounded-2xl shadow px-2">
+                {page === 'overview' &&
                     <div className='w-full flex justify-end items-center gap-3 py-2'>
                         <div className='dropdown dropdown-end'>
                             <button className='btn btn-secondary btn-outline text-sm normal-case  font-medium '>
@@ -260,73 +262,79 @@ function Products() {
                                     <li onClick={()=> handleSortTypeChange('old')}><a>Old</a></li> 
                                 </ul>
                             </div>
-                        </div>
+                        </div>}
+                { page === 'overview' &&
                     <div className="overflow-x-auto col-span-3"> 
-                            <table className="table w-full rounded-xl">
+                    <table className="table w-full rounded-xl">
 
-                                <thead>
-                                    <tr>
-                                        <th></th>
-                                        <th>No.</th>
-                                        <th>Products</th>
-                                        <th>Product ID</th>
-                                        <th>Date</th>
-                                        <th>Status</th>
-                                        <th>Amount</th> 
-                                    </tr>
-                                </thead>
-                            
-                                <tbody>                           
-                               
-                          
-                            {
-                                sortType === '' &&
-                                productsPerPage.map((item, index) => (
-                                    <tr className='text-black' key={index}>
-                                        <th><input onClick={()=>handleCheckboxClick(item._id)} type="checkbox" className="appearance checked:bg-primary" /></th>
-                                        <th>{index + 1}</th>
-                                        <td className='text-sm'>
-                                            <p className='tooltip tooltip-accent flex items-center gap-5'
-                                                data-tip={item.name}
-                                            >
-                                                <Link onClick={scrolltop} to={`/productDetails/${item._id}/${encodeURIComponent(item.name).replace(/%20/g, "-").replace(/%2F/g, "-")}`}>{item.name}</Link>
-                                                <label onClick={() => setItem(item)} htmlFor="my-modal-3" className="btn btn-ghost btn-square text-xl  p-3 text-secondary"><FiEdit /></label>
-                                            </p>
-                                        </td>
-                                        <td>{item._id}</td>
-                                        <td>{item.date}</td>
-                                        <td><div className='flex items-center'>{item.stock ? <p className='flex items-center'><BsDot className='text-4xl text-success' />In Stock</p> : <p className='flex items-center'><BsDot className='text-4xl text-error' />Out of Stock</p>}</div></td>
-                                        <td>${item.price}</td>
-                                    </tr>
-                                ))
-                            }
-                            {
-                                sortType !== '' && 
-                                    sortedItems().map((item, index) => (
-                                        <tr className='text-black' key={index}>
-                                            <th><input onClick={()=>handleCheckboxClick(item._id)} type="checkbox" className="appearance checked:bg-primary" /></th>
-                                            <th>{index+1}</th>
-                                            <td className='text-sm'>
-                                                <p className='tooltip tooltip-accent flex items-center gap-5'
-                                                    data-tip={item.name}
-                                                >
-                                                    <Link onClick={scrolltop} to={`/productDetails/${item._id}/${encodeURIComponent(item.name).replace(/%20/g, "-")}`}>{item.name}</Link>
-                                                    <label onClick={() => setItem(item)} htmlFor="my-modal-3" className="btn btn-ghost btn-square text-xl  p-3 text-secondary"><FiEdit /></label>
-                                                </p>
-                                            </td>
-                                            <td>{item._id}</td>
-                                            <td>{item.date}</td>
-                                            <td><div className='flex items-center'>{item.stock ?  <p className='flex items-center'><BsDot className='text-4xl text-success'/>In Stock</p> : <p className='flex items-center'><BsDot className='text-4xl text-error'/>Out of Stock</p>}</div></td>
-                                            <td>${item.price}</td>
-                                        </tr>
-                                    ))
-                            }                
+                        <thead>
+                            <tr>
+                                <th></th>
+                                <th>No.</th>
+                                <th>Products</th>
+                                <th>Product ID</th>
+                                <th>Date</th>
+                                <th>Status</th>
+                                <th>Amount</th> 
+                            </tr>
+                        </thead>
+                    
+                        <tbody>                           
+                       
+                  
+                    {
+                        sortType === '' &&
+                        productsPerPage.map((item, index) => (
+                            <tr className='text-black' key={index}>
+                                <th><input onClick={()=>handleCheckboxClick(item._id)} type="checkbox" className="appearance checked:bg-primary" /></th>
+                                <th>{index + 1}</th>
+                                <td className='text-sm'>
+                                    <p className='tooltip tooltip-accent flex items-center gap-5'
+                                        data-tip={item.name}
+                                    >
+                                        <Link onClick={scrolltop} to={`/productDetails/${item._id}/${encodeURIComponent(item.name).replace(/%20/g, "-").replace(/%2F/g, "-")}`}>{item.name}</Link>
+                                        <label onClick={() => setItem(item)} htmlFor="my-modal-3" className="btn btn-ghost btn-square text-xl  p-3 text-secondary"><FiEdit /></label>
+                                    </p>
+                                </td>
+                                <td>{item._id}</td>
+                                <td>{item.date}</td>
+                                <td><div className='flex items-center'>{item.stock ? <p className='flex items-center'><BsDot className='text-4xl text-success' />In Stock</p> : <p className='flex items-center'><BsDot className='text-4xl text-error' />Out of Stock</p>}</div></td>
+                                <td>${item.price}</td>
+                            </tr>
+                        ))
+                    }
+                    {
+                        sortType !== '' && 
+                            sortedItems().map((item, index) => (
+                                <tr className='text-black' key={index}>
+                                    <th><input onClick={()=>handleCheckboxClick(item._id)} type="checkbox" className="appearance checked:bg-primary" /></th>
+                                    <th>{index+1}</th>
+                                    <td className='text-sm'>
+                                        <p className='tooltip tooltip-accent flex items-center gap-5'
+                                            data-tip={item.name}
+                                        >
+                                            <Link onClick={scrolltop} to={`/productDetails/${item._id}/${encodeURIComponent(item.name).replace(/%20/g, "-")}`}>{item.name}</Link>
+                                            <label onClick={() => setItem(item)} htmlFor="my-modal-3" className="btn btn-ghost btn-square text-xl  p-3 text-secondary"><FiEdit /></label>
+                                        </p>
+                                    </td>
+                                    <td>{item._id}</td>
+                                    <td>{item.date}</td>
+                                    <td><div className='flex items-center'>{item.stock ?  <p className='flex items-center'><BsDot className='text-4xl text-success'/>In Stock</p> : <p className='flex items-center'><BsDot className='text-4xl text-error'/>Out of Stock</p>}</div></td>
+                                    <td>${item.price}</td>
+                                </tr>
+                            ))
+                    }                
 
-                                </tbody>
-                            </table>
-                    </div>
+                        </tbody>
+                    </table>
             </div>
-            <div className="flex justify-center">
+                }
+                {
+                    page === 'add' && <AddProduct/>
+                }
+            </div>
+            { page === 'overview' &&
+                <div className="flex justify-center">
                 <div className="btn-group items-center">                   
                     { pageNumbers.length > 1 &&
                         pageNumbers.map((number, index) => (
@@ -336,9 +344,10 @@ function Products() {
 
                     
                 </div>
-            </div>
+            </div>}
         </div>
     )
 }
+
 
 export default Products

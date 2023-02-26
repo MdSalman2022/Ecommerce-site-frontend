@@ -203,11 +203,11 @@ function Orders() {
                                         <th><input onClick={()=>handleCheckboxClick(order._id)} type="checkbox" className="appearance checked:bg-primary" /></th>
                                         <th>{index+1}</th>
                                         <td>#{order._id}</td>
-                                        <td>{order.userInfo.name}</td>
+                                        <td>{order.name}</td>
                                         <td>{order.date}</td>
                                         <td><p className='flex items-center gap-5'><HiOutlineMail className='text-2xl' />{order.email}</p></td>
                                         <td><div className={`btn border-none bg-opacity-10 flex gap-2 w-40 ${order.orderStatus ? order.shipment === 'delivered' && 'bg-[#2ED6A3] text-[#2ED67B]' || order.shipment === 'picked' && 'bg-[#FF844B] text-[#FF844B]' : 'bg-[#FF606B] text-[#FF606B]'} `}><BsQuestionCircle className='text-2xl capitalize' />{order.orderStatus ? order.shipment : 'Canceled'}</div></td>
-                                        <td className='text-primary font-semibold'>${order.paymentDetails.amount/100}</td>
+                                        <td className='text-primary font-semibold'>${order.amount/100}</td>
                                     </tr>
                                 ))
                             }
@@ -218,11 +218,11 @@ function Orders() {
                                         <th><input onClick={()=>handleCheckboxClick(order._id)} type="checkbox" className="appearance checked:bg-primary" /></th>
                                         <th>{index+1}</th>
                                         <td>#{order._id}</td>
-                                        <td>{order.userInfo.name}</td>
+                                        <td>{order.name}</td>
                                         <td>{order.date}</td>
                                         <td><p className='flex items-center gap-5'><HiOutlineMail className='text-2xl' />{order.email}</p></td>
                                         <td><div className={`btn border-none bg-opacity-10 flex gap-2 w-40 ${order.orderStatus ? order.shipment === 'delivered' && 'bg-[#2ED6A3] text-[#2ED67B]' || order.shipment === 'picked' && 'bg-[#FF844B] text-[#FF844B]' : 'bg-[#FF606B] text-[#FF606B]'} `}><BsQuestionCircle className='text-2xl capitalize' />{order.orderStatus ? order.shipment : 'Canceled'}</div></td>
-                                        <td className='text-primary font-semibold'>${order.paymentDetails.amount/100}</td>
+                                        <td className='text-primary font-semibold'>${order.amount/100}</td>
                                     </tr>
                                 ))
                             }

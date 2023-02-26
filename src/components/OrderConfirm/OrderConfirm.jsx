@@ -31,9 +31,15 @@ function OrderConfirm() {
 
     const handleOrder = () => {
         const orderData = {
-            userInfo,
+            // userInfo,
+            name: userInfo.name,
+            address: userInfo.address,
+            contact: userInfo.contact,
+            city: userInfo.city,
             email: user.email,
-            paymentDetails,
+            // paymentDetails,
+            transactionId: paymentDetails.id,
+            amount: paymentDetails.amount,
             items: cart,
             date: new Date().toDateString(),
             orderStatus: true,

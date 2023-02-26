@@ -208,10 +208,9 @@ function Shipments() {
                                         <th>{index+1}</th>
                                         <td>#{order._id}</td>
                                         <td>{order.date}</td>
-                                        <td>{order.userInfo.name}</td>
-                                        {/* <td><p className='flex items-center gap-5'><HiOutlineMail className='text-2xl' />{order.email}</p></td> */}
-                                        <td><p className='flex items-center gap-5'><IoIosCall className='text-2xl' />{order.userInfo.contact}</p></td>
-                                        <td className='font-bold text-primary'>{order.userInfo.address},{order.userInfo.city}</td>
+                                        <td>{order.name}</td>
+                                        <td><p className='flex items-center gap-5'><IoIosCall className='text-2xl' />{order.contact}</p></td>
+                                        <td className='font-bold text-primary'>{order.address},{order.city}</td>
                                         <td><div className={`btn border-none bg-opacity-10 flex gap-2 w-40 ${order.orderStatus ? order.shipment === 'delivered' && 'bg-[#2ED6A3] text-[#2ED67B]' || order.shipment === 'picked' && 'bg-[#FF844B] text-[#FF844B]' : 'bg-[#FF606B] text-[#FF606B]'} `}><BsQuestionCircle className='text-2xl capitalize' />{order.orderStatus ? order.shipment : 'Canceled'}</div></td>
 
                                     </tr>
@@ -221,27 +220,16 @@ function Shipments() {
                             {sortType !== '' &&
                                 sortedItems().map((order, index) => (
                                     <tr className='text-neutral' key={index} >
-                                        <th><input onClick={()=>handleCheckboxClick(order._id)} type="checkbox" className="appearance checked:bg-primary" /></th>
-                                        <th>{index+1}</th>
-                                        <td>#{order._id}</td>
-                                        <td>{order.date}</td>
-                                        <td>{order.userInfo.name}</td>
-                                        <td><p className='flex items-center gap-5'><HiOutlineMail className='text-2xl' />{order.userInfo.contact}</p></td>
-                                        <td className='font-bold text-primary'>{order.userInfo.address},{order.userInfo.city}</td>
-                                        <td><div className={`btn border-none bg-opacity-10 flex gap-2 w-40 ${order.orderStatus ? order.shipment === 'delivered' && 'bg-[#2ED6A3] text-[#2ED67B]' || order.shipment === 'picked' && 'bg-[#FF844B] text-[#FF844B]' : 'bg-[#FF606B] text-[#FF606B]'} `}><BsQuestionCircle className='text-2xl capitalize' />{order.orderStatus ? order.shipment : 'Canceled'}</div></td>
-                                        {/* <td className='dropdown dropdown-end'>
-                                            <button className='btn btn-ghost text-2xl'>
-                                                <BsThreeDots />
-                                            </button>
-                                            <ul tabIndex={0} className="dropdown-content menu p-2 shadow bg-base-100 rounded-box w-52">
-                                                <li><a>Delete</a></li>
-                                                <li><a>Edit</a></li>
-                                                <li><a>Delivered</a></li>
-                                                <li><a>Picked</a></li>
-                                                <li><a>Canceled</a></li>
-                                            </ul>
-                                        </td> */}
-                                    </tr>
+                                    <th><input onClick={()=>handleCheckboxClick(order._id)} type="checkbox" className="appearance checked:bg-primary" /></th>
+                                    <th>{index+1}</th>
+                                    <td>#{order._id}</td>
+                                    <td>{order.date}</td>
+                                    <td>{order.name}</td>
+                                    <td><p className='flex items-center gap-5'><IoIosCall className='text-2xl' />{order.contact}</p></td>
+                                    <td className='font-bold text-primary'>{order.address},{order.city}</td>
+                                    <td><div className={`btn border-none bg-opacity-10 flex gap-2 w-40 ${order.orderStatus ? order.shipment === 'delivered' && 'bg-[#2ED6A3] text-[#2ED67B]' || order.shipment === 'picked' && 'bg-[#FF844B] text-[#FF844B]' : 'bg-[#FF606B] text-[#FF606B]'} `}><BsQuestionCircle className='text-2xl capitalize' />{order.orderStatus ? order.shipment : 'Canceled'}</div></td>
+
+                                </tr>
                                 ))
                             }
                             </tbody>

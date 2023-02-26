@@ -18,14 +18,50 @@ import { Pagination, Autoplay } from "swiper";
 
 
 function Banner() {
- 
+
+
+    const [isDesktop, setIsDesktop] = useState(false);
+
+    useEffect(() => {
+      const mediaQuery = window.matchMedia("(min-width: 768px)");
+  
+      const handleMediaQueryChange = (event) => {
+        setIsDesktop(event.matches);
+      };
+  
+      handleMediaQueryChange(mediaQuery);
+      mediaQuery.addEventListener("change", handleMediaQueryChange);
+  
+      return () => {
+        mediaQuery.removeEventListener("change", handleMediaQueryChange);
+      };
+    }, []);
+
+    useEffect(() => {
+        const imageUrls = [
+            "https://i.ibb.co/Pc9jLbR/speaker.webp",
+            "https://i.ibb.co/kXc9Xgt/headphone.webp",
+            'https://i.ibb.co/6yk3vbS/Apple-Mac-Book-Pro-Late-2021-Banner2-1674277405.webp',
+            'https://i.ibb.co/6FW5G2d/MSI-MPG-Z690-EDGE-Wi-Fi-6-Gaming-Motherboard-Slider-1675861274.webp',
+            'https://i.ibb.co/qF5Kd6H/Ben-Q-ZOWIE-XL2546-245-inch-Gaming-Monitor-Main-Slider-1675937487.webp'
+          
+        ];
+    
+        // Create an Image object for each image and set the src property
+        imageUrls.forEach((url) => {
+          const img = new Image();
+          img.src = url;
+        });
+      }, []);
+
     return (
         <div className="hero bg-transparent md:rounded-xl lg:mx-auto">
             <div className="container mx-auto flex flex-col flex-wrap overflow-hidden">
                 <div className="flex justify-center "> 
                     <div className="flex flex-col md:flex-col lg:flex-row md:gap-12">
                         <div className="card w-full object-cover my-5 md:my-10 md:px-0">
-                                <Swiper 
+                          
+                            <Swiper 
                                     modules={[Pagination,Autoplay]}
                                     autoplay={{
                                         delay: 2500,
@@ -37,26 +73,28 @@ function Banner() {
                                     }} 
                                     className="mySwiper w-screen md:w-[750px] lg:w-[1200px] md:rounded-2xl border border-primary"
                                     >
-                                    <SwiperSlide><Link to="/laptop"><img className='w-full h-full' src="https://i.ibb.co/6yk3vbS/Apple-Mac-Book-Pro-Late-2021-Banner2-1674277405.webp" alt="image" /></Link></SwiperSlide>
+                                    <SwiperSlide><Link to="/laptop"><LazyLoadImage className='w-full h-full' src="https://i.ibb.co/6yk3vbS/Apple-Mac-Book-Pro-Late-2021-Banner2-1674277405.webp" alt="image" /></Link></SwiperSlide>
                                     <SwiperSlide><Link to="/components/motherboard"><LazyLoadImage className='w-full h-full' src="https://i.ibb.co/6FW5G2d/MSI-MPG-Z690-EDGE-Wi-Fi-6-Gaming-Motherboard-Slider-1675861274.webp" alt="image" /></Link></SwiperSlide>
                                     <SwiperSlide><Link to="/monitor"><LazyLoadImage className='w-full h-full' src="https://i.ibb.co/qF5Kd6H/Ben-Q-ZOWIE-XL2546-245-inch-Gaming-Monitor-Main-Slider-1675937487.webp" alt="image" /></Link></SwiperSlide>
                                     
 
                                 </Swiper>
-                            
+                        
                         </div> 
                         <div className="my-2 md:my-10 gap-3 px-2 md:gap-5 lg:gap-0 md:px-0 lg:space-y-12 h-full flex items-start lg:items-end md:items-center justify-around lg:justify-start lg:flex-col ">
                                 <div className="card lg:card-side bg-white">
-                                    <LazyLoadImage className='rounded-2xl  object-cover border-primary border w-full h-40 lg:w-96 md:h-72' src="https://i.ibb.co/Pc9jLbR/speaker.webp" alt="image" />
+                                    <img className='rounded-2xl  object-cover border-primary border w-full h-40 lg:w-96 md:h-72' src="https://i.ibb.co/Pc9jLbR/speaker.webp" alt="image" width={300} height={160} />
                                 </div>                          
                             
                                 <div className="card lg:card-side bg-white">
-                                    <LazyLoadImage className='rounded-2xl object-cover border-primary border w-52 h-40 md:w-96 md:h-72' src="https://i.ibb.co/kXc9Xgt/headphone.webp" alt="image" />
+                                    <img className='rounded-2xl object-cover border-primary border w-52 h-40 md:w-96 md:h-72' src="https://i.ibb.co/kXc9Xgt/headphone.webp" alt="image" width={300} height={160}/>
                                 </div>                           
                         </div>
                     </div>
                 </div>    
-                <Marquee className="w-screen h-20 md:h-40 overflow-hidden"  speed={150} pauseOnHover={true}>
+                {
+                    isDesktop &&
+                    (<Marquee className="w-screen h-20 md:h-40 overflow-hidden" speed={150} pauseOnHover={true}>
                             <FaApple className='p-3 lg:p-5 text-6xl lg:text-9xl transition-all duration-300 text-black  '/>
                             
                             <SiSamsung className='p-0 text-5xl lg:text-9xl transition-all duration-300 text-blue-600  '/>
@@ -95,7 +133,7 @@ function Banner() {
                             <LazyLoadImage src="https://i.ibb.co/PNzDXWV/lianli-f.jpg" alt="lianli-f" border="0" className='w-20 md:w-40 mr-5'/>
                             <LazyLoadImage src="https://i.ibb.co/gV36YBn/montech.png" alt="montech" border="0" className='w-20 md:w-40 mr-5'/>
                             <LazyLoadImage src="https://i.ibb.co/TcBrDB1/msi.webp" alt="MSI-Logo" border="0" className='w-20 md:w-40 mr-5'/>
-                </Marquee>
+                </Marquee>)}
             </div>
            
         </div>

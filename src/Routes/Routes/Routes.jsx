@@ -19,6 +19,8 @@ import CheckoutPage from '../../components/CheckoutPage/CheckoutPage';
 import OrderConfirm from '../../components/OrderConfirm/OrderConfirm';
 import PrivateRoute from '../PrivateRoute/PrivateRoute';
 import OrderHistory from '../../components/OrderHistory/OrderHistory';
+import Customers from '../../Pages/Dashboard/Customers/Customers';
+import Transactions from '../../Pages/Dashboard/Transactions/Transactions';
 
 
 export const router = createBrowserRouter([
@@ -114,6 +116,14 @@ export const router = createBrowserRouter([
             {
                 path: '/dashboard/products/search/:name',
                 element: <Products></Products>
+            },
+            {
+                path: '/dashboard/customers',
+                element: <Customers></Customers>
+            },
+            {
+                path: '/dashboard/transactions',
+                element: <Transactions></Transactions>
             },
         ]
     }

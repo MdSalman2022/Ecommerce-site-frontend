@@ -18,7 +18,7 @@ const HotProduct = () => {
 
  
     const startCountdown = () => {
-        const countDownDate = new Date("Feb 28, 2023 23:59:59").getTime();
+        const countDownDate = new Date("Mar 15, 2023 23:59:59").getTime();
         const x = setInterval(function () {
             const now = new Date().getTime();
             const distance = countDownDate - now;
@@ -37,13 +37,7 @@ const HotProduct = () => {
     React.useEffect(() => {
         startCountdown();
     }, []);
-
-    const resetCountdown = () => {
-        clearInterval(x);
-        startCountdown();
-    };
-    
-    setInterval(resetCountdown, 604800000);
+ 
      
     let range;
 
