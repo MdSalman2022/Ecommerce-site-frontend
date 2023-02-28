@@ -6,13 +6,14 @@ import { FaAngleRight, FaExchangeAlt,FaSearch } from 'react-icons/fa'
 import { HiBars3BottomLeft } from 'react-icons/hi2'
 import { IoIosNotificationsOutline } from 'react-icons/io'
 import {BsBag} from 'react-icons/bs'
+import { AiOutlineSearch } from 'react-icons/ai';
 
 
 const MobileHeader = ({ children }) => {
 
 
     const navigate = useNavigate();
-    let { searchText, setSearchText,cart, searchedItems,setSearchedItems , loading } = useContext(AuthContext)
+    let { searchText, setSearchText,cart,searchResult, searchedItems,setSearchedItems , loading } = useContext(AuthContext)
 
     const { register, handleSubmit, formState: { errors } } = useForm();
 
@@ -29,7 +30,12 @@ const MobileHeader = ({ children }) => {
         console.log(errors);
     }
 
-
+    const handleSearch = event => {
+        event.preventDefault()
+        const search = event.target.value;
+        console.log(search)
+        setSearchText(search);        
+    }
     
     const [options, setOptions] = useState(0)
     const [subOptions, setSubOptions] = useState(0)
@@ -387,22 +393,17 @@ const MobileHeader = ({ children }) => {
         setIsOpen(!isOpen);
     }
 
+
+
   return (
     <div className="drawer">
         <input id="my-drawer" type="checkbox" className="drawer-toggle" />
           <div className="drawer-content"> 
            <div className="navbar bg-base-100">
                 <div className="navbar-start">
-                    {/* <div className="dropdown"> */}
                         <label htmlFor="my-drawer" tabIndex={0} className="btn btn-ghost drawer-button btn-circle text-2xl">
                             <HiBars3BottomLeft/>
                         </label>
-                        {/* <ul tabIndex={0} className="menu menu-compact dropdown-content mt-3 p-2 shadow bg-base-100 rounded-box w-52">
-                            <li><a>Homepage</a></li>
-                            <li><a>Portfolio</a></li>
-                            <li><a>About</a></li>
-                        </ul> */}
-                    {/* </div> */}
                 </div>
                 <div className="navbar-center">
                     <Link to="/" className="btn btn-ghost normal-case text-xl text-transparent bg-clip-text bg-gradient-to-r from-blue-400 to-blue-600 flex gap-2"><img className='w-5' src="https://i.ibb.co/xSLpY24/logo-colored.webp" alt="logo"  />BestDeal</Link>
@@ -422,15 +423,29 @@ const MobileHeader = ({ children }) => {
                 </div>
               </div>
               {/* search box  */}
-                    <div className={`absolute z-50 top-14 left-0 flex md:hidden ${isOpen ? 'flex' : 'hidden'}`}>
-                        <div onSubmit={handleSubmit(onSubmit)}  className="form-control">
-                            <form onSubmit={handleSubmit(onSubmit)}  className="input-group w-screen p-1">
-                                <input defaultValue={searchText}  type="text" placeholder="Search…" className="input border-neutral border-2 rounded-none w-full"  {...register("name", { required: true, maxLength: 80 })}/>
-                                <button type="submit" className="btn btn-square">
-                                    <FaSearch/>
-                                </button>
-                            </form>
-                        </div>
+                    <div className={`absolute z-50 top-16 left-0 flex md:hidden ${isOpen ? 'flex' : 'hidden'}`}>
+                        <form onSubmit={handleSubmit(onSubmit)} className="w-screen px-2">
+                            <div onChange={handleSearch} className="input-group">
+                                <input defaultValue={searchText} autocomplete="off" type="text" placeholder="Search..." className="input input-bordered border-primary w-full"  {...register("name", { required: true, maxLength: 80 })} />
+                                <button type="submit" className='bg-primary text-base-100 font-bold px-2 text-2xl'><AiOutlineSearch /></button>
+                            </div>
+                            <ul className='absolute bg-white z-50 w-96 shadow-xl rounded-lg'>
+                                
+                                {searchResult.length > 0 &&
+                                searchResult.slice(0,4).map((item, index) => (
+                                        <li className='cursor-pointer text-neutral hover:bg-accent p-1 transition-all duration-300 ease-in-out flex items-center gap-2' key={index}>
+                                            <img src={item.image} alt="" className='w-20'/>
+                                            <div className='flex flex-col'>
+                                                <Link to={`/productDetails/${item._id}/${encodeURIComponent(item.name).replace(/%20/g, "-")}`} className='text-primary'>{item.name}</Link>
+                                                <p>${item.price}</p>
+                                            </div>
+                                        </li>
+                                ))
+                                }
+                            { searchResult.length > 0 && <Link to={`/search/${searchText}`} className='flex items-center justify-center p-2 rounded-b-lg text-white bg-secondary'>See all results</Link>}
+                            
+                            </ul>
+                        </form>
                     </div>
                 {children}
     {/* <label htmlFor="my-drawer" className="btn btn-primary drawer-button">Open drawer</label> */}

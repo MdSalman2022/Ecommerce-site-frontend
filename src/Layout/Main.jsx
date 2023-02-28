@@ -12,11 +12,11 @@ import { AuthContext } from '../contexts/AuthProvider/AuthProvider';
 const Main = () => {
 
 
-    const { cart, scrolltop } = useContext(AuthContext)
-    
+    const { cart, scrolltop,setSearchResult } = useContext(AuthContext)
+     
 
     return (
-        <div>
+        <div  >
             <Link onClick={scrolltop} to="/cart" className={`animate-bounce z-50 bottom-5 right-5 ${cart.length > 0 ? 'fixed' : 'hidden'}`}>
                 <div className=' rounded-full border-2 border-primary p-1 hover:bg-primary hover:border-white hover:text-base-100 transition-all duration-300 ease-in-out relative bg-white'>
                     <BsBag className='cursor-pointer  p-2 text-4xl text-primary hover:text-white' />

@@ -128,6 +128,7 @@ function Orders() {
                             <BsCart4 className='text-5xl p-2 h-14 w-14 rounded-xl bg-primary bg-opacity-10 text-primary'/>
                             <div className="text-lg">Orders</div>
                             <div className="text-2xl font-bold">150</div>
+                    
                     </div>        
                     <div className="flex items-center gap-5 justify-center bg-white shadow w-full h-32 rounded-3xl">  
                             <TbFileInvoice className='text-5xl p-2 h-14 w-14 rounded-xl bg-primary bg-opacity-10 text-primary'/>

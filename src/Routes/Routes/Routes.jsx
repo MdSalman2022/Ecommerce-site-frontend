@@ -20,7 +20,10 @@ import OrderConfirm from '../../components/OrderConfirm/OrderConfirm';
 import PrivateRoute from '../PrivateRoute/PrivateRoute';
 import OrderHistory from '../../components/OrderHistory/OrderHistory';
 import Customers from '../../Pages/Dashboard/Customers/Customers';
-import Transactions from '../../Pages/Dashboard/Transactions/Transactions';
+import Transactions from '../../Pages/Dashboard/Transactions/Transactions'; 
+import Statistics from '../../Pages/Dashboard/Statistics/Statistics';
+import Settings from '../../Pages/Dashboard/Settings/Settings';
+
 
 
 export const router = createBrowserRouter([
@@ -124,6 +127,14 @@ export const router = createBrowserRouter([
             {
                 path: '/dashboard/transactions',
                 element: <Transactions></Transactions>
+            },
+            {
+                path: '/dashboard/statistics', 
+                element: <Statistics></Statistics>
+            },
+            {
+                path: '/dashboard/settings', 
+                element: <Settings></Settings>
             },
         ]
     }

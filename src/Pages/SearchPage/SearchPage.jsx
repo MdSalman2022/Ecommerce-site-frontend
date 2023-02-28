@@ -8,7 +8,8 @@ import Fuse from 'fuse.js';
 const SearchPage = () => {
 
     let { searchText, searchResult, products } = useContext(AuthContext)
-    
+
+    console.log(searchResult)
 
     if (searchResult.length === 0) {
         products = products

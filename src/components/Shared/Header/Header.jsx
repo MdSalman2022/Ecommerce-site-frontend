@@ -5,7 +5,7 @@ import { Link, NavLink, useNavigate } from 'react-router-dom';
 import { AiOutlineSearch } from 'react-icons/ai';
 import { AuthContext } from '../../../contexts/AuthProvider/AuthProvider';
 import { BsPerson, BsBag } from 'react-icons/bs';
-import {IoNotificationsOutline} from 'react-icons/io5'
+import {IoClose, IoNotificationsOutline} from 'react-icons/io5'
 import {FaAngleRight, FaExchangeAlt} from 'react-icons/fa'
 import {MdFavoriteBorder} from 'react-icons/md'
 import { BiHomeAlt, BiMessageMinus } from 'react-icons/bi'
@@ -29,6 +29,12 @@ const Header = () => {
     const onSubmit = data => {
         navigate(`/search/${data.name}`)
         setSearchText(data.name);
+    }
+    const handleSearch = event => {
+        let search = event.target.value
+        console.log(search)
+        // navigate(`/search/${data.name}`)
+        setSearchText(search);
     }
 
 
@@ -437,6 +443,10 @@ const Header = () => {
         };
     }, []);
   
+    const handleClear = () => {
+        setSearchText('');
+        navigate('/')
+    }
 
 
     return (
@@ -470,12 +480,31 @@ const Header = () => {
                             {/* <LazyLoadImage src="https://i.ibb.co/vd3xm6V/boipaben-final.png" className='w-16' alt="logo" border="0" /> */}
                             <h1 className="text-xl md:text-2xl lg:text-4xl font-semibold text-transparent bg-clip-text bg-gradient-to-r from-blue-400 to-blue-600 flex items-center gap-1"><img className='w-10' src="https://i.ibb.co/xSLpY24/logo-colored.webp" alt="logo" width={50} height={50}/>BestDeal</h1>
                         </Link>
+                        
                     </div>
                     <form onSubmit={handleSubmit(onSubmit)} className="pl-3 lg:pl-0 w-full search col-span-3">
-                        <div className="input-group">
-                            <input defaultValue={searchText} type="text" placeholder="Search..." className="input input-bordered border-primary w-full"  {...register("name", { required: true, maxLength: 80 })} />
+                        <div onChange={handleSearch} className="input-group">
+                            <input value={searchText}  type="text" autoComplete='off' placeholder="Search..." className="input input-bordered border-primary border-r-0 w-full"  {...register("name", { required: true, maxLength: 80 })} />
+                            {/* {searchResult.length > <button className='bg-white text-neutral border-primary border-y font-bold px-3 text-2xl'><IoClose /></button>} */}
+                            {searchText.length > 0 && <span onClick={handleClear} className='bg-white text-neutral border-primary border-y font-bold px-3 text-2xl'><IoClose /></span>}
                             <button type="submit" className='bg-primary text-base-100 font-bold px-3 text-2xl'><AiOutlineSearch /></button>
                         </div>
+                        <ul className='absolute bg-white z-50 w-full max-w-3xl lg:max-w-4xl shadow-xl rounded-lg'>
+                                
+                                {searchResult.length > 0 &&
+                                searchResult.slice(0,4).map((item, index) => (
+                                        <li className='cursor-pointer text-neutral hover:bg-accent p-1 transition-all duration-300 ease-in-out flex items-center gap-2' key={index}>
+                                            <img src={item.image} alt="" className='w-20'/>
+                                            <div className='flex flex-col'>
+                                                <Link to={`/productDetails/${item._id}/${encodeURIComponent(item.name).replace(/%20/g, "-")}`} className='text-primary'>{item.name}</Link>
+                                                <p>${item.price}</p>
+                                            </div>
+                                        </li>
+                                ))
+                                }
+                            { searchResult.length > 0 && <Link to={`/search/${searchText}`} className='flex items-center justify-center p-2 rounded-b-lg text-white bg-secondary'>See all results</Link>}
+                            
+                            </ul>
                     </form>
                     <div className='flex md:text-2xl lg:text-3xl gap-5 lg:justify-end items-center col-span-1'>
                         {/* <p className='cursor-pointer rounded-full border p-1 hover:bg-primary hover:text-base-100 transition-all duration-300 ease-in-out'><BsPerson  className='p-1'/></p>  */}

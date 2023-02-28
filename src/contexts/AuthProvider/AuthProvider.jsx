@@ -3,14 +3,18 @@ import { createUserWithEmailAndPassword, onAuthStateChanged, getAuth, signInWith
 import app from '../../firebase/firebase.config';
 import { useQuery } from '@tanstack/react-query';
 import { animateScroll as scroll } from 'react-scroll'
-
+import { getAnalytics } from 'firebase/analytics'; 
 
 
 
 export const AuthContext = createContext();
 const auth = getAuth(app)
 
+const analysis = getAnalytics(app)
+
 const AuthProvider = ({ children }) => {
+
+  
  
     // let [cart, setCart] = useState([]);
 
@@ -36,13 +40,14 @@ const AuthProvider = ({ children }) => {
     const [title, setTitle] = useState('home')
     
 
-    // const { data: products = [] } = useQuery({
-    //     queryKey: ['products'],
-    //     queryFn: () => fetch('https://bestdeal-ecommerce-server.vercel.app/products')
-    //         .then(res => res.json())
-    // }, [])
+    const { data: products = [] } = useQuery({
+        queryKey: ['products'],
+        queryFn: () => fetch('https://bestdeal-ecommerce-server.vercel.app/products')
+        .then(res => res.json())
+        
+    }, [])
 
-    const { data: products = [], isLoading, isError } = useQuery({
+/*     const { data: products = [], isLoading, isError } = useQuery({
         queryKey: ['products', { sort: 'price', page: 1 }],
         queryFn: async (params) => {
           const query = new URLSearchParams(params).toString();
@@ -62,7 +67,7 @@ const AuthProvider = ({ children }) => {
     
       if (isError) {
         console.log('Error')
-    }
+    } */
     
     /*
     !Search for users starts 
@@ -109,13 +114,13 @@ const AuthProvider = ({ children }) => {
  
     const [user, setUser] = useState(null)
     
-    // const { data: orders = [] } = useQuery({
-    //     queryKey: ['orderhistory'],
-    //     queryFn: () => fetch('https://bestdeal-ecommerce-server.vercel.app/orderhistory')
-    //         .then(res => res.json())
-    // }, [])
-
     const { data: orders = [] } = useQuery({
+        queryKey: ['orderhistory'],
+        queryFn: () => fetch('https://bestdeal-ecommerce-server.vercel.app/orderhistory')
+            .then(res => res.json())
+    }, [])
+
+ /*    const { data: orders = [] } = useQuery({
         queryKey: ['orderhistory'],
         queryFn: async () => {
           const response = await fetch('https://bestdeal-ecommerce-server.vercel.app/orderhistory')
@@ -136,7 +141,7 @@ const AuthProvider = ({ children }) => {
         // render error state
     } else {
         // render orders data
-      }
+      } */
       
 
     const createUser = (name, email, password) => {
