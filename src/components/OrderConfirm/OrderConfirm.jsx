@@ -8,12 +8,12 @@ import CheckoutForm from '../CheckoutPage/CheckoutForm/CheckoutForm'
 const stripePromise = loadStripe(import.meta.env.VITE_STRIP_PK)
 import { useState } from 'react';
 import { Link } from 'react-router-dom'
-
+import {TiTick} from 'react-icons/ti'
 
 function OrderConfirm() {
     
     
-    const { cart, subTotal,setSubPrice, paymentDetails, setCart, setPaymentDetails, user } = useContext(AuthContext)    
+    const { cart, subTotal,setSubPrice, paymentDetails, setCart, setPaymentDetails, user,allUsers } = useContext(AuthContext)    
     
     useEffect(() => {
         let price = 0;
@@ -26,20 +26,19 @@ function OrderConfirm() {
     const [orderPlaced, setOrderPlaced] = useState(false)
 
     
-    let userInfo = JSON.parse(localStorage.getItem('userInfo')) || [];
+    
+    let userInfo = allUsers.find(u => u.email === user?.email) 
 
-
+console.log(userInfo)
     const handleOrder = () => {
-        const orderData = {
-            // userInfo,
+        const orderData = { 
             name: userInfo.name,
             address: userInfo.address,
             contact: userInfo.contact,
             city: userInfo.city,
-            email: user.email,
-            // paymentDetails,
-            transactionId: paymentDetails.id,
-            amount: paymentDetails.amount,
+            email: user.email, 
+            transactionId: paymentDetails.id ? paymentDetails.id : "Cash on Delivery",
+            amount: paymentDetails.amount ? paymentDetails.amount : subTotal*100 ,
             items: cart,
             date: new Date().toDateString(),
             orderStatus: true,
@@ -73,6 +72,10 @@ function OrderConfirm() {
     }, [orderPlaced]);
 
 
+    const [active, setActive] = useState("")
+
+    console.log(active)
+
 
     return (
 
@@ -91,24 +94,37 @@ function OrderConfirm() {
                 <div className="grid md:grid-cols-4 gap-10 py-5">
                     <div className='col-span-1 space-y-10 border p-5 rounded-xl'>
                         <h2 className="text-4xl font-bold">Payment Method</h2>
-                        <div className='flex items-center gap-3'>
-                            <input type="radio" name="radio-1" className="radio radio-secondary" checked />
-                            <AiFillCreditCard className='text-3xl'/>
-                        </div>            
-                        <Elements stripe={stripePromise}>
+                        <div className="grid grid-cols-2 gap-5">                        
+                            <div onClick={()=>setActive("card")} className="flex flex-col items-center">
+                                    <div className={`flex items-center justify-center gap-3 border-2  rounded-lg bg-white hover:border-primary w-full ${active === 'card' ? "border-primary" : "border-neutral"} relative`}>
+                                        {active === 'card' && <TiTick className="absolute text-white top-1 right-1 bg-primary text-2xl rounded-full"/>}
+                                    <img className='' src="https://i.ibb.co/PxH0KQw/creditcard.webp" width={100} height={100} alt="" />
+                                </div>
+                                <p className='text-sm font-semibold'>Pay with Credit Card</p>
+                            </div>         
+                            <div onClick={()=>setActive("delivery")} className="flex flex-col items-center">
+                                <div className={`flex items-center justify-center gap-3 border-2 rounded-lg bg-white hover:border-primary w-full ${active === 'delivery' ? "border-primary" : "border-neutral"} relative`}>
+                                        {active === 'delivery' && <TiTick className="absolute text-white top-1 right-1 bg-primary text-2xl rounded-full"/>}
+                                    <img className='' src="https://i.ibb.co/PxH0KQw/creditcard.webp" width={100} height={100} alt="" />
+                                </div>
+                                <p className='text-sm font-semibold'>Cash On Delivery</p>
+                            </div>            
+                        </div>                
+                       { active === 'card' && <Elements stripe={stripePromise}>
                             <CheckoutForm
                             subTotal={subTotal}
                             />
-                                </Elements>
+                        </Elements>}
                                 
                                 {
-                                    paymentDetails.id && <div className='flex flex-col gap-2'>
+                                    paymentDetails.id &&
+                                    <div className='flex flex-col gap-2'>
                                         <p className='text-2xl font-semibold text-success '>Paid</p>
                                         <p className='text-lg font-semibold'>Payment Details</p>
                                         <p className='text-sm text-secondary font-bold'>Transaction id: <span className="text-neutral font-normal">{paymentDetails.id}</span></p>
                                         <p className='text-sm text-secondary font-bold'>Amount: <span className="text-neutral font-normal">${paymentDetails.amount/100}</span></p>
                                     </div>
-                        }
+                                    }
                     </div>      
                     
                     <div className="col-span-3 space-y-10 bg-base-100 rounded-xl border p-5">
@@ -163,7 +179,7 @@ function OrderConfirm() {
                 <div className='space-y-5'>    
                     <hr />
                     <div className="flex justify-end">
-                        <button onClick={handleOrder} className="btn btn-secondary" disabled={paymentDetails.id ? false : true}>Place Order</button>
+                        <button onClick={handleOrder} className="btn btn-secondary" disabled={active === 'card' ? paymentDetails.id ? false : true : active === 'delivery' ? false : true }>Place Order</button>
                     </div>
                 </div>
                     

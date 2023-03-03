@@ -426,7 +426,7 @@ const MobileHeader = ({ children }) => {
                     <div className={`absolute z-50 top-16 left-0 flex md:hidden ${isOpen ? 'flex' : 'hidden'}`}>
                         <form onSubmit={handleSubmit(onSubmit)} className="w-screen px-2">
                             <div onChange={handleSearch} className="input-group">
-                                <input defaultValue={searchText} autocomplete="off" type="text" placeholder="Search..." className="input input-bordered border-primary w-full"  {...register("name", { required: true, maxLength: 80 })} />
+                                <input defaultValue={searchText} autoComplete="off" type="text" placeholder="Search..." className="input input-bordered border-primary w-full"  {...register("name", { required: true, maxLength: 80 })} />
                                 <button type="submit" className='bg-primary text-base-100 font-bold px-2 text-2xl'><AiOutlineSearch /></button>
                             </div>
                             <ul className='absolute bg-white z-50 w-96 shadow-xl rounded-lg'>

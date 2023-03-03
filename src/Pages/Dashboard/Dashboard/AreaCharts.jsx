@@ -87,7 +87,7 @@ export default class AreaCharts extends PureComponent {
 
   render() {
     return (
-      <div style={{ width: '100%' }}> 
+      <div className='md:w-full' > 
         <ResponsiveContainer width="100%" height={350}>
           <AreaChart
             width={500}

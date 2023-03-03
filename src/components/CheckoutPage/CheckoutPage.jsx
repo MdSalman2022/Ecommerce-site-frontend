@@ -3,38 +3,61 @@ import { FaAngleRight } from 'react-icons/fa';
 import { Link } from 'react-router-dom';
 import { useForm } from 'react-hook-form';
 import { AuthContext } from '../../contexts/AuthProvider/AuthProvider';
+import { toast } from 'react-hot-toast';
 
 
 function CheckoutPage() {
 
-    const {user} = useContext(AuthContext)
+    const {user, allUsers} = useContext(AuthContext)
 
     const { register, formState: { errors }, handleSubmit } = useForm();
     //save data to local storage
 
     const [active, setActive] = useState(false);
+ 
 
-    let info = JSON.parse(localStorage.getItem('userInfo')) || [];
+    let info = allUsers.find(u => u.email === user?.email)
+    console.log(info)
 
     const { name, address, contact, city } = info;
+ 
 
     const handleDelivery = data => {
-        localStorage.setItem('userInfo', JSON.stringify(data))
-        setActive(true)
+        console.log(data) 
+        let email = user.email
+        let orderName = data.name
+        let address = data.address
+        let contact = data.contact
+        let city = data.city
+        fetch('https://bestdeal-ecommerce-server.vercel.app/deliveryInfo', {
+            method: 'PUT',
+            headers: {
+                'Content-Type': 'application/json'
+            },
+            body: JSON.stringify({email ,orderName, address,contact,city })
+        })
+        .then(res => res.json())
+        .then(data => {
+            setActive(true)
+            if (data.modifiedCount > 0) {
+                toast.success('Delivery Details Updated successfully')
+            }
+          })
+          .catch(err => console.error(err))
     }
     
     return (
         <div>
-            <div className="container mx-auto my-10">
+            <div className="checkoutpage container mx-auto my-10">
                     <div className="flex flex-col items-center">
                         <h2 className="text-4xl font-bold text-center">Shipping</h2>
                         <form onSubmit={handleSubmit(handleDelivery)} className="form-control w-full max-w-xl">
                             <label className="label">
                                 <span className="label-text">Name</span>
                             </label>
-                            <input type="text" defaultValue={name ? name : user?.displayName}
+                            <input type="text" defaultValue={name ? name : info.orderName}
                             {...register("name", {
-                                        validate: value => value !== "" || value === (name ? name : user?.displayName),
+                                        validate: value => value !== "" || value === (name ? name : info?.orderName),
                                         required: "Name is required"
                                     })}
                                     className="input input-bordered w-full max-w-xl" />

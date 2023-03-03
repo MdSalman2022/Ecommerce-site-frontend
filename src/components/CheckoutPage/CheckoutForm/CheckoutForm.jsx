@@ -77,13 +77,12 @@ function CheckoutForm({ subTotal }) {
         setPaymentDetails(paymentIntent)
         toast.success(`Payment successfully`)
 
-
     }
 
     return (
         <>
         <form onSubmit={handleSubmit}>
-            <CardElement
+                <CardElement
                 options={{
                 style: {
                     base: {

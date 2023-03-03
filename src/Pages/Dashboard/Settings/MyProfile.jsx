@@ -1,6 +1,18 @@
 import React from 'react'
+import { AuthContext } from '../../../contexts/AuthProvider/AuthProvider'
+import { useContext } from 'react';
 
 function MyProfile() {
+
+    const {allUsers,user} = useContext(AuthContext)
+
+    
+
+    let info = allUsers.find(user => user.email === user?.email)
+    console.log(info)
+console.log(info)
+
+
     return (
         <div className='flex flex-col'>
                 <div className='flex justify-between py-5 border-b-2'>
@@ -18,8 +30,8 @@ function MyProfile() {
                         <p className='font-bold '>Name</p>
                     </div>
                     <div className='flex gap-2'>
-                    <input type="text" placeholder="First Name" className="input input-bordered input-primary w-full max-w-xs" />
-                    <input type="text" placeholder="Last Name" className="input input-bordered input-primary w-full max-w-xs" />
+                    <input type="text" placeholder="First Name" defaultValue={info?.name.split(" ").slice(0,-1).join(" ")} className="input input-bordered input-primary w-full max-w-xs" />
+                    <input type="text" placeholder="Last Name" defaultValue={info?.name.split(" ")[length-1]} className="input input-bordered input-primary w-full max-w-xs" />
                     </div>
                 </div>
                 <div className='flex items-center justify-between py-5 border-b-2'>
@@ -27,7 +39,7 @@ function MyProfile() {
                         <p className='font-bold '>Email</p>
                     </div>
                     <div className='flex gap-2'>
-                    <input type="text" placeholder="example@gmail.com" className="input input-bordered input-primary w-full max-w-lg" />
+                    <input type="text" placeholder="example@gmail.com" defaultValue={user?.email} className="input input-bordered input-primary w-full max-w-lg" />
                     </div>
                 </div>
                 <div className='flex items-center justify-between py-5 border-b-2'>

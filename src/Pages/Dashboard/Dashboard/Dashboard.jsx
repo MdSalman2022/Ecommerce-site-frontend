@@ -15,7 +15,7 @@ function Dashboard() {
         <div className='py-10'>
             <h1 className='text-3xl font-bold pb-5'>Overview</h1>
             <div className="flex flex-col gap-5">
-                <div className='grid grid-cols-3 gap-5'>
+                <div className='flex flex-col md:grid md:grid-cols-3 gap-5'>
                     <div className="stats flex items-end shadow p-0">  
                         <div className="stat">
                             <div className="stat-title">Todays Sales</div>
@@ -50,7 +50,7 @@ function Dashboard() {
                     </div>
                      
                 </div>
-                <div className='grid grid-cols-3 gap-5'>
+                <div className='flex flex-col md:grid md:grid-cols-3 gap-5'>
 
                     <div className="stats shadow col-span-2">  
                         <div className="stat">
@@ -129,7 +129,7 @@ function Dashboard() {
                     </div>      
                     
                 </div>
-                <div className="grid grid-cols-3 gap-5 bg-white p-5 rounded-2xl shadow">
+                <div className="grid md:grid-cols-3 gap-5 bg-white p-5 rounded-2xl shadow">
                     <div className="overflow-x-auto col-span-3">
                         <p className='text-xl font-bold'>Latest Orders</p>
                             <table className="table w-full rounded-xl">

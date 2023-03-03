@@ -1,12 +1,19 @@
-import React, { useEffect, useRef, useState } from "react";
+import React, { useContext, useEffect, useRef, useState } from "react";
 
 import { MdMobileFriendly } from "react-icons/md";
 import { LazyLoadImage } from "react-lazy-load-image-component";
 import { FiCloudLightning } from 'react-icons/fi';
+import { AuthContext } from "../../contexts/AuthProvider/AuthProvider";
+import { Link } from 'react-router-dom';
 
 const HotProduct = () => {
 
-    
+    const {products, scrolltop} = useContext(AuthContext);
+
+    const productId = "63f8bc4830527aba1c293a20";
+    const item = products.find((item) => item._id === productId); 
+
+
     const [countdown, setCountdown] = React.useState({
         days: 0,
         hours: 0,
@@ -92,12 +99,12 @@ const HotProduct = () => {
                         </div>
                             <div className="border border-primary md:h-96 rounded-lg flex flex-col  md:flex-row justify-center items-center p-5 md:p-10 gap-10">
                             <div className="relative group">
-                                <span className=" group-hover:animate-pulse md:group-hover:-translate-y-10 transition-all duration-300  absolute -left-5 -top-2 z-50 font-mono bg-red-500 h-10 w-10 md:h-10 lg:h-16 md:w-10 lg:w-16 md:text-xl lg:text-3xl font-bold  text-base-100 flex justify-center items-center  rounded-full">60%</span>
-                                <LazyLoadImage src="https://i.ibb.co/JqbDVkt/airpulse-a300-001-500x500.jpg" alt="airpulse" className="w-40 md:w-96 lg:w-56 group-hover:scale-125 transition-all duration-300 "/>
+                                <span className=" group-hover:animate-pulse md:group-hover:-translate-y-10 transition-all duration-300  absolute -left-5 -top-2 z-50 font-mono bg-red-500 h-10 w-10 md:h-10 lg:h-16 md:w-10 lg:w-16 md:text-xl lg:text-3xl font-bold  text-base-100 flex justify-center items-center  rounded-full">30%</span>
+                                <LazyLoadImage src={item.image} alt="airpulse" className="w-40 md:w-96 lg:w-56 group-hover:scale-125 transition-all duration-300 "/>
                             </div>
                             <div className="flex flex-col w-full max-w-5xl z-50 gap-2">
-                                <p className="md:text-2xl lg:text-3xl font-bold ">$999.10 <span className="line-through font-semibold text-red-500">$1280.89</span></p>
-                                <p className="text-2xl lg:text-4xl font-bold mb-5">Edifier Airpulse A300 Hi-Res Audio Bluetooth Speaker with Stand</p>
+                                <p className="md:text-2xl lg:text-3xl font-bold ">${item.price} <span className="line-through font-semibold text-red-500">$1280.89</span></p>
+                                <Link onClick={scrolltop} to={`/productDetails/${item._id}/${encodeURIComponent(item.name).replace(/%20/g, "-")}`} className="transition-all duration-300 text-2xl lg:text-4xl font-bold mb-5 hover:text-primary">{item.name}</Link>
                                 <p className="text-green-600">IN STOCK</p>  
                                 <div className="relative">
                                     <div className="absolute w-full bg-gray-200 h-3 rounded-full "></div>

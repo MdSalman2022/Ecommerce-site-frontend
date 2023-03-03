@@ -9,36 +9,36 @@ import { FaGoogle } from 'react-icons/fa';
 
 const Register = () => {
 
+    const { createUser, updateUser, providerLogin,allUsers } = useContext(AuthContext)
 
     const { register, handleSubmit, formState: { errors } } = useForm()
-    const { createUser, updateUser, providerLogin } = useContext(AuthContext)
     const [signUpError, setSignUpError] = useState('')
 
     const [createdUserEmail, setCreatedUserEmail] = useState('')
 
-    // const navigate = useNavigate()
-    // const location = useLocation()
+    const navigate = useNavigate()
+    const location = useLocation()
 
+console.log(allUsers)
 
-
-    // const from = location?.state?.from.pathname || '/'
-
-    const navigate = useNavigate();
-
+    const from = location?.state?.from.pathname || '/'
+ 
     const handleSignUp = data => {
         setSignUpError('')
         createUser(data.email, data.password)
             .then(result => {
                 const user = result.user;
-                toast.success("Successfuuly Registered")
-                const userInfo = {
-                    displayName: data.name,
-                    photoURL: data.photoURL
-                }
+                toast.success("Successfully Registered") 
                 updateUser(userInfo)
                     .then(() => {
-                        navigate('/')
-                        saveUser(data.name, data.email, data.role)
+                        let findUser = allUsers.find(u => u.email === user.email) 
+                        if (findUser) {
+                            navigate(from, { replace: true })
+                        } 
+                        else {
+                            saveUser(user.displayName, user.email)
+                            navigate(from, { replace: true })
+                        }
                     })
                     .catch(err => console.log(err))
 
@@ -49,9 +49,9 @@ const Register = () => {
             })
     }
 
-    const saveUser = (name, email, role) => {
-        const user = { name, email, role }
-        fetch('https://buyandsell24-server.vercel.app/users', {
+    const saveUser = (name, email,photoURL) => {
+        const user = { name, email, photoURL }
+        fetch('https://bestdeal-ecommerce-server.vercel.app/adduser', {
             method: 'POST',
             headers: {
                 'content-type': 'application/json'
@@ -64,26 +64,33 @@ const Register = () => {
                 setCreatedUserEmail(email)
             })
     }
+
+
     const googleSignIn = event => {
         event.preventDefault();
         const Provider = new GoogleAuthProvider();
         providerLogin(Provider)
             .then(result => {
                 const user = result.user;
-                saveUser(user.displayName, user.email, user.role = "buyer")
+                let findUser = allUsers.find(u => u.email === user.email) 
+                if (findUser) {
+                    navigate(from, { replace: true })
+                } 
+                else {
+                    saveUser(user.displayName, user.email, user.photoURL)
+                    navigate(from, { replace: true })
+                }
             })
             .catch(error => console.error(error))
     }
-
-    const backgroundImage = "https://i.ibb.co/j4h2GNB/blob-scene-haikei.png"
-
+ 
 
 
     return (
         <div className=''>
             <div className="grid grid-cols-2 justify-items-center place-content-center">
                 <div className='bg-gradient-to-r from-primary to-secondary w-full flex flex-col items-center justify-center h-screen'>
-                    <img className='max-w-xl drop-shadow-lg' src="https://i.ibb.co/PwNgB5h/login-page.png" alt="" />
+                    <img className='max-w-xl' src="https://i.ibb.co/PwNgB5h/login-page.png" alt="" />
                 </div>
                 <div className='overflow-hidden bg-accent w-full flex flex-col items-center justify-center h-screen relative'  >
                         <svg viewBox="0 0 200 200" xmlns="http://www.w3.org/2000/svg" className='absolute -right-28 -top-40 h-96 drop-shadow-xl'>
@@ -101,7 +108,7 @@ const Register = () => {
                                     {...register("name",
                                         { required: "Name is required", })}
                                     className="input input-bordered w-full max-w-xs" />
-                                {errors.name && <p className='text-red-500'>{errors.name.message}</p>}
+                                {errors.name && <p className='text-blue-100 underline decoration-red-5'>{errors.name.message}</p>}
                             </div>
                             <div className="space-y-1 text-sm">
                                 <label for="email" className="block text-white ">Email Address</label>
@@ -109,7 +116,7 @@ const Register = () => {
                                     {...register("email",
                                         { required: "Email is required" })}
                                     className="input input-bordered w-full max-w-xs" />
-                                {errors.email && <p className='text-red-500'>{errors.email.message}</p>}
+                                {errors.email && <p className='text-blue-100 underline decoration-red-5'>{errors.email.message}</p>}
                             </div>
                             <div className="space-y-1 text-sm">
                                 <label for="password" className="block text-white ">Password</label>
@@ -121,7 +128,7 @@ const Register = () => {
                                             // pattern: { value: /(?=.*[A-Z])(?=.*[!@#$&*])(?=.*[0-9])/, message: 'Choose Stronger Password' }
                                         })}
                                     className="input input-bordered w-full max-w-xs" />
-                                {errors.password && <p className='text-red-500'>{errors.password.message}</p>}
+                                {errors.password && <p className='text-blue-100 underline decoration-red-5'>{errors.password.message}</p>}
                             </div>
                             
                             <input className='btn btn-secondary border border-white w-full mt-4' value="Sign Up" type="submit" />

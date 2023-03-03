@@ -54,7 +54,7 @@ function Transactions() {
 
 
     return (
-        <div>
+        <div className='py-14 md:p-0'>
             <h1 className="text-3xl font-bold">Transactions</h1>
                 <div className='w-full flex justify-end items-center gap-3'>
                     
@@ -122,8 +122,8 @@ function Transactions() {
                                 </tbody>
                             </table>
                     </div>
-                    <div className="col-span-3 flex justify-center">
-                        <div className="btn-group items-center">                   
+                    <div className="col-span-3 flex-wrap flex justify-center">
+                        <div className="btn-group flex-wrap items-center">                   
                             { pageNumbers.length > 1 &&
                                 pageNumbers.map((number, index) => (
                                     <button key={index} onClick={() => paginate(number)} className={`btn btn-neutral hover:btn-primary ${currentPage === number && 'btn-active'}`}>{number}</button>

@@ -32,14 +32,19 @@ const AuthProvider = ({ children }) => {
     let [subTotal, setSubPrice] = useState(0)
     let [paymentDetails, setPaymentDetails] = useState({})
  
-    
-    const [allUsers, setAllUsers] = useState('')
+     
 
     const [loading, setLoading] = useState(true)
 
     const [title, setTitle] = useState('home')
     
 
+    const { data: allUsers = [] } = useQuery({
+        queryKey: ['getusers'],
+        queryFn: () => fetch('https://bestdeal-ecommerce-server.vercel.app/getusers')
+        .then(res => res.json())
+    }, [])
+  
     const { data: products = [] } = useQuery({
         queryKey: ['products'],
         queryFn: () => fetch('https://bestdeal-ecommerce-server.vercel.app/products')
@@ -178,7 +183,8 @@ const AuthProvider = ({ children }) => {
     useEffect(() => {
         const unsubscribe = onAuthStateChanged(auth, (currentUser) => {
             setUser(currentUser)
-            setLoading(false)
+            console.log(currentUser)
+          setLoading(false)
         });
 
         return () => {
@@ -188,9 +194,7 @@ const AuthProvider = ({ children }) => {
 
     const authInfo = {
         user,
-        loading,
-        allUsers,
-        setAllUsers,
+        loading, 
         setLoading,
         updateUser,
         createUser,
@@ -218,8 +222,8 @@ const AuthProvider = ({ children }) => {
         setResults,
         results,
         setSearchResult,
-        searchResult
-        
+        searchResult,
+        allUsers
     }
 
     return (

@@ -49,7 +49,7 @@ function AddProduct() {
 
 
                     }
-                    fetch('http://localhost:5000/addproduct', {
+                    fetch('https://bestdeal-ecommerce-server.vercel.app/addproduct', {
                         method: 'POST',
                         headers: {
                             'content-type': 'application/json'
@@ -70,7 +70,7 @@ function AddProduct() {
 
     return (
         <div> 
-                <form onSubmit={handleSubmit(handleAdd)} className="form-control w-full grid grid-cols-2 justify-items-start p-5">
+                <form onSubmit={handleSubmit(handleAdd)} className="form-control w-full flex flex-col md:grid grid-cols-2 justify-items-start p-5">
                             <div className="col-span-1 w-full max-w-3xl">
                                 <label className="label">
                                     <span className="text-lg label-text">Product Name</span> 

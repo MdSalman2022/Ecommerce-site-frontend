@@ -10,8 +10,9 @@ import { AuthContext } from '../../../contexts/AuthProvider/AuthProvider';
 function DashboardHeader() {
 
 
-let { dashboardSearch, setDashBoardSearch,products } = useContext(AuthContext)
+let { dashboardSearch, setDashBoardSearch,products,user } = useContext(AuthContext)
 
+    const [isOpen, setIsOpen] = useState(false);
     
     const navigate = useNavigate();
 
@@ -25,15 +26,16 @@ let { dashboardSearch, setDashBoardSearch,products } = useContext(AuthContext)
 
     const handleReset = data => {
         location.reload();
-      }
+    }
     
+ 
     
     return (
-        <div className='flex items-center justify-between py-3'>
+        <div className='hidden md:flex justify-end md:items-center md:justify-between md:py-3 relative'>
 
-            <form onSubmit={handleSubmit(onSubmit)} className="form-control">
-                <div className="input-group">
-                    <input defaultValue={dashboardSearch} type="text" placeholder="Search…" className="input input-bordered w-96 focus:border-b focus:outline-none"   {...register("name", { required: true, maxLength: 80 })} />
+            <form onSubmit={handleSubmit(onSubmit)} className="form-control md:flex hidden">
+                <div className="input-group  ">
+                    <input defaultValue={dashboardSearch} type="text" placeholder="Search…" className="input input-bordered md:w-96 focus:border-b focus:outline-none"   {...register("name", { required: true, maxLength: 80 })} />
                     <button type="submit" className="btn bg-transparent btn-square border-primary"><AiOutlineSearch className='text-3xl text-primary'/></button>
                 </div>
                 {
@@ -44,24 +46,24 @@ let { dashboardSearch, setDashBoardSearch,products } = useContext(AuthContext)
                 }
             </form>
 
-            <div className='flex items-center gap-5'>
-                <div className='relative'>
-                    <p className='btn btn-ghost text-2xl p-2 text-neutral rounded-lg'><BiMessageDetail/></p>
-                    <div className="badge rounded-full w-4 h-4 badge-primary text-white badge-xs absolute top-2 right-1">0</div>
+            <div className='flex items-center gap-5 '>
+                <div className='md:relative hidden'>
+                    <p className='btn btn-ghost text-lg md:text-2xl p-2 text-neutral rounded-lg'><BiMessageDetail/></p>
+                    <div className="badge rounded-full w-2 md:w-4 h-4 badge-primary text-white badge-xs absolute top-2 right-1">0</div>
                 </div>
-                <div className='relative'>
-                    <p className='btn btn-ghost text-2xl p-2 text-neutral rounded-lg'><IoIosNotificationsOutline/></p>
-                    <div className="badge rounded-full w-4 h-4 badge-primary text-white badge-xs absolute top-2 right-1">0</div>
+                <div className='md:relative hidden'>
+                    <p className='btn btn-ghost text-lg md:text-2xl p-2 text-neutral rounded-lg'><IoIosNotificationsOutline/></p>
+                    <div className="badge rounded-full w-2 md:w-4 h-4 badge-primary text-white badge-xs absolute top-2 right-1">0</div>
                 </div>
                 <div className='flex items-center gap-3'>
                     <div className="avatar">
-                        <div className="w-14 rounded-full">
-                            <img src="https://i.ibb.co/hfByZJ1/img1.webp" />
+                        <div className="w-8 md:w-14 rounded-full">
+                            <img src={user?.photoURL ? user?.photoURL : "https://i.ibb.co/hfByZJ1/img1.webp"} />
                         </div>
                     </div>
-                    <div className="flex flex-col">
-                        <p className='text-md font-semibold'>Rico</p>
-                        <p className='text-md'>Admin</p>
+                    <div className="hidden md:flex flex-col">
+                        <p className='text-xs md:text-md font-semibold'>{user?.displayName ? user?.displayName : 'Rico'}</p>
+                        <p className='text-xs md:text-md'>Admin</p>
                     </div>
                 </div>
             </div>

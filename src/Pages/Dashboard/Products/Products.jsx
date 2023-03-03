@@ -326,8 +326,8 @@ function Products() {
                 }
             </div>
             { page === 'overview' &&
-                <div className="flex justify-center">
-                <div className="btn-group items-center">                   
+                <div className="flex flex-wrap justify-center">
+                <div className="btn-group flex-wrap items-center">                   
                     { pageNumbers.length > 1 &&
                         pageNumbers.map((number, index) => (
                             <button key={index} onClick={() => paginate(number)} className={`btn btn-neutral hover:btn-primary ${currentPage === number && 'btn-active'}`}>{number}</button>

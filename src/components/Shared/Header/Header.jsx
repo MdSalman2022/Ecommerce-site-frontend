@@ -61,7 +61,6 @@ const Header = () => {
         }
       }, [searchText]);
       
- 
 
     const handleLogOut = () => {
         logOut()
@@ -448,6 +447,16 @@ const Header = () => {
         navigate('/')
     }
 
+    
+    const [isOpen, setIsOpen] = useState(false);
+
+    useEffect(() => {
+        if (searchResult.length > 0) {
+            setIsOpen(true);
+        }
+        else 
+            setIsOpen(false);
+    }, [searchResult])
 
     return (
         <div>
@@ -491,18 +500,18 @@ const Header = () => {
                         </div>
                         <ul className='absolute bg-white z-50 w-full max-w-3xl lg:max-w-4xl shadow-xl rounded-lg'>
                                 
-                                {searchResult.length > 0 &&
+                                {isOpen &&
                                 searchResult.slice(0,4).map((item, index) => (
                                         <li className='cursor-pointer text-neutral hover:bg-accent p-1 transition-all duration-300 ease-in-out flex items-center gap-2' key={index}>
                                             <img src={item.image} alt="" className='w-20'/>
                                             <div className='flex flex-col'>
-                                                <Link to={`/productDetails/${item._id}/${encodeURIComponent(item.name).replace(/%20/g, "-")}`} className='text-primary'>{item.name}</Link>
+                                                <Link onClick={() => setIsOpen(!isOpen)} to={`/productDetails/${item._id}/${encodeURIComponent(item.name).replace(/%20/g, "-")}`} className='text-primary'>{item.name}</Link>
                                                 <p>${item.price}</p>
                                             </div>
                                         </li>
                                 ))
                                 }
-                            { searchResult.length > 0 && <Link to={`/search/${searchText}`} className='flex items-center justify-center p-2 rounded-b-lg text-white bg-secondary'>See all results</Link>}
+                            {isOpen && <Link onClick={() => setIsOpen(!isOpen)} to={`/search/${searchText}`} className='flex items-center justify-center p-2 rounded-b-lg text-white bg-secondary'>See all results</Link>}
                             
                             </ul>
                     </form>
@@ -522,6 +531,7 @@ const Header = () => {
                                             <div className="dropdown dropdown-end">
                                                 <label tabIndex={0} className="btn btn-sm btn-ghost border border-gray-200 mb-1 cursor-pointer rounded-full h-10 w-10 p-0  "><img src={user.photoURL} alt="" className='w-10 rounded-full' /></label>
                                                 <ul tabIndex={0} className="dropdown-content menu p-2 shadow bg-base-100 rounded-box w-52 text-sm gap-1">
+                                                    <li><span className='flex items-center justify-between'>Dark Mode <input type="checkbox" className="toggle toggle-primary"   /></span></li>
                                                     <li ><Link to="/orderhistory">Order History</Link></li>
                                                     <li onClick={handleLogOut}><a href="#">Logout</a></li>
                                                 </ul>
@@ -571,13 +581,6 @@ const Header = () => {
                                 {cart && <div className={`absolute -top-1 -right-2  text-sm  ${cart.length === 0 ? 'bg-red-500 border-error' : 'bg-green-500 border-primary'} text-base-100 rounded-full border  w-5 h-5 flex items-center justify-center`}>{cart.length}</div>}
                             </div>
                         </Link>
-                        {/* <div className="dropdown dropdown-end">
-                            <label tabIndex={0} className="btn btn-sm btn-ghost border border-gray-200 mb-1 cursor-pointer rounded-full h-10 w-10 p-0 text-2xl hover:bg-primary hover:border-none hover:text-base-100 transition-all duration-300 ease-in-out"><BsPerson/></label>
-                            <ul tabIndex={0} className="dropdown-content menu p-2 shadow bg-base-100 rounded-box w-52 text-sm gap-1">
-                                <li><Link to="/login">Login</Link></li>
-                                <li><Link to="/register">Signup</Link></li>
-                            </ul>
-                        </div> */}
  
                     </div>
                 </div>

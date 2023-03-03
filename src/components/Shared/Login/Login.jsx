@@ -10,7 +10,7 @@ const Login = () => {
 
     const { register, formState: { errors }, handleSubmit } = useForm();
 
-    const { signIn } = useContext(AuthContext)
+    const { signIn,allUsers } = useContext(AuthContext)
 
     const [loginError, setLoginError] = useState('')
     const [loginUserEmail, setLoginUserEmail] = useState('')
@@ -26,17 +26,33 @@ const Login = () => {
 
 
 
+
+
     const handleLogin = data => {
         setLoginError('')
         signIn(data.email, data.password)
-            .then(result => {
-
-                navigate('/')
-                const user = result.user
+            .then(result => { 
                 setLoginUserEmail(data.email)
+                const user = result.user
+                let findUser = allUsers.find(u => u.email === user.email) 
+                if (findUser) {
+                    navigate(from, { replace: true })
+                } 
+                else {
+                    saveUser(user.displayName, user.email)
+                    navigate(from, { replace: true })
+                }
+
             })
             .catch(error => {
-                setLoginError(error.message)
+                if (error.message === 'Firebase: Error (auth/user-not-found).') {
+                    toast.error("User not found")
+                    setLoginError("Email did not matched")
+                }
+                else {
+                    setLoginError(error.message)
+                }  
+                console.log(error.message)
             })
     }
 
@@ -47,17 +63,41 @@ const Login = () => {
         providerLogin(Provider)
             .then(result => {
                 const user = result.user;
-            })
+                let findUser = allUsers.find(u => u.email === user.email) 
+                if (findUser) {
+                    navigate(from, { replace: true })
+                } 
+                else {
+                    saveUser(user.displayName, user.email)
+                    navigate(from, { replace: true })
+                }
+                })
             .catch(error => console.error(error))
     }
     
+    const saveUser = (name, email,photoURL) => {
+        const user = { name, email, photoURL }
+        fetch('https://bestdeal-ecommerce-server.vercel.app/adduser', {
+            method: 'POST',
+            headers: {
+                'content-type': 'application/json'
+            },
+            body: JSON.stringify(user)
+        })
+            .then(res => res.json())
+            .then(data => {
+                console.log('save user', data)
+                // setCreatedUserEmail(email)
+            })
+    }
+
 
     return (
         <div className=' '>
             
             <div className="grid grid-cols-2 justify-items-center place-content-center ">
                 <div className='bg-gradient-to-r from-primary to-secondary w-full flex flex-col items-center justify-center h-screen'>
-                    <img className='max-w-xl drop-shadow-sm' src="https://i.ibb.co/PwNgB5h/login-page.png" alt="" />
+                    <img className='max-w-xl' src="https://i.ibb.co/PwNgB5h/login-page.png" alt="" />
                 </div>
                 <div className='bg-accent w-full flex flex-col items-center justify-center h-screen relative overflow-hidden'>
                     <svg viewBox="0 0 200 200" xmlns="http://www.w3.org/2000/svg" className='absolute -left-28 -top-40 h-96 drop-shadow-xl'>
@@ -76,7 +116,7 @@ const Login = () => {
                                         required: "Email is required"
                                     })}
                                     className="input input-bordered w-full max-w-xs" />
-                                {errors.email && <p className='text-red-600'>{errors.email?.message}</p>}
+                                {errors.email && <p className='text-blue-100 underline decoration-red-500'>{errors.email?.message}</p>}
                             </div>
                             <div className="space-y-1 text-sm">
                                 <label className="label"><span className="label-text text-white">Password</span></label>
@@ -86,12 +126,12 @@ const Login = () => {
                                         minLength: { value: 6, message: 'Password must be 6 character or longer' }
                                     })}
                                     className="input input-bordered w-full max-w-xs" />
-                                {errors.password && <p className='text-red-600'>{errors.password?.message}</p>}
+                                {errors.password && <p className='text-blue-100 underline decoration-red-500'>{errors.password?.message}</p>}
                             </div>
                             <input className='btn btn-secondary w-full border border-white' value="Login" type="submit" />
                             <div>
                                 {
-                                    loginError && <p className='text-red-500'>{loginError}</p>
+                                    loginError && <p className='text-blue-100 underline decoration-red-500'>{loginError}</p>
                                 }
                             </div>
                         </form>
