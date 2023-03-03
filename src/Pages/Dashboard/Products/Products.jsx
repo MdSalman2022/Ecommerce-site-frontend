@@ -115,7 +115,7 @@ function Products() {
 
 
     const handleDelete = ids => {
-        fetch('https://bestdeal-ecommerce-server.vercel.app/delete', {
+        fetch(`${import.meta.env.VITE_SERVER_URL}/delete`, {
           method: 'DELETE',
           headers: {
             'Content-Type': 'application/json'
@@ -148,7 +148,7 @@ function Products() {
         const { name, price, stock } = data;
         const updatedProduct = {name, price, stock }
         
-        fetch(`https://bestdeal-ecommerce-server.vercel.app/update/${id}`, {
+        fetch(`${import.meta.env.VITE_SERVER_URL}/update/${id}`, {
             method: 'PUT',
             headers: {
                 'content-type': 'application/json'

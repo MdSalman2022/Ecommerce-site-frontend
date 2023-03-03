@@ -66,7 +66,7 @@ function Shipments() {
         
         
         const handleDelete = ids => {
-                fetch('https://bestdeal-ecommerce-server.vercel.app/deleteOrder', {
+                fetch(`${import.meta.env.VITE_SERVER_URL}/deleteOrder`, {
                   method: 'DELETE',
                   headers: {
                     'Content-Type': 'application/json'
@@ -85,7 +85,7 @@ function Shipments() {
               }
         
         const handleOrder = (ids, status) => {
-                fetch('https://bestdeal-ecommerce-server.vercel.app/orderstatus', {
+                fetch(`${import.meta.env.VITE_SERVER_URL}/orderstatus`, {
                   method: 'PUT',
                   headers: {
                     'Content-Type': 'application/json'
@@ -103,7 +103,7 @@ function Shipments() {
                   .catch(err => console.error(err))
               }
         const handleCancelOrder = ids => {
-                fetch('https://bestdeal-ecommerce-server.vercel.app/orderCancel', {
+                fetch(`${import.meta.env.VITE_SERVER_URL}/orderCancel`, {
                   method: 'PUT',
                   headers: {
                     'Content-Type': 'application/json'

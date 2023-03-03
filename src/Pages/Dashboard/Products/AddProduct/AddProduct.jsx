@@ -49,7 +49,7 @@ function AddProduct() {
 
 
                     }
-                    fetch('https://bestdeal-ecommerce-server.vercel.app/addproduct', {
+                    fetch(`${import.meta.env.VITE_SERVER_URL}/addproduct`, {
                         method: 'POST',
                         headers: {
                             'content-type': 'application/json'

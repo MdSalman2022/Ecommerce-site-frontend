@@ -51,7 +51,7 @@ console.log(allUsers)
 
     const saveUser = (name, email,photoURL) => {
         const user = { name, email, photoURL }
-        fetch('https://bestdeal-ecommerce-server.vercel.app/adduser', {
+        fetch(`${import.meta.env.VITE_SERVER_URL}/adduser`, {
             method: 'POST',
             headers: {
                 'content-type': 'application/json'

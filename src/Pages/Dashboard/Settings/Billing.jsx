@@ -21,7 +21,7 @@ function Billing() {
     const handleCard = data => {
         let cardnumber = data.cardnumber
         let email = user.email
-        fetch('https://bestdeal-ecommerce-server.vercel.app/userdata', {
+        fetch(`${import.meta.env.VITE_SERVER_URL}/userdata`, {
           method: 'PUT',
           headers: {
             'Content-Type': 'application/json'

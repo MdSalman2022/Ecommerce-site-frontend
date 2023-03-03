@@ -20,7 +20,7 @@ function CheckoutForm({ subTotal }) {
     
     useEffect(() => {
         // Create PaymentIntent as soon as the page loads
-        fetch("https://bestdeal-ecommerce-server.vercel.app/create-payment-intent", {
+        fetch(`${import.meta.env.VITE_SERVER_URL}/create-payment-intent`, {
           method: "POST",
             headers: {
                 "Content-Type": "application/json",

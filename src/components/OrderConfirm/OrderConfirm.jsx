@@ -45,7 +45,7 @@ console.log(userInfo)
             shipment: 'picked',
         };
       
-        fetch('https://bestdeal-ecommerce-server.vercel.app/orderhistory', {
+        fetch(`${import.meta.env.VITE_SERVER_URL}/orderhistory`, {
           method: 'POST',
           headers: {
             'Content-Type': 'application/json'

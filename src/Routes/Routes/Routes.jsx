@@ -42,7 +42,7 @@ export const router = createBrowserRouter([
             },
             {
                 path: '/productdetails/:id/:name',
-                loader: ({ params }) => fetch(`https://bestdeal-ecommerce-server.vercel.app/product/${params.id}`),
+                loader: ({ params }) => fetch(`${import.meta.env.VITE_SERVER_URL}/product/${params.id}`),
                 element: <ProductDetails></ProductDetails>
             }, 
             {

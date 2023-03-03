@@ -41,13 +41,13 @@ const AuthProvider = ({ children }) => {
 
     const { data: allUsers = [] } = useQuery({
         queryKey: ['getusers'],
-        queryFn: () => fetch('https://bestdeal-ecommerce-server.vercel.app/getusers')
+        queryFn: () => fetch(`${import.meta.env.VITE_SERVER_URL}/getusers`)
         .then(res => res.json())
     }, [])
   
     const { data: products = [] } = useQuery({
         queryKey: ['products'],
-        queryFn: () => fetch('https://bestdeal-ecommerce-server.vercel.app/products')
+        queryFn: () => fetch(`${import.meta.env.VITE_SERVER_URL}/products`)
         .then(res => res.json())
         
     }, [])
@@ -121,7 +121,7 @@ const AuthProvider = ({ children }) => {
     
     const { data: orders = [] } = useQuery({
         queryKey: ['orderhistory'],
-        queryFn: () => fetch('https://bestdeal-ecommerce-server.vercel.app/orderhistory')
+        queryFn: () => fetch(`${import.meta.env.VITE_SERVER_URL}/orderhistory`)
             .then(res => res.json())
     }, [])
 

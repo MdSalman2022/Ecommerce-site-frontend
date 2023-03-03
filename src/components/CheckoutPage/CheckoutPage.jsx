@@ -29,7 +29,7 @@ function CheckoutPage() {
         let address = data.address
         let contact = data.contact
         let city = data.city
-        fetch('https://bestdeal-ecommerce-server.vercel.app/deliveryInfo', {
+        fetch(`${import.meta.env.VITE_SERVER_URL}/deliveryInfo'`, {
             method: 'PUT',
             headers: {
                 'Content-Type': 'application/json'
