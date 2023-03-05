@@ -82,11 +82,11 @@ function Banner() {
                         
                         </div> 
                         <div className="my-2 md:my-10 gap-3 px-2 md:gap-5 lg:gap-0 md:px-0 lg:space-y-12 h-full flex items-start lg:items-end md:items-center justify-around lg:justify-start lg:flex-col ">
-                                <div className="card lg:card-side bg-white">
+                                <div className="card lg:card-side bg- dark:bg-neutral">
                                     <img className='rounded-2xl  object-cover border-primary border w-full h-40 lg:w-96 md:h-72' src="https://i.ibb.co/Pc9jLbR/speaker.webp" alt="image" width={300} height={160} />
                                 </div>                          
                             
-                                <div className="card lg:card-side bg-white">
+                                <div className="card lg:card-side bg-white dark:bg-neutral">
                                     <img className='rounded-2xl object-cover border-primary border w-52 h-40 md:w-96 md:h-72' src="https://i.ibb.co/kXc9Xgt/headphone.webp" alt="image" width={300} height={160}/>
                                 </div>                           
                         </div>
@@ -94,7 +94,7 @@ function Banner() {
                 </div>    
                 {
                     isDesktop &&
-                    (<Marquee className="w-screen h-20 md:h-40 overflow-hidden" speed={150} pauseOnHover={true}>
+                    (<Marquee className="w-screen h-20 md:h-40 overflow-hidden " speed={150} pauseOnHover={true} gradient={false} >
                             <FaApple className='p-3 lg:p-5 text-6xl lg:text-9xl transition-all duration-300 text-black  '/>
                             
                             <SiSamsung className='p-0 text-5xl lg:text-9xl transition-all duration-300 text-blue-600  '/>

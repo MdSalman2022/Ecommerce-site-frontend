@@ -35,7 +35,7 @@ const BackInStore = () => {
             <div className="container mx-auto  grid grid-cols-1 lg:grid-cols-3">
                 <div className='flex flex-col justify-center gap-3'>
                     <h3 className="font-bold text-xl md:text-4xl text-secondary">Back In Store this week</h3>
-                    <p className='w-96 text-neutral'>Finally these fast selling products are back in stock.
+                    <p className='w-96 text-neutral dark:text-accent'>Finally these fast selling products are back in stock.
                         What's in it for you? Be quick or be...</p>
                     <Link onClick={scrolltop} to="/products" className='flex items-center gap-3 text-primary font-semibold'>View all products <FaAngleRight/></Link>
 

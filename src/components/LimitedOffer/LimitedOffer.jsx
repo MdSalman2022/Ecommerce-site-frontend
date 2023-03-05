@@ -43,10 +43,10 @@ const LimitedOffer = () => {
     
     return (
         <div className='py-5 lg:py-20'>
-            <div className='container mx-auto border rounded-2xl '>
-                <div className="card lg:card-side bg-base-100 ">
+            <div className='container mx-auto border rounded-2xl dark:border-gray-400'>
+                <div className="card lg:card-side bg-base-100 dark:bg-neutral dark:text-white">
                     <figure><LazyLoadImage src="https://i.ibb.co/4mC2XsP/macbook.webp" alt="Album" className='h-full object-cover'/></figure>
-                    <div className="card-body flex-col justify-center items-center gap-10 border-l">
+                    <div className="card-body flex-col justify-center items-center gap-10 border-l dark:border-gray-400">
                         <div className="text-xl md:text-3xl font-semibold text-center">Limited Offer on <span className="font-bold text-primary">Laptops</span> <h2 className="text-2xl md:text-4xl font-bold text-primary">Upto 60%</h2></div> 
                         <div className="grid grid-flow-col gap-5 text-center auto-cols-max">
                             <div className="flex flex-col p-2 bg-primary rounded-box text-base-100">

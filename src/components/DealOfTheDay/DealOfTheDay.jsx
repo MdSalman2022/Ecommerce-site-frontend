@@ -18,8 +18,8 @@ const DealOfTheDay = () => {
   
     return (
         <div className='pb-20'>
-            <div className='container mx-auto border rounded-2xl '>
-                <div className="card flex-col-reverse md:flex-col lg:flex-row lg:card-side bg-white ">
+            <div className='container mx-auto border  rounded-2xl '>
+                <div className="card flex-col-reverse md:flex-col lg:flex-row lg:card-side bg-white dark:bg-neutral dark:text-accent dark:border-gray-400 ">
                     <div className="card-body flex-col justify-center items-center gap-10 border-r">
                         <div className="text-4xl text-center flex flex-col">Get 30% Off on<span className='text-primary font-bold'>PlayStation 5</span></div>
                         

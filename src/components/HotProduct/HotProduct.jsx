@@ -71,10 +71,10 @@ const HotProduct = () => {
 
     return (
         <div className='py-20'>
-            <div className="container mx-auto ">
+            <div className="container mx-auto">
                     <div className="flex flex-col items-center md:grid h-full md:grid-cols-3 lg:grid-cols-5 gap-5">
                     {/* sidebar */}
-                        <div className="col-span-1 flex flex-col gap-2">
+                        <div className="col-span-1 flex flex-col gap-2 dark:opacity-90">
                             <div className=" h-72 bg-base-100 w-full border p-5 flex flex-col rounded-xl">
                                 <p>Get the all new</p>
                                 <p className="font-bold text-xl text-primary">Intel I5 13600K</p>
@@ -91,7 +91,7 @@ const HotProduct = () => {
                     
                     {/* Hot product box  */}
                     <div className="md:col-span-2 lg:col-span-4">
-                        <div className="text-center pb-10">
+                        <div className="text-center dark:text-accent pb-10">
                             <p className="text-center text-3xl font-bold">
                                 <span className="text-red-500">Hot</span> Product This Week
                             </p>
@@ -103,8 +103,8 @@ const HotProduct = () => {
                                 <LazyLoadImage src={item.image} alt="airpulse" className="w-40 md:w-96 lg:w-56 group-hover:scale-125 transition-all duration-300 "/>
                             </div>
                             <div className="flex flex-col w-full max-w-5xl z-50 gap-2">
-                                <p className="md:text-2xl lg:text-3xl font-bold ">${item.price} <span className="line-through font-semibold text-red-500">$1280.89</span></p>
-                                <Link onClick={scrolltop} to={`/productDetails/${item._id}/${encodeURIComponent(item.name).replace(/%20/g, "-")}`} className="transition-all duration-300 text-2xl lg:text-4xl font-bold mb-5 hover:text-primary">{item.name}</Link>
+                                <p className="md:text-2xl lg:text-3xl font-bold dark:text-accent ">${item.price} <span className="line-through font-semibold text-red-500">$1280.89</span></p>
+                                <Link onClick={scrolltop} to={`/productDetails/${item._id}/${encodeURIComponent(item.name).replace(/%20/g, "-")}`} className="transition-all duration-300 text-2xl lg:text-4xl font-bold mb-5 hover:text-primary dark:text-accent">{item.name}</Link>
                                 <p className="text-green-600">IN STOCK</p>  
                                 <div className="relative">
                                     <div className="absolute w-full bg-gray-200 h-3 rounded-full "></div>
@@ -136,7 +136,7 @@ const HotProduct = () => {
                                         </span>
                                         sec
                                     </div>
-                                    <div className="flex text-left items-center">
+                                    <div className="flex text-left items-center dark:text-accent">
                                         <p>Remains until the end of <br /> the offer</p>
                                     </div>
                                 </div>

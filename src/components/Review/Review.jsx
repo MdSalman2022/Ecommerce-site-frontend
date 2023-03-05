@@ -1,9 +1,12 @@
-import React from 'react';
+import React, { useContext } from 'react';
 import Marquee from 'react-fast-marquee';
 import { LazyLoadImage } from 'react-lazy-load-image-component';
 import {FaRegStar} from 'react-icons/fa';
+import { AuthContext } from '../../contexts/AuthProvider/AuthProvider';
 
 const Review = () => {
+
+    const {darkmode} = useContext(AuthContext);
 
     const reviews = [
         {
@@ -40,15 +43,17 @@ const Review = () => {
     return (
         <div className='py-5 lg:py-20'>
              <div className="text-center my-5 flex flex-col items-center gap-5 pb-10">
-                <h1 className="text-4xl font-bold">What are people saying about us</h1>
+                <h1 className="text-4xl font-bold dark:text-accent">What are people saying about us</h1>
                 <span className="h-1 w-20 bg-primary rounded-full"></span>
             </div>
             <div className="flex">
-            <Marquee
+                <Marquee
+                    {...(darkmode ? {gradient: false} : {gradient: true})}
                     speed={100}
                     pauseOnHover={true}
                     style={{height: '100%', width: '100vw'}}
                     className="w-full h-52 md:h-40 "
+
                 >
             {
                 reviews.map((review, index) => (
@@ -60,7 +65,7 @@ const Review = () => {
                                         <LazyLoadImage src={review.img} alt="" className="object-cover w-12 h-12 rounded-full dark:bg-gray-500" />
                                 </div>
                                 <div>
-                                        <h4 className="font-bold">{ review.name}</h4>
+                                        <h4 className="font-bold dark:text-accent">{ review.name}</h4>
                                         <span className="text-xs dark:text-gray-400">{ review.days}</span>
                                 </div>
                             </div>

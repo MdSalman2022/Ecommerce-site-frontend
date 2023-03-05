@@ -14,15 +14,15 @@ const Brand = () => {
 
 
     return (
-        <div className='bg-accent'>
+        <div className='bg-accent dark:bg-opacity-10'>
             <div className="container mx-auto py-10">
                 <div className="text-center flex flex-col items-center justify-center my-10 gap-5">
-                    <h1 className="text-4xl font-bold text-secondary">Shop By Brand</h1>
+                    <h1 className="text-4xl font-bold text-secondary dark:text-primary">Shop By Brand</h1>
                     <span className={`h-1 w-20 bg-primary rounded-full transition-width duration-500 ${showBorder ? "lg:w-20" : "lg:w-0"}`}></span>
                 </div>
                 <section className="">
                     <div className="container p-6 mx-auto space-y-6 text-center lg:p-8 lg:space-y-8">
-                        <div className="h-full grid grid-cols-2 md:grid-cols-3 lg:grid-cols-6 justify-items-center gap-5 text-gray-500">
+                        <div className="h-full grid grid-cols-2 md:grid-cols-3 lg:grid-cols-6 justify-items-center gap-5 text-gray-500 dark:text-accent">
                             <Link onClick={scrolltop} to={`/brand/apple`}><FaApple className='p-5 text-9xl transition-all duration-300 hover:text-black '/></Link>
                         
                             <Link onClick={scrolltop} to="/brand/samsung"><SiSamsung className='p-0 text-9xl transition-all duration-300 hover:text-primary '/></Link>                            

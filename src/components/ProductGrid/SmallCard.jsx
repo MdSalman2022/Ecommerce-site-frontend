@@ -59,7 +59,7 @@ function SmallCard({products, len}) {
     return (
         <div className="card items-center card-compact lg:card-side bg-base-100 relative drop-shadow-md h-full w-full">
             <figure className='w-80 object-cover'><LazyLoadImage src={products[products.length-len]?.image} alt="Album" className='w-60 object-cover'/></figure>
-            <div className="card-body flex flex-col w-full">
+            <div className="card-body flex flex-col w-full dark:bg-neutral dark:text-accent dark:border dark:rounded-r-2xl">
                 <div className='card-title flex-col justify-start items-start w-[90%]'>
                     <Link  onClick={scrolltop} className='hover:text-primary transition-all' to={`/productDetails/${products[products.length-len]?._id}/${encodeURIComponent(products[products.length-len]?.name).replace(/%20/g, "-")}`}>{products[products.length-len]?.name}</Link>
                     <p className="text-xl font-semibold">${products[products.length-len]?.price}</p>
@@ -72,7 +72,7 @@ function SmallCard({products, len}) {
                     <div className=' flex flex-col gap-3 items-center'>
                     <div className="flex w-full justify-center items-center">
                         <button className='btn btn-secondary rounded-full ' onClick={() => setCount(count - 1)} disabled={count === 0}><FaMinus className="text-base-100"/></button>
-                        <input type="number" className=' w-full text-center border-none'  value={count} onChange={handleChange} />
+                        <input type="number" className=' w-full text-center border-none dark:bg-transparent'  value={count} onChange={handleChange} />
                         <button className={`btn btn-secondary rounded-full border-none text-neutral ${count === 10 ? ' hover:bg-[#e5e7eb] bg-[#e5e7eb] ' : ''}`}
                         onClick={() => setCount(count + 1)}  disabled={count === 10}><FaPlus className="text-base-100"/></button>
                         </div>

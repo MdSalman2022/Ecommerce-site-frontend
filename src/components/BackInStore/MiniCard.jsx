@@ -24,9 +24,9 @@ function MiniCard({ item }) {
     }
 
     return (
-        <div className="card card-compact bg-base-100 shadow-lg shadow-blue-50 h-[500px] group relative">
+        <div className="card card-compact bg-base-100 shadow-lg shadow-blue-50 dark:shadow-none h-[500px] group relative">
             <figure><LazyLoadImage className='object-cover group-hover:scale-110 transition-all duration-300 p-2 '  src={item?.image} alt={item?.cat} /></figure>
-            <div className="card-body">
+            <div className="card-body dark:bg-gray-200 dark:rounded-b-2xl">
                 <h2 className="card-title text-sm justify-between">
                 <Link preventScrollReset={false}  onClick={scrolltop} className='hover:text-primary transition-all' to={`/productDetails/${item?._id}/${encodeURIComponent(item?.name).replace(/%20/g, "-")}`}>{item?.name}</Link>
                     {/* {item?.name} */}
@@ -43,12 +43,12 @@ function MiniCard({ item }) {
                         <div className='w-full flex flex-col gap-3 justify-center items-center'>
                             <div className="flex">
                                 <button className='btn btn-secondary rounded-full h-5 w-12 text-xl' onClick={() => setCount(count - 1)} disabled={count === 0}><FaMinus className="text-base-100"/></button>
-                                <input type="number" className=' text-center border-none'  value={count} onChange={handleChange}/>
+                                <input type="number" className=' text-center border-none dark:bg-transparent'  value={count} onChange={handleChange}/>
                                 <button className={`btn btn-secondary rounded-full h-8 w-12 text-xl border-none text-neutral${count === 10 ? ' hover:bg-[#e5e7eb] bg-[#e5e7eb] ' : ''}`}
                                     onClick={() => setCount(count + 1)}  disabled={count === 10}
                                 ><FaPlus className="text-base-100"/></button>
                             </div>
-                        <button className="btn rounded-full btn-secondary text-base-100 w-full md:w-48 lg:w-80">Add to cart</button>                                    
+                        <button className="btn rounded-full btn-secondary text-base-100 w-full md:w-48 lg:w-72">Add to cart</button>                                    
                         </div>                               
                     </div>
                 </div>

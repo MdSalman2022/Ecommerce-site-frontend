@@ -55,9 +55,9 @@ function FeaturedCard({ item }) {
       
 
     return (
-        <div className="card px-5 md:px-0 lg:w-64 card-compact bg-white shadow-lg md:h-[550px] group relative">
-        <figure><LazyLoadImage className='object-cover md:w-52 h-60 group-hover:scale-110 transition-all duration-300 p-2'  src={item.image} alt="featured" /></figure>
-        <div className="card-body h-72 md:h-52">
+        <div className="card px-5 md:px-0 lg:w-64 card-compact bg-white dark:bg-gray-300 border-white border shadow-lg md:h-[550px] group relative">
+        <figure className='dark:bg-white'><LazyLoadImage className='object-cover md:w-52 h-60 group-hover:scale-110 transition-all duration-300 p-2'  src={item.image} alt="featured" /></figure>
+        <div className="card-body h-72 md:h-52 dark:bg-gray-200">
                 <h2 className="card-title text-lg justify-between">
                 <Link onClick={scrolltop} className='hover:text-secondary transition-all' to={`/productDetails/${item._id}/${encodeURIComponent(item.name).replace(/%20/g, "-")}`}>{item.name} {item?.bestseller ? <div className="badge bg-green-600 border-0 text-base-100 top-40 right-3">{item?.sells}+</div> : ''}</Link>
                      
@@ -74,7 +74,7 @@ function FeaturedCard({ item }) {
                     <div className=' flex flex-col gap-3 items-center'>
                         <div className="flex w-full justify-center items-center">
                             <button className='btn btn-secondary rounded-full ' onClick={() => setCount(count - 1)} disabled={count === 0}><FaMinus className="text-base-100"/></button>
-                            <input type="number" className='w-36 lg:w-32 text-center border-none'  value={count} onChange={handleChange}/>
+                            <input type="number" className='w-36 lg:w-32 text-center border-none dark:bg-transparent'  value={count} onChange={handleChange}/>
                             <button className={`btn btn-secondary rounded-full border-none text-neutral ${count === 10 ? ' hover:bg-[#e5e7eb] bg-[#e5e7eb] ' : ''}`}
                             onClick={() => setCount(count + 1)}  disabled={count === 10}><FaPlus className="text-base-100"/></button>
                         </div>

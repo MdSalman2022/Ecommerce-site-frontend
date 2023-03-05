@@ -44,9 +44,9 @@ const Featured = () => {
     const showBorder = useShowAtThreshold(1300);
     
     return (
-        <div className='bg-primary py-20'>
+        <div className='bg-primary dark:bg-opacity-10 py-20'>
                 <div className="container mx-auto flex flex-col items-center gap-5 text-center  ">
-                    <h1 className={`text-3xl md:text-5xl font-bold text-base-100`}>Featured Products</h1>
+                    <h1 className={`text-3xl md:text-5xl font-bold text-base-100 dark:text-gray-200`}>Featured Products</h1>
                     <span
                         className={`h-1 w-20 bg-base-100 rounded-full transition-width duration-500 ${
                             showBorder ? "md:w-20" : "md:w-0"

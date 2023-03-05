@@ -15,6 +15,7 @@ const analysis = getAnalytics(app)
 const AuthProvider = ({ children }) => {
 
   
+  const [darkmode, setDarkMode] = useState(false)
  
     // let [cart, setCart] = useState([]);
 
@@ -223,7 +224,9 @@ const AuthProvider = ({ children }) => {
         results,
         setSearchResult,
         searchResult,
-        allUsers
+        allUsers,
+        setDarkMode,
+        darkmode
     }
 
     return (

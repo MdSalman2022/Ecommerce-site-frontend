@@ -58,7 +58,7 @@ function BigCard({ products }) {
     return (
             <div className="card card-compact lg:card-side bg-base-100 relative drop-shadow-md">
                         <figure className='w-full object-cover p-5'><LazyLoadImage src={products[products.length-1]?.image} alt="Album"/></figure>
-                        <div className="card-body flex flex-col justify-between w-full">
+                        <div className="card-body flex flex-col justify-between w-full dark:bg-neutral dark:text-accent dark:border dark:rounded-r-2xl">
                             <div className='card-title flex-col justify-start items-start'>
                                 <Link  onClick={scrolltop} className='hover:text-primary transition-all' to={`/productDetails/${products[products.length-1]?._id}/${encodeURIComponent(products[products.length-1]?.name).replace(/%20/g, "-")}`}>{products[products.length-1]?.name}</Link>
                                 <p className="text-xl font-semibold">${products[products.length-1]?.price}</p>
@@ -83,7 +83,7 @@ function BigCard({ products }) {
                                     <div className=' flex flex-col gap-3 items-center'>
                                         <div className="flex w-full justify-center items-center">
                                             <button className='btn btn-secondary rounded-full ' onClick={() => setCount(count - 1)} disabled={count === 0}><FaMinus className="text-base-100"/></button>
-                                            <input type="number" className='w-full text-center border-none' value={count} onChange={handleChange} />
+                                            <input type="number" className='w-full text-center border-none dark:bg-transparent' value={count} onChange={handleChange} />
                                             <button className={`btn btn-secondary rounded-full border-none text-neutral ${count === 10 ? ' hover:bg-[#e5e7eb] bg-[#e5e7eb] ' : ''}`}
                                             onClick={() => setCount(count + 1)}  disabled={count === 10}><FaPlus className="text-base-100"/></button>
                                         </div>

@@ -67,7 +67,7 @@ const PopulerProducts = () => {
  
 
     return (
-        <div className='md:py-20 bg-accent'>
+        <div className='md:py-20 bg-accent dark:bg-opacity-10'>
             <div className='container mx-auto p-5 md:p-0'>
                 
                 <div className="flex flex-col md:flex-row justify-between gap-2 py-5">

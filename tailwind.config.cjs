@@ -1,5 +1,6 @@
 /** @type {import('tailwindcss').Config} */
 module.exports = {
+  darkMode: "class",
   content: [
     "./src/**/*.{js,jsx,ts,tsx}",
   ],
@@ -40,6 +41,7 @@ module.exports = {
           "error": "#ea2b0f",
         },
       },
+      "light", 
     ],
   },
   plugins: [require("daisyui"), "prettier-plugin-organize-imports", "prettier-plugin-tailwindcss", ], "pluginSearchDirs": false

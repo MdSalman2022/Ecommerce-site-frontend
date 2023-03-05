@@ -22,7 +22,7 @@ import Fuse from 'fuse.js';
 const Header = () => {
     const navigate = useNavigate();
     const { user, logOut,cart } = useContext(AuthContext)
-    let { searchText, setSearchText, searchResult,setSearchResult,products} = useContext(AuthContext)
+    let { searchText, setSearchText, searchResult,setSearchResult,products, darkmode, setDarkMode} = useContext(AuthContext)
 
     const { register, handleSubmit, formState: { errors } } = useForm(); 
     
@@ -459,9 +459,9 @@ const Header = () => {
     }, [searchResult])
 
     return (
-        <div>
+        <div className='bg-base-100 dark:bg-neutral '>
             {/* top header  */}
-            <div className={`hidden h-8 md:grid grid-cols-3 container mx-auto lg:gap-80 text-sm place-items-center  bg-base-100 `}>
+            <div className={`hidden h-8 md:grid grid-cols-3 container mx-auto lg:gap-80 text-sm place-items-center text-neutral dark:text-base-100`}>
                 <div className='flex gap-5'>
                     <Link to="/" className='flex items-center gap-2'><BiHomeAlt/> Home</Link>
                     <p className='flex items-center gap-2'><BsFillPersonFill/> About Us</p>
@@ -482,7 +482,7 @@ const Header = () => {
             </div>
 
             {/* Primary Header  */}
-            <div className={`hidden md:flex border-t  `}>
+            <div className={`hidden md:flex border-t dark:border-gray-600 `}>
                 <div className="container mx-auto grid grid-cols-4 md:justify-items-center lg:justify-items-stretch gap-10 lg:grid-cols-5  py-5">
                     <div className=" col-span-1 logo hidden md:flex items-center">
                         <Link to='/' className=" ">
@@ -493,20 +493,20 @@ const Header = () => {
                     </div>
                     <form onSubmit={handleSubmit(onSubmit)} className="pl-3 lg:pl-0 w-full search col-span-3">
                         <div onChange={handleSearch} className="input-group">
-                            <input value={searchText}  type="text" autoComplete='off' placeholder="Search..." className="input input-bordered border-primary border-r-0 w-full"  {...register("name", { required: true, maxLength: 80 })} />
+                            <input value={searchText}  type="text" autoComplete='off' placeholder="Search..." className="input input-bordered border-primary border-r-0 dark:bg-neutral dark:text-accent w-full"  {...register("name", { required: true, maxLength: 80 })} />
                             {/* {searchResult.length > <button className='bg-white text-neutral border-primary border-y font-bold px-3 text-2xl'><IoClose /></button>} */}
-                            {searchText.length > 0 && <span onClick={handleClear} className='bg-white text-neutral border-primary border-y font-bold px-3 text-2xl'><IoClose /></span>}
+                            {searchText.length > 0 && <span onClick={handleClear} className='bg-white dark:bg-neutral dark:text-accent text-neutral border-primary border-y font-bold px-3 text-2xl'><IoClose /></span>}
                             <button type="submit" className='bg-primary text-base-100 font-bold px-3 text-2xl'><AiOutlineSearch /></button>
                         </div>
-                        <ul className='absolute bg-white z-50 w-full max-w-3xl lg:max-w-4xl shadow-xl rounded-lg'>
+                        <ul className='absolute bg-white dark:bg-neutral dark:border dark:border-gray-600 z-50 w-full max-w-3xl lg:max-w-4xl shadow-xl rounded-lg'>
                                 
                                 {isOpen &&
                                 searchResult.slice(0,4).map((item, index) => (
-                                        <li className='cursor-pointer text-neutral hover:bg-accent p-1 transition-all duration-300 ease-in-out flex items-center gap-2' key={index}>
+                                        <li className='cursor-pointer text-neutral hover:bg-accent p-1 transition-all duration-300 ease-in-out flex items-center gap-2 dark:border-b dark:border-gray-600 group' key={index}>
                                             <img src={item.image} alt="" className='w-20'/>
-                                            <div className='flex flex-col'>
+                                            <div className='flex flex-col '>
                                                 <Link onClick={() => setIsOpen(!isOpen)} to={`/productDetails/${item._id}/${encodeURIComponent(item.name).replace(/%20/g, "-")}`} className='text-primary'>{item.name}</Link>
-                                                <p>${item.price}</p>
+                                                <p className='dark:text-accent dark:group-hover:text-neutral'>${item.price}</p>
                                             </div>
                                         </li>
                                 ))
@@ -531,7 +531,7 @@ const Header = () => {
                                             <div className="dropdown dropdown-end">
                                                 <label tabIndex={0} className="btn btn-sm btn-ghost border border-gray-200 mb-1 cursor-pointer rounded-full h-10 w-10 p-0  "><img src={user.photoURL} alt="" className='w-10 rounded-full' /></label>
                                                 <ul tabIndex={0} className="dropdown-content menu p-2 shadow bg-base-100 rounded-box w-52 text-sm gap-1">
-                                                    <li><span className='flex items-center justify-between'>Dark Mode <input type="checkbox" className="toggle toggle-primary"   /></span></li>
+                                                    <li ><span className='flex items-center justify-between'>Dark Mode <input onClick={()=>setDarkMode(!darkmode)} type="checkbox" className="toggle toggle-primary"   /></span></li>
                                                     <li ><Link to="/orderhistory">Order History</Link></li>
                                                     <li onClick={handleLogOut}><a href="#">Logout</a></li>
                                                 </ul>
@@ -559,24 +559,24 @@ const Header = () => {
                         }
                       
                         <div className="dropdown dropdown-end">
-                            <label tabIndex={0} className="btn btn-sm btn-ghost border border-gray-200 mb-1 cursor-pointer rounded-full h-10 w-10 p-0 text-2xl hover:bg-primary hover:border-none hover:text-base-100 transition-all duration-300 ease-in-out"><IoNotificationsOutline /></label>
-                            <ul tabIndex={0} className="dropdown-content menu p-2 shadow bg-base-100 rounded-box w-52 text-sm gap-1">
-                                <li><Link to="/laptop" className='text-sm bg-accent'>
+                            <label tabIndex={0} className="btn btn-sm btn-ghost dark:text-base-100 border border-gray-200 mb-1 cursor-pointer rounded-full h-10 w-10 p-0 text-2xl hover:bg-primary hover:border-none hover:text-base-100 transition-all duration-300 ease-in-out"><IoNotificationsOutline /></label>
+                            <ul tabIndex={0} className="dropdown-content menu p-2 shadow bg-base-100 dark:bg-neutral rounded-box w-52 text-sm gap-1">
+                                <li><Link to="/laptop" className='text-sm bg-accent dark:bg-opacity-10 dark:text-base-100'>
                                     <div className='flex flex-col'>
-                                        <p><span className='text-red-500'>30% </span> discount on <span className='text-secondary font-bold p-0'>Laptops</span>  </p>
+                                        <p><span className='text-red-500'>30% </span> discount on <span className='text-secondary dark:text-accent font-bold p-0'>Laptops</span>  </p>
                                         <span className='text-xs '>1 hour</span>
                                     </div>
                                 </Link></li>
-                                <li><Link to="/laptop" className='text-sm  bg-accent'>
+                                <li><Link to="/laptop" className='text-sm  bg-accent dark:bg-opacity-10 dark:text-base-100'>
                                     <div className='flex flex-col'>
-                                        <p><span className='text-red-500'>50% </span> discount on <span className='text-secondary font-bold p-0'>Accessories</span>  </p>
+                                        <p><span className='text-red-500'>50% </span> discount on <span className='text-secondary dark:text-accent font-bold p-0'>Accessories</span>  </p>
                                         <span className='text-xs '>2 hour</span>
                                     </div>
                                 </Link></li>
                             </ul>
                         </div>
                         <Link to="/cart">
-                            <div className='rounded-full border p-1 hover:bg-primary hover:text-base-100 transition-all duration-300 ease-in-out relative'>
+                            <div className='rounded-full border p-1 hover:bg-primary dark:text-base-100 hover:text-base-100 transition-all duration-300 ease-in-out relative'>
                                 <BsBag className='cursor-pointer  p-1' />
                                 {cart && <div className={`absolute -top-1 -right-2  text-sm  ${cart.length === 0 ? 'bg-red-500 border-error' : 'bg-green-500 border-primary'} text-base-100 rounded-full border  w-5 h-5 flex items-center justify-center`}>{cart.length}</div>}
                             </div>
@@ -590,11 +590,11 @@ const Header = () => {
             {/* Category Header  */}
 
 
-            <div className={`hidden md:flex md:flex-wrap py-4  border-y bg-base-100 w-full  ${isFixed ? 'transition-all duration-300 z-50 fixed top-0 rounded-md bg-clip-padding backdrop-filter backdrop-blur-sm bg-opacity-80' : ''}`}>
+            <div className={`hidden md:flex md:flex-wrap py-4  border-y dark:border-gray-600 bg-base-100 w-full  ${isFixed ? 'transition-all duration-300 z-50 fixed top-0 rounded-md bg-clip-padding backdrop-filter backdrop-blur-sm bg-opacity-80 dark:bg-opacity-30' : 'dark:bg-neutral'}`}>
                 <div className='container mx-auto'>
                     <div className="flex justify-between md:gap-2 lg:gap-0">
                         <div className='relative group'>
-                            <p className='flex gap-2 justify-center items-center p-3 bg-primary text-base-100 lg:   w-44 rounded-full '>All Categories <FaAngleDown /> </p>
+                            <p className='flex gap-2 justify-center items-center p-3 bg-primary text-base-100 lg:w-44 rounded-full '>All Categories <FaAngleDown /> </p>
                             <div className="hidden group-hover:flex group-hover:flex-col absolute z-50  py-5 lg:w-56  top-12 h-full ">
                                 <ul className='space-y-2 bg-base-100 z-50 rounded-lg shadow'>
                                     {
@@ -640,15 +640,15 @@ const Header = () => {
                             </div>
                         </div>
                         <div className='flex flex-wrap gap-3'>
-                            <div className={`relative group flex gap-1 justify-center items-center transition-all duration-300 text-primary bg-accent hover:text-primary  w-32 cursor-pointer text-sm font-semibold rounded-full ${isFixed && 'border-primary border'}`}>
+                            <div className={`relative group flex gap-1 justify-center items-center transition-all duration-300 text-primary bg-accent dark:bg-neutral dark:border hover:text-primary  w-32 cursor-pointer text-sm font-semibold rounded-full ${isFixed && 'border-primary border'}`}>
                                 
                                 <Link to="/monitor" className='flex items-center gap-2 p-2'>Monitor <FaAngleDown /></Link>
 
-                                <div className="absolute top-12 left-0 hidden group-hover:flex group-hover:flex-col  z-50  py-5 w-40 bg-base-100 text-neutral rounded-lg h-full">
+                                <div className="absolute top-12 left-0 hidden group-hover:flex group-hover:flex-col  z-50   w-40 bg-base-100 text-neutral rounded-lg h-full">
                                     <ul className='space-y-2 bg-base-100  rounded-lg shadow'>
                                         {
                                             allcategories[2].subcategories.map((subcategory, index) => (
-                                                <Link key={index} to={`/monitor/${subcategory.brand}`}><li className='transition-all duration-300 cursor-pointer hover:text-primary font-semibold p-2 '>{subcategory.name}</li></Link>
+                                                <Link key={index} to={`/monitor/${subcategory.brand}`}><li className='transition-all duration-300 cursor-pointer hover:text-primary font-semibold p-3 '>{subcategory.name}</li></Link>
                                             ))
 
                                         }
@@ -656,30 +656,30 @@ const Header = () => {
                                 </div>
                             
                             </div>
-                            <div className='group relative flex gap-1 justify-center items-center transition-all duration-300 text-neutral hover:bg-accent hover:text-primary w-32 cursor-pointer text-sm font-semibold rounded-full'>
+                            <div className='group relative flex gap-1 justify-center items-center transition-all duration-300 text-neutral hover:bg-accent  dark:text-base-100 dark:hover:bg-neutral dark:hover:text-primary hover:text-primary w-32 cursor-pointer text-sm font-semibold rounded-full'>
                                 
                                 <Link to="/laptop" className='flex items-center gap-2 p-2'>Laptops <FaAngleDown /></Link>
 
-                                <div className="absolute top-12 left-0 hidden group-hover:flex group-hover:flex-col  z-50  py-5 w-40 bg-base-100 text-neutral rounded-lg h-full">
+                                <div className="absolute top-12 left-0 hidden group-hover:flex group-hover:flex-col  z-50   w-40 bg-base-100 text-neutral rounded-lg h-full">
                                     <ul className='space-y-2 bg-base-100  rounded-lg shadow'>
                                     {
                                             allcategories[1].subcategories.map((subcategory,index) => (
-                                                <Link key={index} to={`/laptop/${subcategory.brand}`}><li className='transition-all duration-300 cursor-pointer hover:text-primary font-semibold p-2 '>{subcategory.name}</li></Link>
+                                                <Link key={index} to={`/laptop/${subcategory.brand}`}><li className='transition-all duration-300 cursor-pointer hover:text-primary font-semibold p-3 '>{subcategory.name}</li></Link>
                                             ))
 
                                         }
                                     </ul>
                                 </div>
                             </div>
-                            <div className='group relative flex gap-1 justify-center items-center transition-all duration-300 text-neutral hover:bg-accent hover:text-primary w-32 cursor-pointer text-sm font-semibold rounded-full'>
+                            <div className='group relative flex gap-1 justify-center items-center transition-all duration-300 text-neutral hover:bg-accent  dark:text-base-100 dark:hover:bg-neutral dark:hover:text-primary hover:text-primary w-32 cursor-pointer text-sm font-semibold rounded-full'>
                                 
                                 <Link to="/smartphone" className='flex items-center gap-2 p-2'>Smartphone <FaAngleDown /></Link>
 
-                                <div className="absolute top-12 left-0 hidden group-hover:flex group-hover:flex-col  z-50  py-5 w-40 bg-base-100 text-neutral rounded-lg h-full">
+                                <div className="absolute top-12 left-0 hidden group-hover:flex group-hover:flex-col  z-50   w-40 bg-base-100 text-neutral rounded-lg h-full">
                                     <ul className='space-y-2 bg-base-100  rounded-lg shadow'>
                                     {
                                             allcategories[3].subcategories.map((subcategory,index) => (
-                                                <Link key={index} to={`/smartphone/${subcategory.brand}`}><li className='transition-all duration-300 cursor-pointer hover:text-primary font-semibold p-2 '>{subcategory.name}</li></Link>
+                                                <Link key={index} to={`/smartphone/${subcategory.brand}`}><li className='transition-all duration-300 cursor-pointer hover:text-primary font-semibold p-3 '>{subcategory.name}</li></Link>
  
                                             ))
 
@@ -688,30 +688,30 @@ const Header = () => {
                                 </div>
                             
                             </div>
-                            <div className='group relative flex gap-1 justify-center items-center transition-all duration-300 text-neutral hover:bg-accent hover:text-primary w-32 cursor-pointer text-sm font-semibold rounded-full'>
+                            <div className='group relative flex gap-1 justify-center items-center transition-all duration-300 text-neutral hover:bg-accent  dark:text-base-100 dark:hover:bg-neutral dark:hover:text-primary hover:text-primary w-32 cursor-pointer text-sm font-semibold rounded-full'>
                                  
                                 <Link to="/tablet" className='flex items-center gap-2 p-2'>Tablet <FaAngleDown /></Link>
                                 
-                                <div className="absolute top-12 left-0 hidden group-hover:flex group-hover:flex-col  z-50  py-5 w-40 bg-base-100 text-neutral rounded-lg h-full">
+                                <div className="absolute top-12 left-0 hidden group-hover:flex group-hover:flex-col  z-50   w-40 bg-base-100 text-neutral rounded-lg h-full">
                                     <ul className='space-y-2 bg-base-100  rounded-lg shadow'>
                                     {
                                             allcategories[4].subcategories.map((subcategory,index) => (
-                                                <Link key={index} to={`/tablet/${subcategory.brand}`}><li className='transition-all duration-300 cursor-pointer hover:text-primary font-semibold p-2 '>{subcategory.name}</li></Link>
+                                                <Link key={index} to={`/tablet/${subcategory.brand}`}><li className='transition-all duration-300 cursor-pointer hover:text-primary font-semibold p-3 '>{subcategory.name}</li></Link>
                                             ))
 
                                         }
                                     </ul>
                                 </div>
                             </div>
-                            <div className='group relative flex gap-1 justify-center items-center transition-all duration-300 text-neutral hover:bg-accent hover:text-primary w-32 cursor-pointer text-sm font-semibold rounded-full'>
+                            <div className='group relative flex gap-1 justify-center items-center transition-all duration-300 text-neutral hover:bg-accent  dark:text-base-100 dark:hover:bg-neutral dark:hover:text-primary hover:text-primary w-32 cursor-pointer text-sm font-semibold rounded-full'>
                                  
                                 <Link to="/camera" className='flex items-center gap-2 p-2'>Camera <FaAngleDown /></Link>
 
-                                <div className="absolute top-12 left-0 hidden group-hover:flex group-hover:flex-col  z-50  py-5 w-40 bg-base-100 text-neutral rounded-lg h-full">
+                                <div className="absolute top-12 left-0 hidden group-hover:flex group-hover:flex-col  z-50   w-40 bg-base-100 text-neutral rounded-lg h-full">
                                     <ul className='space-y-2 bg-base-100  rounded-lg shadow'>
                                     {
                                             allcategories[5].subcategories.map((subcategory, index) => (
-                                                <Link key={index} to={`/camera/${subcategory.brand}`}><li className='transition-all duration-300 cursor-pointer hover:text-primary font-semibold p-2 '>{subcategory.name}</li></Link>
+                                                <Link key={index} to={`/camera/${subcategory.brand}`}><li className='transition-all duration-300 cursor-pointer hover:text-primary font-semibold p-3 '>{subcategory.name}</li></Link>
  
                                             ))
 
@@ -719,29 +719,29 @@ const Header = () => {
                                     </ul>
                                 </div>
                             </div>
-                            <div className='group relative flex gap-1 justify-center items-center transition-all duration-300 text-neutral hover:bg-accent hover:text-primary w-32 cursor-pointer text-sm font-semibold rounded-full'>
+                            <div className='group relative flex gap-1 justify-center items-center transition-all duration-300 text-neutral hover:bg-accent  dark:text-base-100 dark:hover:bg-neutral dark:hover:text-primary hover:text-primary w-32 cursor-pointer text-sm font-semibold rounded-full'>
                                  
                                 <Link to="/accessories" className='flex items-center gap-2 p-2'>Accessories <FaAngleDown /></Link>
 
-                                <div className="absolute top-12 left-0 hidden group-hover:flex group-hover:flex-col  z-50  py-5 w-40 bg-base-100 text-neutral rounded-lg h-full">
+                                <div className="absolute top-12 left-0 hidden group-hover:flex group-hover:flex-col  z-50   w-40 bg-base-100 text-neutral rounded-lg h-full">
                                     <ul className='space-y-2 bg-base-100  rounded-lg shadow'>
                                         {
                                             allcategories[8].subcategories.map((subcategory, index) => (
-                                                <Link key={index} to={`/accessories/${subcategory.type}`}><li className='transition-all duration-300 cursor-pointer hover:text-primary font-semibold p-2 '>{subcategory.name}</li></Link>
+                                                <Link key={index} to={`/accessories/${subcategory.type}`}><li className='transition-all duration-300 cursor-pointer hover:text-primary font-semibold p-3 '>{subcategory.name}</li></Link>
                                             ))
                                         }
                                     </ul>
                                 </div>
                             </div>
-                            <div className='group relative flex gap-1 justify-center items-center transition-all duration-300 text-neutral hover:bg-accent hover:text-primary w-32 cursor-pointer text-sm font-semibold rounded-full'>
+                            <div className='group relative flex gap-1 justify-center items-center transition-all duration-300 text-neutral hover:bg-accent  dark:text-base-100 dark:hover:bg-neutral dark:hover:text-primary hover:text-primary w-32 cursor-pointer text-sm font-semibold rounded-full'>
                                  
                                 <Link to="/tv" className='flex items-center gap-2 p-2'>TV <FaAngleDown /></Link>
                                 
-                                <div className="absolute top-12 left-0 hidden group-hover:flex group-hover:flex-col  z-50  py-5 w-40 bg-base-100 text-neutral rounded-lg h-full">
+                                <div className="absolute top-12 left-0 hidden group-hover:flex group-hover:flex-col  z-50   w-40 bg-base-100 text-neutral rounded-lg h-full">
                                     <ul className='space-y-2 bg-base-100  rounded-lg shadow'>
                                     {
                                             allcategories[7].subcategories.map((subcategory, index) => (
-                                                <Link key={index} to={`/tv/${subcategory.brand}`}><li className='transition-all duration-300 cursor-pointer hover:text-primary font-semibold p-2 '>{subcategory.name}</li></Link>
+                                                <Link key={index} to={`/tv/${subcategory.brand}`}><li className='transition-all duration-300 cursor-pointer hover:text-primary font-semibold p-3 '>{subcategory.name}</li></Link>
                                             ))
 
                                         }

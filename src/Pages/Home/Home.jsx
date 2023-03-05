@@ -19,11 +19,10 @@ import GridDiscount from '../../components/GridDiscount/GridDiscount';
 import { LazyLoadComponent } from 'react-lazy-load-image-component';
 
 const Home = () => {
-
+ 
     
     return (
-        <div className="overflow-x-hidden">
-
+        <div className={`overflow-x-hidden dark:bg-neutral`}>
             <Banner></Banner>
             <OurService/>
             <AdvertisedProducts></AdvertisedProducts>

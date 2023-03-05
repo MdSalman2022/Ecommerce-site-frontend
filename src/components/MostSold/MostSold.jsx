@@ -24,10 +24,10 @@ const MostSold = () => {
  
 
     return (
-        <div className='py-20 bg-accent '>
+        <div className='py-20 bg-accent dark:bg-opacity-10'>
             <div className="container mx-auto flex flex-col gap-2 justify-center items-center pb-14">
                  <h1 className="text-4xl font-bold text-secondary">Most Sold This Week</h1> 
-                 <p className='text-neutral'>Top 10 most sold this week, next day delivery.</p>
+                 <p className='text-neutral dark:text-accent'>Top 10 most sold this week, next day delivery.</p>
             </div>
             <div className="container mx-auto grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 justify-items-center gap-5 p-5"> 
                 {bestseller.map((item,index) => (

@@ -73,14 +73,14 @@ const ProductCard = ({ item }) => {
 
 
     return (
-        <div className="transition-all duration-300 card card-compact w-11/12 bg-base-100 shadow-md  h-full group">
+        <div className="transition-all duration-300 card card-compact w-11/12 bg-base-100 bg-clip-padding backdrop-filter backdrop-blur-sm dark:bg-gray-200 shadow-md  h-full group">
         <Link onClick={scrolltop} to={`/productDetails/${item._id}/${encodedProductName}`}>
-        <figure className='relative'>
+        <figure className='relative dark:bg-white rounded-t-2xl'>
                 <LazyLoadImage className='object-contain group-hover:scale-110 transition-all duration-300 p-2  h-64' src={item.image} alt={item?.cat}/>
                 
                     <div className='absolute top-5 right-0 w-14 flex flex-col items-center gap-3'>
                         <FiHeart className='p-2 bg-base-100 hover:scale-110 hover:border-error transition-all duration-300 text-4xl border rounded-full text-error'/>
-                        <MdOutlineCompareArrows className='p-2 bg-base-100 hover:scale-110 hover:border-success transition-all duration-300 text-4xl border rounded-full'/>
+                        <MdOutlineCompareArrows className='p-2 bg-base-100 hover:scale-110 hover:border-success transition-all duration-300 text-4xl dark:text-neutral border rounded-full'/>
                         {item?.featured && <div className="badge bg-base-100 border-none text-4xl text-yellow-400"><MdStars className=''/></div>}
                     </div>
 
@@ -108,7 +108,7 @@ const ProductCard = ({ item }) => {
                         <div className='w-full flex flex-col gap-3 justify-center items-center'>
                             <div className="flex items-center px-2">
                                 <button className='btn btn-secondary rounded-full h-5 w-12 text-xl' onClick={() => setCount(count - 1)} disabled={count === 0}><FaMinus className="text-base-100"/></button>
-                                <input type="number" className='w-[70%] text-center border-none'  value={count} onChange={handleChange}/>
+                                <input type="number" className='w-[70%] text-center border-none dark:bg-transparent'  value={count} onChange={handleChange}/>
                                 <button className={`btn btn-secondary rounded-full h-8 w-12 text-xl border-none text-neutral${count === 10 ? ' hover:bg-[#e5e7eb] bg-[#e5e7eb] ' : ''}`}
                                     onClick={() => setCount(count + 1)}  disabled={count > 9}
                                 ><FaPlus className="text-base-100"/></button>
