@@ -29,8 +29,6 @@ function DashboardMobileHeader() {
     
     return (
         <div className='flex z-50'>
-            <button onClick={()=>handleSearchBox()} className="btn btn-ghost btn-circle absolute right-2 "><AiOutlineSearch className='text-2xl md:text-3xl text-primary'/></button>
-
             <div className='flex md:hidden absolute top-5 '>
                 <form onSubmit={handleSubmit(onSubmit)} className={`form-control ${isOpen ? 'absolute top-10 left-0':'hidden'}`}>
                     <div className="input-group w-screen">

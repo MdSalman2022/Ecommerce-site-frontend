@@ -36,13 +36,13 @@ module.exports = {
 
           "success": "#19C332",
 
-          "warning": "#E27E03",
+          "warning": "#facc15",
 
           "error": "#ea2b0f",
         },
       },
-      "light", 
+      "light",
     ],
   },
-  plugins: [require("daisyui"), "prettier-plugin-organize-imports", "prettier-plugin-tailwindcss", ], "pluginSearchDirs": false
+  plugins: [require("daisyui"), "prettier-plugin-organize-imports", "prettier-plugin-tailwindcss",], "pluginSearchDirs": false
 }
