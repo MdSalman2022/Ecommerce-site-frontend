@@ -1,13 +1,24 @@
-import React, { useRef, useContext, useEffect, useState } from 'react' 
-import { Link, Navigate, useNavigate } from 'react-router-dom';
-import ProductCard from '../../components/ProductCard/ProductCard';
-import { useForm } from 'react-hook-form';
-import { LazyLoadImage } from 'react-lazy-load-image-component';
-import { AuthContext } from '../../contexts/AuthProvider/AuthProvider';
-import Marquee from 'react-fast-marquee';
-import { FaApple } from 'react-icons/fa';
-import { SiSamsung, SiAsus, SiRazer, SiIntel, SiAmd, SiNvidia, SiLogitech, SiDell, SiCorsair, SiMicrosoft, SiXiaomi } from 'react-icons/si';
-
+import React, { useRef, useContext, useEffect, useState } from "react";
+import { Link, Navigate, useNavigate } from "react-router-dom";
+import ProductCard from "../../components/ProductCard/ProductCard";
+import { useForm } from "react-hook-form";
+import { LazyLoadImage } from "react-lazy-load-image-component";
+import { AuthContext } from "../../contexts/AuthProvider/AuthProvider";
+import Marquee from "react-fast-marquee";
+import { FaApple } from "react-icons/fa";
+import {
+  SiSamsung,
+  SiAsus,
+  SiRazer,
+  SiIntel,
+  SiAmd,
+  SiNvidia,
+  SiLogitech,
+  SiDell,
+  SiCorsair,
+  SiMicrosoft,
+  SiXiaomi,
+} from "react-icons/si";
 
 import { Swiper, SwiperSlide } from "swiper/react";
 
@@ -16,127 +27,222 @@ import "swiper/css/pagination";
 import "swiper/css/navigation";
 import { Pagination, Autoplay } from "swiper";
 
-
 function Banner() {
+  const [isDesktop, setIsDesktop] = useState(false);
 
+  useEffect(() => {
+    const mediaQuery = window.matchMedia("(min-width: 768px)");
 
-    const [isDesktop, setIsDesktop] = useState(false);
+    const handleMediaQueryChange = event => {
+      setIsDesktop(event.matches);
+    };
 
-    useEffect(() => {
-      const mediaQuery = window.matchMedia("(min-width: 768px)");
-  
-      const handleMediaQueryChange = (event) => {
-        setIsDesktop(event.matches);
-      };
-  
-      handleMediaQueryChange(mediaQuery);
-      mediaQuery.addEventListener("change", handleMediaQueryChange);
-  
-      return () => {
-        mediaQuery.removeEventListener("change", handleMediaQueryChange);
-      };
-    }, []);
+    handleMediaQueryChange(mediaQuery);
+    mediaQuery.addEventListener("change", handleMediaQueryChange);
 
-    useEffect(() => {
-        const imageUrls = [
-            "https://i.ibb.co/Pc9jLbR/speaker.webp",
-            "https://i.ibb.co/kXc9Xgt/headphone.webp",
-            'https://i.ibb.co/6yk3vbS/Apple-Mac-Book-Pro-Late-2021-Banner2-1674277405.webp',
-            'https://i.ibb.co/6FW5G2d/MSI-MPG-Z690-EDGE-Wi-Fi-6-Gaming-Motherboard-Slider-1675861274.webp',
-            'https://i.ibb.co/qF5Kd6H/Ben-Q-ZOWIE-XL2546-245-inch-Gaming-Monitor-Main-Slider-1675937487.webp'
-          
-        ];
-    
-        // Create an Image object for each image and set the src property
-        imageUrls.forEach((url) => {
-          const img = new Image();
-          img.src = url;
-        });
-      }, []);
+    return () => {
+      mediaQuery.removeEventListener("change", handleMediaQueryChange);
+    };
+  }, []);
 
-    return (
-        <div className="hero bg-transparent md:rounded-xl lg:mx-auto">
-            <div className="container mx-auto flex flex-col flex-wrap overflow-hidden">
-                <div className="flex justify-center "> 
-                    <div className="flex flex-col md:flex-col lg:flex-row md:gap-12">
-                        <div className="card w-full object-cover my-5 md:my-10 md:px-0">
-                          
-                            <Swiper 
-                                    modules={[Pagination,Autoplay]}
-                                    autoplay={{
-                                        delay: 2500,
-                                        disableOnInteraction: false,
-                                    }}
-                                    
-                                    pagination={{
-                                    clickable: true,
-                                    }} 
-                                    className="mySwiper w-screen md:w-[750px] lg:w-[1200px] md:rounded-2xl border border-primary"
-                                    >
-                                    <SwiperSlide><Link to="/laptop"><LazyLoadImage className='w-full h-full' src="https://i.ibb.co/6yk3vbS/Apple-Mac-Book-Pro-Late-2021-Banner2-1674277405.webp" alt="image" /></Link></SwiperSlide>
-                                    <SwiperSlide><Link to="/components/motherboard"><LazyLoadImage className='w-full h-full' src="https://i.ibb.co/6FW5G2d/MSI-MPG-Z690-EDGE-Wi-Fi-6-Gaming-Motherboard-Slider-1675861274.webp" alt="image" /></Link></SwiperSlide>
-                                    <SwiperSlide><Link to="/monitor"><LazyLoadImage className='w-full h-full' src="https://i.ibb.co/qF5Kd6H/Ben-Q-ZOWIE-XL2546-245-inch-Gaming-Monitor-Main-Slider-1675937487.webp" alt="image" /></Link></SwiperSlide>
-                                    
+  useEffect(() => {
+    const imageUrls = [
+      "https://i.ibb.co/Pc9jLbR/speaker.webp",
+      "https://i.ibb.co/kXc9Xgt/headphone.webp",
+      "https://i.ibb.co/6yk3vbS/Apple-Mac-Book-Pro-Late-2021-Banner2-1674277405.webp",
+      "https://i.ibb.co/6FW5G2d/MSI-MPG-Z690-EDGE-Wi-Fi-6-Gaming-Motherboard-Slider-1675861274.webp",
+      "https://i.ibb.co/qF5Kd6H/Ben-Q-ZOWIE-XL2546-245-inch-Gaming-Monitor-Main-Slider-1675937487.webp",
+    ];
 
-                                </Swiper>
-                        
-                        </div> 
-                        <div className="my-2 md:my-10 gap-3 px-2 md:gap-5 lg:gap-0 md:px-0 lg:space-y-12 h-full flex items-start lg:items-end md:items-center justify-around lg:justify-start lg:flex-col ">
-                                <div className="card lg:card-side bg- dark:bg-neutral">
-                                    <img className='rounded-2xl  object-cover border-primary border w-full h-40 lg:w-96 md:h-72' src="https://i.ibb.co/Pc9jLbR/speaker.webp" alt="image" width={300} height={160} />
-                                </div>                          
-                            
-                                <div className="card lg:card-side bg-white dark:bg-neutral">
-                                    <img className='rounded-2xl object-cover border-primary border w-52 h-40 md:w-96 md:h-72' src="https://i.ibb.co/kXc9Xgt/headphone.webp" alt="image" width={300} height={160}/>
-                                </div>                           
-                        </div>
-                    </div>
-                </div>    
-                {
-                    isDesktop &&
-                    (<Marquee className="w-screen h-20 md:h-40 overflow-hidden " speed={150} pauseOnHover={true} gradient={false} >
-                            <FaApple className='p-3 lg:p-5 text-6xl lg:text-9xl transition-all duration-300 text-black  '/>
-                            
-                            <SiSamsung className='p-0 text-5xl lg:text-9xl transition-all duration-300 text-blue-600  '/>
-                            
-                            <SiXiaomi className='p-3 lg:p-5 text-6xl lg:text-9xl transition-all duration-300 text-orange-500  '/>
+    // Create an Image object for each image and set the src property
+    imageUrls.forEach(url => {
+      const img = new Image();
+      img.src = url;
+    });
+  }, []);
 
-                            <SiAsus className='p-1 text-5xl lg:text-9xl transition-all duration-300 text-blue-600  '/>                            
-                            
-                            <SiRazer className='p-3 lg:p-5 text-6xl lg:text-9xl transition-all duration-300 text-green-600  '/>
-                            
-                            <SiMicrosoft className='p-3 lg:p-5 text-6xl lg:text-9xl transition-all duration-300 text-primary  '/>
-
-                            <SiIntel className='p-3 lg:p-5 text-6xl lg:text-9xl transition-all duration-300 text-primary  '/>
-                            
-                            <SiAmd className='p-1 text-5xl lg:text-9xl transition-all duration-300 text-black  '/>
-                            
-                            <SiNvidia className='p-3 lg:p-5 text-6xl lg:text-9xl transition-all duration-300 text-green-500  '/> 
-
-                            <SiDell className='p-3 lg:p-5 text-6xl lg:text-9xl transition-all duration-300 text-black  '/>
-
-                            <SiLogitech className='p-3 lg:p-5 text-6xl lg:text-9xl transition-all duration-300 text-sky-500  '/>
-
-                            <SiCorsair className='p-3 lg:p-5 text-6xl lg:text-9xl transition-all duration-300 text-black '  />  
- 
-                           
-                            <LazyLoadImage src="https://i.ibb.co/Jp47P3J/noctua-logo.webp" alt="noctua-logo" border="0" className='w-20 md:w-40 mr-5'/>
-                            <LazyLoadImage src="https://i.ibb.co/H7vP3xf/sapphire-logo.png" alt="sapphire-logo" border="0" className='w-20 md:w-40 mr-5'/>
-                            <LazyLoadImage src="https://i.ibb.co/9HB36Tg/tt.png" alt="tt" border="0" className='w-20 md:w-40 mr-5'/>
-                            <LazyLoadImage src="https://i.ibb.co/xGkffpc/zotac.webp" alt="zotac-logo-big" border="0" className='w-20 md:w-40 mr-5'/>
-                            <LazyLoadImage src="https://i.ibb.co/4Jd2GJ5/1611033291-nzxt-logo.webp" alt="1611033291-nzxt-logo" border="0" className='w-20 md:w-40 mr-5'/>
-                            <LazyLoadImage src="https://i.ibb.co/1McwKJV/antec.webp" alt="antec" border="0" className='w-20 md:w-40 mr-5'/>
-                            <LazyLoadImage src="https://i.ibb.co/fCZ1gbP/Cooler-Master-Logo.webp" alt="Cooler-Master-Logo" border="0" className='w-20 md:w-40 mr-5'/>
-                            <LazyLoadImage src="https://i.ibb.co/HBwfqGs/Deepcool-logo-black.webp" alt="Deepcool-logo-black" border="0" className='w-20 md:w-40 mr-5'/>
-                            <LazyLoadImage src="https://i.ibb.co/vY7TxTh/Gigabyte-Symbol.png" alt="Gigabyte-Symbol" border="0" className='w-20 md:w-40 mr-5'/>
-                            <LazyLoadImage src="https://i.ibb.co/nczC9yv/gskill.webp" alt="gskill" border="0" className='w-20 md:w-40 mr-5'/>
-                            <LazyLoadImage src="https://i.ibb.co/PNzDXWV/lianli-f.jpg" alt="lianli-f" border="0" className='w-20 md:w-40 mr-5'/>
-                            <LazyLoadImage src="https://i.ibb.co/gV36YBn/montech.png" alt="montech" border="0" className='w-20 md:w-40 mr-5'/>
-                            <LazyLoadImage src="https://i.ibb.co/TcBrDB1/msi.webp" alt="MSI-Logo" border="0" className='w-20 md:w-40 mr-5'/>
-                </Marquee>)}
+  return (
+    <div className="hero bg-transparent md:rounded-xl lg:mx-auto">
+      <div className="container mx-auto flex flex-col flex-wrap overflow-hidden">
+        <div className="flex justify-center ">
+          <div className="flex flex-col md:flex-col md:gap-12 lg:flex-row">
+            <div className="card my-5 w-full object-cover md:my-10 md:px-0">
+              <Swiper
+                modules={[Pagination, Autoplay]}
+                autoplay={{
+                  delay: 2500,
+                  disableOnInteraction: false,
+                }}
+                pagination={{
+                  clickable: true,
+                }}
+                className="mySwiper w-screen border border-primary md:w-[750px] md:rounded-2xl lg:w-[1200px]"
+              >
+                <SwiperSlide>
+                  <Link to="/laptop">
+                    <LazyLoadImage
+                      className="h-full w-full"
+                      src="https://i.ibb.co/6yk3vbS/Apple-Mac-Book-Pro-Late-2021-Banner2-1674277405.webp"
+                      alt="image"
+                    />
+                  </Link>
+                </SwiperSlide>
+                <SwiperSlide>
+                  <Link to="/components/motherboard">
+                    <LazyLoadImage
+                      className="h-full w-full"
+                      src="https://i.ibb.co/6FW5G2d/MSI-MPG-Z690-EDGE-Wi-Fi-6-Gaming-Motherboard-Slider-1675861274.webp"
+                      alt="image"
+                    />
+                  </Link>
+                </SwiperSlide>
+                <SwiperSlide>
+                  <Link to="/monitor">
+                    <LazyLoadImage
+                      className="h-full w-full"
+                      src="https://i.ibb.co/qF5Kd6H/Ben-Q-ZOWIE-XL2546-245-inch-Gaming-Monitor-Main-Slider-1675937487.webp"
+                      alt="image"
+                    />
+                  </Link>
+                </SwiperSlide>
+              </Swiper>
             </div>
-           
+            <div className="my-2 flex h-full items-start justify-around gap-3 px-2 md:my-10 md:items-center md:gap-5 md:px-0 lg:flex-col lg:items-end lg:justify-start lg:gap-0 lg:space-y-12 ">
+              <div className="bg- card lg:card-side dark:bg-neutral">
+                <img
+                  className="h-40  w-full rounded-2xl border border-primary object-cover md:h-72 lg:w-96"
+                  src="https://i.ibb.co/Pc9jLbR/speaker.webp"
+                  alt="image"
+                  width={300}
+                  height={160}
+                />
+              </div>
+
+              <div className="card bg-white lg:card-side dark:bg-neutral">
+                <img
+                  className="h-40 w-52 rounded-2xl border border-primary object-cover md:h-72 md:w-96"
+                  src="https://i.ibb.co/kXc9Xgt/headphone.webp"
+                  alt="image"
+                  width={300}
+                  height={160}
+                />
+              </div>
+            </div>
+          </div>
         </div>
-    )
+        {isDesktop && (
+          <Marquee
+            className="h-20 w-screen overflow-hidden md:h-40 "
+            speed={150}
+            pauseOnHover={true}
+            gradient={false}
+          >
+            <FaApple className="p-3 text-6xl text-black transition-all duration-300 lg:p-5 lg:text-9xl  " />
+
+            <SiSamsung className="p-0 text-5xl text-blue-600 transition-all duration-300 lg:text-9xl  " />
+
+            <SiXiaomi className="p-3 text-6xl text-orange-500 transition-all duration-300 lg:p-5 lg:text-9xl  " />
+
+            <SiAsus className="p-1 text-5xl text-blue-600 transition-all duration-300 lg:text-9xl  " />
+
+            <SiRazer className="p-3 text-6xl text-green-600 transition-all duration-300 lg:p-5 lg:text-9xl  " />
+
+            <SiMicrosoft className="p-3 text-6xl text-primary transition-all duration-300 lg:p-5 lg:text-9xl  " />
+
+            <SiIntel className="p-3 text-6xl text-primary transition-all duration-300 lg:p-5 lg:text-9xl  " />
+
+            <SiAmd className="p-1 text-5xl text-black transition-all duration-300 lg:text-9xl  " />
+
+            <SiNvidia className="p-3 text-6xl text-green-500 transition-all duration-300 lg:p-5 lg:text-9xl  " />
+
+            <SiDell className="p-3 text-6xl text-black transition-all duration-300 lg:p-5 lg:text-9xl  " />
+
+            <SiLogitech className="p-3 text-6xl text-sky-500 transition-all duration-300 lg:p-5 lg:text-9xl  " />
+
+            <SiCorsair className="p-3 text-6xl text-black transition-all duration-300 lg:p-5 lg:text-9xl " />
+
+            <LazyLoadImage
+              src="https://i.ibb.co/Jp47P3J/noctua-logo.webp"
+              alt="noctua-logo"
+              border="0"
+              className="mr-5 w-20 md:w-40"
+            />
+            <LazyLoadImage
+              src="https://i.ibb.co/H7vP3xf/sapphire-logo.png"
+              alt="sapphire-logo"
+              border="0"
+              className="mr-5 w-20 md:w-40"
+            />
+            <LazyLoadImage
+              src="https://i.ibb.co/9HB36Tg/tt.png"
+              alt="tt"
+              border="0"
+              className="mr-5 w-20 md:w-40"
+            />
+            <LazyLoadImage
+              src="https://i.ibb.co/xGkffpc/zotac.webp"
+              alt="zotac-logo-big"
+              border="0"
+              className="mr-5 w-20 md:w-40"
+            />
+            <LazyLoadImage
+              src="https://i.ibb.co/4Jd2GJ5/1611033291-nzxt-logo.webp"
+              alt="1611033291-nzxt-logo"
+              border="0"
+              className="mr-5 w-20 md:w-40"
+            />
+            <LazyLoadImage
+              src="https://i.ibb.co/1McwKJV/antec.webp"
+              alt="antec"
+              border="0"
+              className="mr-5 w-20 md:w-40"
+            />
+            <LazyLoadImage
+              src="https://i.ibb.co/fCZ1gbP/Cooler-Master-Logo.webp"
+              alt="Cooler-Master-Logo"
+              border="0"
+              className="mr-5 w-20 md:w-40"
+            />
+            <LazyLoadImage
+              src="https://i.ibb.co/HBwfqGs/Deepcool-logo-black.webp"
+              alt="Deepcool-logo-black"
+              border="0"
+              className="mr-5 w-20 md:w-40"
+            />
+            <LazyLoadImage
+              src="https://i.ibb.co/vY7TxTh/Gigabyte-Symbol.png"
+              alt="Gigabyte-Symbol"
+              border="0"
+              className="mr-5 w-20 md:w-40"
+            />
+            <LazyLoadImage
+              src="https://i.ibb.co/nczC9yv/gskill.webp"
+              alt="gskill"
+              border="0"
+              className="mr-5 w-20 md:w-40"
+            />
+            <LazyLoadImage
+              src="https://i.ibb.co/PNzDXWV/lianli-f.jpg"
+              alt="lianli-f"
+              border="0"
+              className="mr-5 w-20 md:w-40"
+            />
+            <LazyLoadImage
+              src="https://i.ibb.co/gV36YBn/montech.png"
+              alt="montech"
+              border="0"
+              className="mr-5 w-20 md:w-40"
+            />
+            <LazyLoadImage
+              src="https://i.ibb.co/TcBrDB1/msi.webp"
+              alt="MSI-Logo"
+              border="0"
+              className="mr-5 w-20 md:w-40"
+            />
+          </Marquee>
+        )}
+      </div>
+    </div>
+  );
 }
-export default Banner
+export default Banner;
