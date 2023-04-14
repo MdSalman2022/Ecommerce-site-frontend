@@ -1,760 +1,641 @@
-import React, { useContext, useEffect, useState } from 'react';
-import { useForm } from 'react-hook-form';
-import { LazyLoadImage } from 'react-lazy-load-image-component';
-import { Link, NavLink, useNavigate } from 'react-router-dom';
-import { AiOutlineSearch } from 'react-icons/ai';
-import { AuthContext } from '../../../contexts/AuthProvider/AuthProvider';
-import { BsPerson, BsBag } from 'react-icons/bs';
-import {IoClose, IoNotificationsOutline} from 'react-icons/io5'
-import {FaAngleRight, FaExchangeAlt} from 'react-icons/fa'
-import {MdFavoriteBorder} from 'react-icons/md'
-import { BiHomeAlt, BiMessageMinus } from 'react-icons/bi'
-import { BsFillPersonFill,BsMenuButtonWideFill } from 'react-icons/bs'
-import { FaQuestion } from 'react-icons/fa'
-import { IoLanguage } from 'react-icons/io5'
-import { TbTruckDelivery } from 'react-icons/tb'
-import {RxDashboard} from 'react-icons/rx'
-import {FaAngleDown} from 'react-icons/fa'   
+import React, { useContext, useEffect, useState } from "react";
+import { useForm } from "react-hook-form";
+import { LazyLoadImage } from "react-lazy-load-image-component";
+import { Link, NavLink, useNavigate } from "react-router-dom";
+import { AiOutlineSearch } from "react-icons/ai";
+import { AuthContext } from "../../../contexts/AuthProvider/AuthProvider";
+import { BsPerson, BsBag } from "react-icons/bs";
+import { IoClose, IoNotificationsOutline } from "react-icons/io5";
+import { FaAngleRight, FaExchangeAlt } from "react-icons/fa";
+import { MdFavoriteBorder } from "react-icons/md";
+import { BiHomeAlt, BiMessageMinus } from "react-icons/bi";
+import { BsFillPersonFill, BsMenuButtonWideFill } from "react-icons/bs";
+import { FaQuestion } from "react-icons/fa";
+import { IoLanguage } from "react-icons/io5";
+import { TbTruckDelivery } from "react-icons/tb";
+import { RxDashboard } from "react-icons/rx";
+import { FaAngleDown } from "react-icons/fa";
 
-import Fuse from 'fuse.js';
-
+import Fuse from "fuse.js";
+import { allcategories } from "./NavbarItems";
 
 const Header = () => {
-    const navigate = useNavigate();
-    const { user, logOut,cart } = useContext(AuthContext)
-    let { searchText, setSearchText, searchResult,setSearchResult,products, darkmode, setDarkMode} = useContext(AuthContext)
+  const navigate = useNavigate();
+  const { user, logOut, cart } = useContext(AuthContext);
+  let {
+    searchText,
+    setSearchText,
+    searchResult,
+    setSearchResult,
+    products,
+    darkmode,
+    setDarkMode,
+  } = useContext(AuthContext);
 
-    const { register, handleSubmit, formState: { errors } } = useForm(); 
-    
-    const onSubmit = data => {
-        navigate(`/search/${data.name}`)
-        setSearchText(data.name);
+  const {
+    register,
+    handleSubmit,
+    formState: { errors },
+  } = useForm();
+
+  const onSubmit = data => {
+    navigate(`/search/${data.name}`);
+    setSearchText(data.name);
+  };
+  const handleSearch = event => {
+    let search = event.target.value;
+    console.log(search);
+    // navigate(`/search/${data.name}`)
+    setSearchText(search);
+  };
+
+  useEffect(() => {
+    if (searchText === "") {
+      setSearchResult([]);
+    } else {
+      const fuse = new Fuse(products, {
+        keys: ["name", "brand", "subcat", "cat"],
+        threshold: 0.1,
+        includeScore: true,
+        location: 0,
+        distance: 100,
+        minMatchCharLength: 1,
+        shouldSort: true,
+        tokenize: true,
+        matchAllTokens: true,
+        findAllMatches: true,
+      });
+      const searchResults = fuse
+        .search(searchText)
+        .sort((a, b) => b.score - a.score);
+      const formattedResults = searchResults.map(result => result.item);
+      setSearchResult(formattedResults);
     }
-    const handleSearch = event => {
-        let search = event.target.value
-        console.log(search)
-        // navigate(`/search/${data.name}`)
-        setSearchText(search);
-    }
+  }, [searchText]);
 
+  const handleLogOut = () => {
+    logOut()
+      .then(() => {})
+      .catch(error => console.error(error));
+  };
 
+  const [options, setOptions] = useState(0);
+  const [subOptions, setSubOptions] = useState(0);
 
-    useEffect(() => {
-        if (searchText === '') {
-          setSearchResult([]);
-        } else {
-          const fuse = new Fuse(products, {
-            keys: ['name','brand', 'subcat','cat'],
-            threshold: 0.1,
-            includeScore: true,
-            location: 0,
-            distance: 100,
-            minMatchCharLength: 1,
-            shouldSort: true,
-            tokenize: true,
-            matchAllTokens: true,
-            findAllMatches: true,
-          });
-            const searchResults = fuse.search(searchText).sort((a, b) => b.score - a.score);
-          const formattedResults = searchResults.map((result) => result.item);
-          setSearchResult(formattedResults);
-        }
-      }, [searchText]);
-      
+  const handleOptions = id => {
+    setOptions(id);
+  };
+  const handleSubOptions = id => {
+    setSubOptions(id);
+  };
 
-    const handleLogOut = () => {
-        logOut()
-            .then(() => { })
-            .catch(error => console.error(error))
-    }
+  const [isFixed, setIsFixed] = useState(false);
 
-
-
-
-
-    const [options, setOptions] = useState(0)
-    const [subOptions, setSubOptions] = useState(0)
-
-    const handleOptions = id => {
-        setOptions(id)
-    }
-    const handleSubOptions = id => {
-        setSubOptions(id)
-    }
-
-    const allcategories = [
-        {
-            id: 1,
-            name: 'Desktop Components',
-            cat:'components', 
-            subcategories: [
-                {
-                    id: 1,
-                    name: 'Processor',
-                    subcat:'processor',
-                    subcategories: [
-                        {
-                            id: 1,
-                            name: 'Intel',
-                            brand:'intel',
-                        },
-                        {
-                            id: 2,
-                            name: 'AMD',
-                            brand:'amd',
-                        }
-                    ]
-                },
-                {
-                    id: 2,
-                    name: 'Motherboard',
-                    subcat:'motherboard',
-                    subcategories: [
-                        {
-                            id: 1,
-                            name: 'Gigabyte',
-                            brand:'gigabyte',
-                        },
-                        {
-                            id: 2,
-                            name: 'Asus',
-                            brand:'asus',
-                        },
-                        {
-                            id: 3,
-                            name: 'MSI',
-                            brand:'msi',
-                        },
-                    ]
-                },
-                {
-                    id: 3,
-                    name: 'Ram',
-                    subcat: 'ram',
-                    subcategories: [
-                        {
-                            id: 1,
-                            name: 'Corsair',
-                            brand:'corsair',
-                        },
-                        {
-                            id: 2,
-                            name: 'G.Skill',
-                            brand:'gskill',
-                        },
-                    ]
-                },
-                {
-                    id: 4,
-                    name: 'Graphics Card',
-                    subcat:'graphics-card',
-                    subcategories: [
-                                {
-                                    id: 1,
-                                    name: 'Asus',
-                                    brand:'asus',
-                                },
-                                {
-                                    id: 2,
-                                    name: 'Zotac',
-                                    brand:'zotac',
-                                },
-                                {
-                                    id: 3,
-                                    name: 'Sapphire',
-                                    brand:'sapphire',
-                                }
-                            ] 
-                },
-                {
-                    id: 5,
-                    name: 'Power Supply',
-                    subcat:'psu',
-                    subcategories: [
-                        {
-                            id: 1,
-                            name: 'Corsair',
-                            brand:'corsair',
-                        },
-                    ]
-                },
-                {
-                    id: 6,
-                    name: 'Storage',
-                    subcat:'storage',
-                    subcategories: [
-                        {
-                            id: 1,
-                            name: 'SSD',
-                            type: 'ssd',
-                            subcategories: [
-                                {
-                                    id: 1,
-                                    name: 'Samsung',
-                                    brand:'samsung',
-                                }, 
-                            ]
-                        },
-                        {
-                            id: 2,
-                            name: 'HDD',
-                            type: 'hdd',
-                            subcategories: [
-                                {
-                                    id: 1,
-                                    name: 'Seagate',
-                                    brand:'seagate',
-                                },
-                                {
-                                    id: 2,
-                                    name: 'Western Digital',
-                                    brand:'wd',
-                                },
-                            ]
-                        }
-                
-                    ]
-                },
-                {
-                    id: 7,
-                    name: 'CPU Cooler',
-                    subcat: 'cooler',
-                    subcategories: [
-                        {
-                            id: 1,
-                            name: 'Corsair',
-                            brand: 'corsair',
-                        }
-                    ]
-                },
-                {
-                    id: 8,
-                    name: 'Case',
-                    subcat: 'case',
-                    subcategories: [
-                        {
-                            id: 1,
-                            name: 'Lian LI',
-                            brand: 'lianli',
-
-                        }
-                    ]
-                }
-            ]
-        },   
-        {
-            id: 2,
-            name: 'Laptops',
-            cat: 'laptop',
-            subcategories: [
-                {
-                    id: 1,
-                    name: 'Asus',
-                    brand: 'asus',
-                },
-                {
-                    id: 2,
-                    name: 'Hp',
-                    brand: 'hp',
-                },
-                {
-                    id: 3,
-                    name: 'MSI',
-                    brand: 'msi',
-                }
-            ]
-
-        },
-        {
-            id: 3,
-            name: 'Monitors',
-            cat: 'monitor',
-            subcategories: [
-                {
-                    id: 1,
-                    name: 'Asus',
-                    brand: 'asus',
-                },
-                {
-                    id: 2,
-                    name: 'Hp',
-                    brand: 'hp',
-                },
-                {
-                    id: 3,
-                    name: 'MSI',
-                    brand: 'msi',
-                }
-            ]
-        },
-        {
-            id: 4,
-            name: 'Smartphone',
-            cat: 'smartphone',
-            subcategories: [
-                {
-                    id: 1,
-                    name: 'Samsung',
-                    brand: 'samsung',
-                },
-                {
-                    id: 2,
-                    name: 'Apple',
-                    brand: 'apple',
-                },
-                {
-                    id: 3,
-                    name: 'Xiaomi',
-                    brand: 'xiaomi',
-                }
-            ]
-        },
-        {
-            id: 5,
-            name: 'Tablets',
-            cat: 'tablet',
-            subcategories: [
-                {
-                    id: 1,
-                    name: 'Samsung',
-                    brand: 'samsung',
-                },
-                {
-                    id: 2,
-                    name: 'Apple',
-                    brand: 'apple',
-                }
-            ]
-        },
-        {
-            id: 6,
-            name: 'Camera',
-            cat: 'camera',
-            subcategories: [
-                {
-                    id: 1,
-                    name: 'Canon',
-                    brand: 'canon',
-                },
-                {
-                    id: 2,
-                    name: 'Nikon',
-                    brand: 'nikon',
-                }
-            ]
-        },
-        {
-            id: 7,
-            name: 'Consoles',
-            cat: 'console',
-            subcategories: [
-                {
-                    id: 1,
-                    name: 'Playstation',
-                    brand: 'sony',
-                },
-                {
-                    id: 2,
-                    name: 'Xbox',
-                    brand: 'microsoft',
-                }
-            ]
-        },
-        {
-            id: 8,
-            name: 'TV',
-            cat: 'tv',
-            subcategories: [
-                {
-                    id: 1,
-                    name: 'Xiaomi',
-                    brand: 'xiaomi',
-
-                },
-                {
-                    id: 2,
-                    name: 'Sony',
-                    brand: 'sony',
-                }
-            ]
-        },
-        {
-            id: 9,
-            name: 'Accessories',
-            cat: 'accessories',
-            subcategories: [
-                {
-                    id: 1,
-                    name: 'Headphones',
-                    type: 'headphone',
-                    subcategories: [
-                        {
-                            id: 1,
-                            name: 'Logitech',
-                            brand: 'logitech',
-                        }
-                    ]
-                },
-                {
-                    id: 2,
-                    name: 'Mouse',
-                    type: 'mouse',
-                    subcategories: [
-                        {
-                            id: 1,
-                            name: 'Razer',
-                            brand: 'razer',
-                        }   
-                    ]
-                },
-                {
-                    id: 3,
-                    name: 'Keyboard',
-                    type: 'keyboard',
-                    subcategories: [
-                        {
-                            id: 1,
-                            name: 'Corsair',
-                            brand: 'corsair',
-                        }   
-                    ]
-                }
-            ]
-        },
-
-    ]
- 
-    const [isFixed, setIsFixed] = useState(false);
-
-    useEffect(() => {
-        function handleScroll() {
-            if (window.scrollY > 150) { 
-                setIsFixed(true);
-            } else { 
-                setIsFixed(false);
-            }
-        }
-
-        window.addEventListener('scroll', handleScroll);
-
-        return () => {
-            window.removeEventListener('scroll', handleScroll);
-        };
-    }, []);
-  
-    const handleClear = () => {
-        setSearchText('');
-        navigate('/')
+  useEffect(() => {
+    function handleScroll() {
+      if (window.scrollY > 150) {
+        setIsFixed(true);
+      } else {
+        setIsFixed(false);
+      }
     }
 
-    
-    const [isOpen, setIsOpen] = useState(false);
+    window.addEventListener("scroll", handleScroll);
 
-    useEffect(() => {
-        if (searchResult.length > 0) {
-            setIsOpen(true);
-        }
-        else 
-            setIsOpen(false);
-    }, [searchResult])
+    return () => {
+      window.removeEventListener("scroll", handleScroll);
+    };
+  }, []);
 
-    return (
-        <div className='bg-base-100 dark:bg-neutral '>
-            {/* top header  */}
-            <div className={`hidden h-8 md:grid grid-cols-3 container mx-auto lg:gap-80 text-sm place-items-center text-neutral dark:text-base-100`}>
-                <div className='flex gap-5'>
-                    <Link to="/" className='flex items-center gap-2'><BiHomeAlt/> Home</Link>
-                    <p className='flex items-center gap-2'><BsFillPersonFill/> About Us</p>
-                    <p className='flex items-center gap-2'><BiMessageMinus/> Contact</p>
-                    {/* <p><FaQuestion/> FAQ</p> */}
-                </div>
-                
-                <div className='flex gap-5 '>
-                    <p className='flex items-center gap-2'><IoLanguage/> English</p>
-                    <p>$ US Dollar</p>
-                </div>
+  const handleClear = () => {
+    setSearchText("");
+    navigate("/");
+  };
 
-                <div className='flex gap-5 border-l pl-3 '>
-                    <Link to="/dashboard" className='transition-all duration-300 flex items-center gap-2 hover:text-primary'><RxDashboard/> Dashboard</Link>
-                    <p className='flex items-center gap-2'><TbTruckDelivery/> Delivery</p>
-                </div>
+  const [isOpen, setIsOpen] = useState(false);
 
-            </div>
+  useEffect(() => {
+    if (searchResult.length > 0) {
+      setIsOpen(true);
+    } else setIsOpen(false);
+  }, [searchResult]);
 
-            {/* Primary Header  */}
-            <div className={`hidden md:flex border-t dark:border-gray-600 `}>
-                <div className="container mx-auto grid grid-cols-4 md:justify-items-center lg:justify-items-stretch gap-10 lg:grid-cols-5  py-5">
-                    <div className=" col-span-1 logo hidden md:flex items-center">
-                        <Link to='/' className=" ">
-                            {/* <LazyLoadImage src="https://i.ibb.co/vd3xm6V/boipaben-final.png" className='w-16' alt="logo" border="0" /> */}
-                            <h1 className="text-xl md:text-2xl lg:text-4xl font-semibold text-transparent bg-clip-text bg-gradient-to-r from-blue-400 to-blue-600 flex items-center gap-1"><img className='w-10' src="https://i.ibb.co/xSLpY24/logo-colored.webp" alt="logo" width={50} height={50}/>BestDeal</h1>
-                        </Link>
-                        
-                    </div>
-                    <form onSubmit={handleSubmit(onSubmit)} className="pl-3 lg:pl-0 w-full search col-span-3">
-                        <div onChange={handleSearch} className="input-group">
-                            <input value={searchText}  type="text" autoComplete='off' placeholder="Search..." className="input input-bordered border-primary border-r-0 dark:bg-neutral dark:text-accent w-full"  {...register("name", { required: true, maxLength: 80 })} />
-                            {/* {searchResult.length > <button className='bg-white text-neutral border-primary border-y font-bold px-3 text-2xl'><IoClose /></button>} */}
-                            {searchText.length > 0 && <span onClick={handleClear} className='bg-white dark:bg-neutral dark:text-accent text-neutral border-primary border-y font-bold px-3 text-2xl'><IoClose /></span>}
-                            <button type="submit" className='bg-primary text-base-100 font-bold px-3 text-2xl'><AiOutlineSearch /></button>
-                        </div>
-                        <ul className='absolute bg-white dark:bg-neutral dark:border dark:border-gray-600 z-50 w-full max-w-3xl lg:max-w-4xl shadow-xl rounded-lg'>
-                                
-                                {isOpen &&
-                                searchResult.slice(0,4).map((item, index) => (
-                                        <li className='cursor-pointer text-neutral hover:bg-accent p-1 transition-all duration-300 ease-in-out flex items-center gap-2 dark:border-b dark:border-gray-600 group' key={index}>
-                                            <img src={item.image} alt="" className='w-20'/>
-                                            <div className='flex flex-col '>
-                                                <Link onClick={() => setIsOpen(!isOpen)} to={`/productDetails/${item._id}/${encodeURIComponent(item.name).replace(/%20/g, "-")}`} className='text-primary'>{item.name}</Link>
-                                                <p className='dark:text-accent dark:group-hover:text-neutral'>${item.price}</p>
-                                            </div>
-                                        </li>
-                                ))
-                                }
-                            {isOpen && <Link onClick={() => setIsOpen(!isOpen)} to={`/search/${searchText}`} className='flex items-center justify-center p-2 rounded-b-lg text-white bg-secondary'>See all results</Link>}
-                            
-                            </ul>
-                    </form>
-                    <div className='flex md:text-2xl lg:text-3xl gap-5 lg:justify-end items-center col-span-1'>
-                        {/* <p className='cursor-pointer rounded-full border p-1 hover:bg-primary hover:text-base-100 transition-all duration-300 ease-in-out'><BsPerson  className='p-1'/></p>  */}
-                        
-                        
-                        {
-                            user ?
-                                <div className="flex items-center gap-4">
-                                    <div className="flex    ">
-                                        {/* <label className='text-sm text-right'>{user.displayName}</label>    */}
-                                    </div>
-                                    {
-                                        user.photoURL ?
-                                            
-                                            <div className="dropdown dropdown-end">
-                                                <label tabIndex={0} className="btn btn-sm btn-ghost border border-gray-200 mb-1 cursor-pointer rounded-full h-10 w-10 p-0  "><img src={user.photoURL} alt="" className='w-10 rounded-full' /></label>
-                                                <ul tabIndex={0} className="dropdown-content menu p-2 shadow bg-base-100 rounded-box w-52 text-sm gap-1">
-                                                    <li ><span className='flex items-center justify-between'>Dark Mode <input onClick={()=>setDarkMode(!darkmode)} type="checkbox" className="toggle toggle-primary"   /></span></li>
-                                                    <li ><Link to="/orderhistory">Order History</Link></li>
-                                                    <li onClick={handleLogOut}><a href="#">Logout</a></li>
-                                                </ul>
-                                            </div>
-                                            :
-                                            <div className="dropdown dropdown-end">
-                                                <label tabIndex={0} className="btn btn-sm btn-ghost border border-gray-200 mb-1 cursor-pointer rounded-full h-10 w-10 p-0 text-2xl hover:bg-primary hover:border-none hover:text-base-100 transition-all duration-300 ease-in-out"><BsPerson/></label>
-                                                <ul tabIndex={0} className="dropdown-content menu p-2 shadow bg-base-100 rounded-box w-52 text-sm gap-1">
-                                                    <li ><Link to="/orderhistory">Order History</Link></li>
-                                                    <li onClick={handleLogOut}><a>Logout</a></li>
-                                                </ul>
-                                            </div>
-                                    }
-                                </div>
-                                
-                                :
-                                <div className="dropdown dropdown-end">
-                                    <label tabIndex={0} className="btn btn-sm btn-ghost border border-gray-200 mb-1 cursor-pointer rounded-full h-10 w-10 p-0 text-2xl hover:bg-primary hover:border-none hover:text-base-100 transition-all duration-300 ease-in-out"><BsPerson/></label>
-                                    <ul tabIndex={0} className="dropdown-content menu p-2 shadow bg-base-100 rounded-box w-52 text-sm gap-1">
-                                        <li><Link to="/login">Login</Link></li>
-                                        <li><Link to="/register">Signup</Link></li>
-                                    </ul>
-                                </div>
-
-                        }
-                      
-                        <div className="dropdown dropdown-end">
-                            <label tabIndex={0} className="btn btn-sm btn-ghost dark:text-base-100 border border-gray-200 mb-1 cursor-pointer rounded-full h-10 w-10 p-0 text-2xl hover:bg-primary hover:border-none hover:text-base-100 transition-all duration-300 ease-in-out"><IoNotificationsOutline /></label>
-                            <ul tabIndex={0} className="dropdown-content menu p-2 shadow bg-base-100 dark:bg-neutral rounded-box w-52 text-sm gap-1">
-                                <li><Link to="/laptop" className='text-sm bg-accent dark:bg-opacity-10 dark:text-base-100'>
-                                    <div className='flex flex-col'>
-                                        <p><span className='text-red-500'>30% </span> discount on <span className='text-secondary dark:text-accent font-bold p-0'>Laptops</span>  </p>
-                                        <span className='text-xs '>1 hour</span>
-                                    </div>
-                                </Link></li>
-                                <li><Link to="/laptop" className='text-sm  bg-accent dark:bg-opacity-10 dark:text-base-100'>
-                                    <div className='flex flex-col'>
-                                        <p><span className='text-red-500'>50% </span> discount on <span className='text-secondary dark:text-accent font-bold p-0'>Accessories</span>  </p>
-                                        <span className='text-xs '>2 hour</span>
-                                    </div>
-                                </Link></li>
-                            </ul>
-                        </div>
-                        <Link to="/cart">
-                            <div className='rounded-full border p-1 hover:bg-primary dark:text-base-100 hover:text-base-100 transition-all duration-300 ease-in-out relative'>
-                                <BsBag className='cursor-pointer  p-1' />
-                                {cart && <div className={`absolute -top-1 -right-2  text-sm  ${cart.length === 0 ? 'bg-red-500 border-error' : 'bg-green-500 border-primary'} text-base-100 rounded-full border  w-5 h-5 flex items-center justify-center`}>{cart.length}</div>}
-                            </div>
-                        </Link>
- 
-                    </div>
-                </div>
-            </div>
-
-
-            {/* Category Header  */}
-
-
-            <div className={`hidden md:flex md:flex-wrap py-4  border-y dark:border-gray-600 bg-base-100 w-full  ${isFixed ? 'transition-all duration-300 z-50 fixed top-0 rounded-md bg-clip-padding backdrop-filter backdrop-blur-sm bg-opacity-80 dark:bg-opacity-30' : 'dark:bg-neutral'}`}>
-                <div className='container mx-auto'>
-                    <div className="flex justify-between md:gap-2 lg:gap-0">
-                        <div className='relative group'>
-                            <p className='flex gap-2 justify-center items-center p-3 bg-primary text-base-100 lg:w-44 rounded-full '>All Categories <FaAngleDown /> </p>
-                            <div className="hidden group-hover:flex group-hover:flex-col absolute z-50  py-5 lg:w-56  top-12 h-full ">
-                                <ul className='space-y-2 bg-base-100 z-50 rounded-lg shadow'>
-                                    {
-                                        allcategories.map((category, index) => (
-                                            <li key={index} onMouseEnter={()=>handleOptions(category.id)} onMouseLeave={()=>handleOptions(0)} className='transition-all duration-300 cursor-pointer hover:text-base-100 rounded-lg hover:bg-primary font-semibold border-b p-2 flex items-start relative'>
-                                                <Link to={`/${category.cat}`}><span className='flex items-center'>{category.name} &nbsp; <FaAngleRight /></span></Link>
-                                                    <div className={`w-48 absolute -right-44 top-0  px-5 py-0  ${options=== category.id ? '' : 'hidden'}`}>
-                                                        <div className='text-neutral hover:text-primary transition-all duration-300 bg-base-100 rounded-lg'>{
-                                                            category.subcategories.map((subcategory,index) => ( 
-                                                                <Link key={index}
-                                                                    onMouseEnter={() => handleSubOptions(subcategory.id)}
-                                                                    onMouseLeave={() => handleSubOptions(0)}
-                                                                    className='p-2 pl-2 transition-all duration-300 text-neutral hover:text-base-100 hover:bg-primary  border-b rounded-lg flex items-start relative'
-                                                                    to={`/${category.cat}/${subcategory.subcat ? subcategory.subcat : subcategory.brand ? subcategory.brand : subcategory.type}`}>
-                                                                    <span className='flex items-center'>
-                                                                        {subcategory.name} &nbsp; <FaAngleRight />
-                                                                    </span>
-                                                          
-                                                                    { subcategory.subcategories &&
-                                                                        <div className={`w-48 absolute -right-44 top-0 px-5 py-0 rounded-lg ${subOptions === subcategory.id ? '' : 'hidden'}`}>
-                                                                        <ul className='space-y-5 bg-base-100 rounded-lg'>
-                                                                            {
-                                                                                subcategory?.subcategories?.map((s,index) => (
-                                                                                    <Link key={index} className='' to={`/${category.cat}/${subcategory.subcat ? subcategory.subcat : subcategory.type}/${s.brand ? s.brand : s.type}`}>
-                                                                                        <li className='transition-all duration-300 text-neutral hover:text-base-100 hover:bg-primary py-2 pr-5 pl-2 border-b rounded-lg'>
-                                                                                        { s.name}
-                                                                                        </li>
-                                                                                    </Link>
-                                                                                ) )
-                                                                            }
-                                                                            </ul> 
-                                                                        </div>
-                                                                    }
-                                                                </Link> 
-                                                                
-                                                            ))
-                                                        }</div> 
-                                                    </div>
-                                            </li>
-                                        ))
-                                    }
-                                </ul>
-                            </div>
-                        </div>
-                        <div className='flex flex-wrap gap-3'>
-                            <div className={`relative group flex gap-1 justify-center items-center transition-all duration-300 text-primary bg-accent dark:bg-neutral dark:border hover:text-primary  w-32 cursor-pointer text-sm font-semibold rounded-full ${isFixed && 'border-primary border'}`}>
-                                
-                                <Link to="/monitor" className='flex items-center gap-2 p-2'>Monitor <FaAngleDown /></Link>
-
-                                <div className="absolute top-12 left-0 hidden group-hover:flex group-hover:flex-col  z-50   w-40 bg-base-100 text-neutral rounded-lg h-full">
-                                    <ul className='space-y-2 bg-base-100  rounded-lg shadow'>
-                                        {
-                                            allcategories[2].subcategories.map((subcategory, index) => (
-                                                <Link key={index} to={`/monitor/${subcategory.brand}`}><li className='transition-all duration-300 cursor-pointer hover:text-primary font-semibold p-3 '>{subcategory.name}</li></Link>
-                                            ))
-
-                                        }
-                                    </ul>
-                                </div>
-                            
-                            </div>
-                            <div className='group relative flex gap-1 justify-center items-center transition-all duration-300 text-neutral hover:bg-accent  dark:text-base-100 dark:hover:bg-neutral dark:hover:text-primary hover:text-primary w-32 cursor-pointer text-sm font-semibold rounded-full'>
-                                
-                                <Link to="/laptop" className='flex items-center gap-2 p-2'>Laptops <FaAngleDown /></Link>
-
-                                <div className="absolute top-12 left-0 hidden group-hover:flex group-hover:flex-col  z-50   w-40 bg-base-100 text-neutral rounded-lg h-full">
-                                    <ul className='space-y-2 bg-base-100  rounded-lg shadow'>
-                                    {
-                                            allcategories[1].subcategories.map((subcategory,index) => (
-                                                <Link key={index} to={`/laptop/${subcategory.brand}`}><li className='transition-all duration-300 cursor-pointer hover:text-primary font-semibold p-3 '>{subcategory.name}</li></Link>
-                                            ))
-
-                                        }
-                                    </ul>
-                                </div>
-                            </div>
-                            <div className='group relative flex gap-1 justify-center items-center transition-all duration-300 text-neutral hover:bg-accent  dark:text-base-100 dark:hover:bg-neutral dark:hover:text-primary hover:text-primary w-32 cursor-pointer text-sm font-semibold rounded-full'>
-                                
-                                <Link to="/smartphone" className='flex items-center gap-2 p-2'>Smartphone <FaAngleDown /></Link>
-
-                                <div className="absolute top-12 left-0 hidden group-hover:flex group-hover:flex-col  z-50   w-40 bg-base-100 text-neutral rounded-lg h-full">
-                                    <ul className='space-y-2 bg-base-100  rounded-lg shadow'>
-                                    {
-                                            allcategories[3].subcategories.map((subcategory,index) => (
-                                                <Link key={index} to={`/smartphone/${subcategory.brand}`}><li className='transition-all duration-300 cursor-pointer hover:text-primary font-semibold p-3 '>{subcategory.name}</li></Link>
- 
-                                            ))
-
-                                        }
-                                    </ul>
-                                </div>
-                            
-                            </div>
-                            <div className='group relative flex gap-1 justify-center items-center transition-all duration-300 text-neutral hover:bg-accent  dark:text-base-100 dark:hover:bg-neutral dark:hover:text-primary hover:text-primary w-32 cursor-pointer text-sm font-semibold rounded-full'>
-                                 
-                                <Link to="/tablet" className='flex items-center gap-2 p-2'>Tablet <FaAngleDown /></Link>
-                                
-                                <div className="absolute top-12 left-0 hidden group-hover:flex group-hover:flex-col  z-50   w-40 bg-base-100 text-neutral rounded-lg h-full">
-                                    <ul className='space-y-2 bg-base-100  rounded-lg shadow'>
-                                    {
-                                            allcategories[4].subcategories.map((subcategory,index) => (
-                                                <Link key={index} to={`/tablet/${subcategory.brand}`}><li className='transition-all duration-300 cursor-pointer hover:text-primary font-semibold p-3 '>{subcategory.name}</li></Link>
-                                            ))
-
-                                        }
-                                    </ul>
-                                </div>
-                            </div>
-                            <div className='group relative flex gap-1 justify-center items-center transition-all duration-300 text-neutral hover:bg-accent  dark:text-base-100 dark:hover:bg-neutral dark:hover:text-primary hover:text-primary w-32 cursor-pointer text-sm font-semibold rounded-full'>
-                                 
-                                <Link to="/camera" className='flex items-center gap-2 p-2'>Camera <FaAngleDown /></Link>
-
-                                <div className="absolute top-12 left-0 hidden group-hover:flex group-hover:flex-col  z-50   w-40 bg-base-100 text-neutral rounded-lg h-full">
-                                    <ul className='space-y-2 bg-base-100  rounded-lg shadow'>
-                                    {
-                                            allcategories[5].subcategories.map((subcategory, index) => (
-                                                <Link key={index} to={`/camera/${subcategory.brand}`}><li className='transition-all duration-300 cursor-pointer hover:text-primary font-semibold p-3 '>{subcategory.name}</li></Link>
- 
-                                            ))
-
-                                        }
-                                    </ul>
-                                </div>
-                            </div>
-                            <div className='group relative flex gap-1 justify-center items-center transition-all duration-300 text-neutral hover:bg-accent  dark:text-base-100 dark:hover:bg-neutral dark:hover:text-primary hover:text-primary w-32 cursor-pointer text-sm font-semibold rounded-full'>
-                                 
-                                <Link to="/accessories" className='flex items-center gap-2 p-2'>Accessories <FaAngleDown /></Link>
-
-                                <div className="absolute top-12 left-0 hidden group-hover:flex group-hover:flex-col  z-50   w-40 bg-base-100 text-neutral rounded-lg h-full">
-                                    <ul className='space-y-2 bg-base-100  rounded-lg shadow'>
-                                        {
-                                            allcategories[8].subcategories.map((subcategory, index) => (
-                                                <Link key={index} to={`/accessories/${subcategory.type}`}><li className='transition-all duration-300 cursor-pointer hover:text-primary font-semibold p-3 '>{subcategory.name}</li></Link>
-                                            ))
-                                        }
-                                    </ul>
-                                </div>
-                            </div>
-                            <div className='group relative flex gap-1 justify-center items-center transition-all duration-300 text-neutral hover:bg-accent  dark:text-base-100 dark:hover:bg-neutral dark:hover:text-primary hover:text-primary w-32 cursor-pointer text-sm font-semibold rounded-full'>
-                                 
-                                <Link to="/tv" className='flex items-center gap-2 p-2'>TV <FaAngleDown /></Link>
-                                
-                                <div className="absolute top-12 left-0 hidden group-hover:flex group-hover:flex-col  z-50   w-40 bg-base-100 text-neutral rounded-lg h-full">
-                                    <ul className='space-y-2 bg-base-100  rounded-lg shadow'>
-                                    {
-                                            allcategories[7].subcategories.map((subcategory, index) => (
-                                                <Link key={index} to={`/tv/${subcategory.brand}`}><li className='transition-all duration-300 cursor-pointer hover:text-primary font-semibold p-3 '>{subcategory.name}</li></Link>
-                                            ))
-
-                                        }
-                                    </ul>
-                                </div>
-                            </div> 
-                        </div>
-
-                    </div>
-                </div>
-            </div>
+  return (
+    <div className="bg-base-100 dark:bg-neutral ">
+      {/* top header  */}
+      <div
+        className={`container mx-auto hidden h-8 grid-cols-3 place-items-center text-sm text-neutral dark:text-base-100 md:grid lg:gap-80`}
+      >
+        <div className="flex gap-5">
+          <Link to="/" className="flex items-center gap-2">
+            <BiHomeAlt /> Home
+          </Link>
+          <p className="flex items-center gap-2">
+            <BsFillPersonFill /> About Us
+          </p>
+          <p className="flex items-center gap-2">
+            <BiMessageMinus /> Contact
+          </p>
+          {/* <p><FaQuestion/> FAQ</p> */}
         </div>
-    );
+
+        <div className="flex gap-5 ">
+          <p className="flex items-center gap-2">
+            <IoLanguage /> English
+          </p>
+          <p>$ US Dollar</p>
+        </div>
+
+        <div className="flex gap-5 border-l pl-3 ">
+          <Link
+            to="/dashboard"
+            className="flex items-center gap-2 transition-all duration-300 hover:text-primary"
+          >
+            <RxDashboard /> Dashboard
+          </Link>
+          <p className="flex items-center gap-2">
+            <TbTruckDelivery /> Delivery
+          </p>
+        </div>
+      </div>
+
+      {/* Primary Header  */}
+      <div className={`hidden border-t dark:border-gray-600 md:flex `}>
+        <div className="container mx-auto grid grid-cols-4 gap-10 py-5 md:justify-items-center lg:grid-cols-5  lg:justify-items-stretch">
+          <div className=" logo col-span-1 hidden items-center md:flex">
+            <Link to="/" className=" ">
+              {/* <LazyLoadImage src="https://i.ibb.co/vd3xm6V/boipaben-final.png" className='w-16' alt="logo" border="0" /> */}
+              <h1 className="flex items-center gap-1 bg-gradient-to-r from-blue-400 to-blue-600 bg-clip-text text-xl font-semibold text-transparent md:text-2xl lg:text-4xl">
+                <img
+                  className="w-10"
+                  src="https://i.ibb.co/xSLpY24/logo-colored.webp"
+                  alt="logo"
+                  width={50}
+                  height={50}
+                />
+                BestDeal
+              </h1>
+            </Link>
+          </div>
+          <form
+            onSubmit={handleSubmit(onSubmit)}
+            className="search col-span-3 w-full pl-3 lg:pl-0"
+          >
+            <div onChange={handleSearch} className="input-group">
+              <input
+                value={searchText}
+                type="text"
+                autoComplete="off"
+                placeholder="Search..."
+                className="input-bordered input w-full border-r-0 border-primary dark:bg-neutral dark:text-accent"
+                {...register("name", { required: true, maxLength: 80 })}
+              />
+              {/* {searchResult.length > <button className='bg-white text-neutral border-primary border-y font-bold px-3 text-2xl'><IoClose /></button>} */}
+              {searchText.length > 0 && (
+                <span
+                  onClick={handleClear}
+                  className="border-y border-primary bg-white px-3 text-2xl font-bold text-neutral dark:bg-neutral dark:text-accent"
+                >
+                  <IoClose />
+                </span>
+              )}
+              <button
+                type="submit"
+                className="bg-primary px-3 text-2xl font-bold text-base-100"
+              >
+                <AiOutlineSearch />
+              </button>
+            </div>
+            <ul className="absolute z-50 w-full max-w-3xl rounded-lg bg-white shadow-xl dark:border dark:border-gray-600 dark:bg-neutral lg:max-w-4xl">
+              {isOpen &&
+                searchResult.slice(0, 4).map((item, index) => (
+                  <li
+                    className="group flex cursor-pointer items-center gap-2 p-1 text-neutral transition-all duration-300 ease-in-out hover:bg-accent dark:border-b dark:border-gray-600"
+                    key={index}
+                  >
+                    <img src={item.image} alt="" className="w-20" />
+                    <div className="flex flex-col ">
+                      <Link
+                        onClick={() => setIsOpen(!isOpen)}
+                        to={`/productDetails/${item._id}/${encodeURIComponent(
+                          item.name
+                        ).replace(/%20/g, "-")}`}
+                        className="text-primary"
+                      >
+                        {item.name}
+                      </Link>
+                      <p className="dark:text-accent dark:group-hover:text-neutral">
+                        ${item.price}
+                      </p>
+                    </div>
+                  </li>
+                ))}
+              {isOpen && (
+                <Link
+                  onClick={() => setIsOpen(!isOpen)}
+                  to={`/search/${searchText}`}
+                  className="flex items-center justify-center rounded-b-lg bg-secondary p-2 text-white"
+                >
+                  See all results
+                </Link>
+              )}
+            </ul>
+          </form>
+          <div className="col-span-1 flex items-center gap-5 md:text-2xl lg:justify-end lg:text-3xl">
+            {/* <p className='cursor-pointer rounded-full border p-1 hover:bg-primary hover:text-base-100 transition-all duration-300 ease-in-out'><BsPerson  className='p-1'/></p>  */}
+
+            {user ? (
+              <div className="flex items-center gap-4">
+                {user.photoURL ? (
+                  <div className="dropdown-end dropdown">
+                    <label
+                      tabIndex={0}
+                      className="btn-ghost btn-sm btn mb-1 h-10 w-10 cursor-pointer rounded-full border border-gray-200 p-0  "
+                    >
+                      <img
+                        src={
+                          user?.photoURL
+                            ? user?.photoURL
+                            : "https://media.istockphoto.com/id/1337144146/vector/default-avatar-profile-icon-vector.jpg?s=612x612&w=0&k=20&c=BIbFwuv7FxTWvh5S3vB6bkT0Qv8Vn8N5Ffseq84ClGI="
+                        }
+                        alt=""
+                        className="w-10 rounded-full"
+                      />
+                    </label>
+                    <ul
+                      tabIndex={0}
+                      className="dropdown-content menu rounded-box w-52 gap-1 bg-base-100 p-2 text-sm shadow"
+                    >
+                      <li>
+                        <span className="flex items-center justify-between">
+                          Dark Mode{" "}
+                          <input
+                            onClick={() => setDarkMode(!darkmode)}
+                            type="checkbox"
+                            className="toggle-primary toggle"
+                          />
+                        </span>
+                      </li>
+                      <li>
+                        <Link to="/orderhistory">Order History</Link>
+                      </li>
+                      <li onClick={handleLogOut}>
+                        <a href="#">Logout</a>
+                      </li>
+                    </ul>
+                  </div>
+                ) : (
+                  <div className="dropdown-end dropdown">
+                    <label
+                      tabIndex={0}
+                      className="btn-ghost btn-sm btn mb-1 h-10 w-10 cursor-pointer rounded-full border border-gray-200 p-0 text-2xl transition-all duration-300 ease-in-out hover:border-none hover:bg-primary hover:text-base-100"
+                    >
+                      <BsPerson />
+                    </label>
+                    <ul
+                      tabIndex={0}
+                      className="dropdown-content menu rounded-box w-52 gap-1 bg-base-100 p-2 text-sm shadow"
+                    >
+                      <li>
+                        <Link to="/orderhistory">Order History</Link>
+                      </li>
+                      <li onClick={handleLogOut}>
+                        <a>Logout</a>
+                      </li>
+                    </ul>
+                  </div>
+                )}
+              </div>
+            ) : (
+              <div className="dropdown-end dropdown">
+                <label
+                  tabIndex={0}
+                  className="btn-ghost btn-sm btn mb-1 h-10 w-10 cursor-pointer rounded-full border border-gray-200 p-0 text-2xl transition-all duration-300 ease-in-out hover:border-none hover:bg-primary hover:text-base-100"
+                >
+                  <BsPerson />
+                </label>
+                <ul
+                  tabIndex={0}
+                  className="dropdown-content menu rounded-box w-52 gap-1 bg-base-100 p-2 text-sm shadow"
+                >
+                  <li>
+                    <Link to="/login">Login</Link>
+                  </li>
+                  <li>
+                    <Link to="/register">Signup</Link>
+                  </li>
+                </ul>
+              </div>
+            )}
+
+            <div className="dropdown-end dropdown">
+              <label
+                tabIndex={0}
+                className="btn-ghost btn-sm btn mb-1 h-10 w-10 cursor-pointer rounded-full border border-gray-200 p-0 text-2xl transition-all duration-300 ease-in-out hover:border-none hover:bg-primary hover:text-base-100 dark:text-base-100"
+              >
+                <IoNotificationsOutline />
+              </label>
+              <ul
+                tabIndex={0}
+                className="dropdown-content menu rounded-box w-52 gap-1 bg-base-100 p-2 text-sm shadow dark:bg-neutral"
+              >
+                <li>
+                  <Link
+                    to="/laptop"
+                    className="bg-accent text-sm dark:bg-opacity-10 dark:text-base-100"
+                  >
+                    <div className="flex flex-col">
+                      <p>
+                        <span className="text-red-500">30% </span> discount on{" "}
+                        <span className="p-0 font-bold text-secondary dark:text-accent">
+                          Laptops
+                        </span>{" "}
+                      </p>
+                      <span className="text-xs ">1 hour</span>
+                    </div>
+                  </Link>
+                </li>
+                <li>
+                  <Link
+                    to="/laptop"
+                    className="bg-accent  text-sm dark:bg-opacity-10 dark:text-base-100"
+                  >
+                    <div className="flex flex-col">
+                      <p>
+                        <span className="text-red-500">50% </span> discount on{" "}
+                        <span className="p-0 font-bold text-secondary dark:text-accent">
+                          Accessories
+                        </span>{" "}
+                      </p>
+                      <span className="text-xs ">2 hour</span>
+                    </div>
+                  </Link>
+                </li>
+              </ul>
+            </div>
+            <Link to="/cart">
+              <div className="relative rounded-full border p-1 transition-all duration-300 ease-in-out hover:bg-primary hover:text-base-100 dark:text-base-100">
+                <BsBag className="cursor-pointer  p-1" />
+                {cart && (
+                  <div
+                    className={`absolute -top-1 -right-2  text-sm  ${
+                      cart.length === 0
+                        ? "border-error bg-red-500"
+                        : "border-primary bg-green-500"
+                    } flex h-5 w-5  items-center justify-center rounded-full border text-base-100`}
+                  >
+                    {cart.length}
+                  </div>
+                )}
+              </div>
+            </Link>
+          </div>
+        </div>
+      </div>
+
+      {/* Category Header  */}
+
+      <div
+        className={`hidden w-full border-y bg-base-100  py-4 dark:border-gray-600 md:flex md:flex-wrap  ${
+          isFixed
+            ? "fixed top-0 z-50 rounded-md bg-opacity-80 bg-clip-padding backdrop-blur-sm backdrop-filter transition-all duration-300 dark:bg-opacity-30"
+            : "dark:bg-neutral"
+        }`}
+      >
+        <div className="container mx-auto">
+          <div className="flex justify-between md:gap-2 lg:gap-0">
+            <div className="group relative">
+              <p className="flex items-center justify-center gap-2 rounded-full bg-primary p-3 text-base-100 lg:w-44 ">
+                All Categories <FaAngleDown />{" "}
+              </p>
+              <div className="absolute top-12 z-50 hidden h-full  py-5 group-hover:flex  group-hover:flex-col lg:w-56 ">
+                <ul className="z-50  bg-base-100 shadow">
+                  {allcategories.map((category, index) => (
+                    <li
+                      key={index}
+                      onMouseEnter={() => handleOptions(category.id)}
+                      onMouseLeave={() => handleOptions(0)}
+                      className="relative flex cursor-pointer items-start  border-b p-2 font-semibold transition-all duration-300 hover:bg-primary hover:text-base-100"
+                    >
+                      <Link to={`/${category.cat}`}>
+                        <span className="flex items-center">
+                          {category.name} &nbsp; <FaAngleRight />
+                        </span>
+                      </Link>
+                      <div
+                        className={`absolute -right-[172px] top-0 w-48 px-5  py-0 drop-shadow-lg  ${
+                          options === category.id ? "" : "hidden"
+                        }`}
+                      >
+                        <div className=" bg-base-100 text-neutral transition-all duration-300 hover:text-primary">
+                          {category.subcategories.map((subcategory, index) => (
+                            <Link
+                              key={index}
+                              onMouseEnter={() =>
+                                handleSubOptions(subcategory.id)
+                              }
+                              onMouseLeave={() => handleSubOptions(0)}
+                              className="relative flex items-start  border-b p-2 pl-2  text-neutral transition-all duration-300 hover:bg-primary hover:text-base-100"
+                              to={`/${category.cat}/${
+                                subcategory.subcat
+                                  ? subcategory.subcat
+                                  : subcategory.brand
+                                  ? subcategory.brand
+                                  : subcategory.type
+                              }`}
+                            >
+                              <span className="flex items-center">
+                                {subcategory.name} &nbsp; <FaAngleRight />
+                              </span>
+
+                              {subcategory.subcategories && (
+                                <div
+                                  className={`absolute -right-[172px] top-0 w-48  px-5 py-0 ${
+                                    subOptions === subcategory.id
+                                      ? ""
+                                      : "hidden"
+                                  }`}
+                                >
+                                  <ul className="space-y-5  bg-base-100">
+                                    {subcategory?.subcategories?.map(
+                                      (s, index) => (
+                                        <Link
+                                          key={index}
+                                          className=""
+                                          to={`/${category.cat}/${
+                                            subcategory.subcat
+                                              ? subcategory.subcat
+                                              : subcategory.type
+                                          }/${s.brand ? s.brand : s.type}`}
+                                        >
+                                          <li className=" border-b py-2 pr-5 pl-2 text-neutral transition-all duration-300 hover:bg-primary hover:text-base-100">
+                                            {s.name}
+                                          </li>
+                                        </Link>
+                                      )
+                                    )}
+                                  </ul>
+                                </div>
+                              )}
+                            </Link>
+                          ))}
+                        </div>
+                      </div>
+                    </li>
+                  ))}
+                </ul>
+              </div>
+            </div>
+            <div className="flex flex-wrap gap-3">
+              <div
+                className={`group relative flex w-32 cursor-pointer items-center justify-center gap-1 rounded-full bg-accent text-sm font-semibold text-primary  transition-all duration-300 hover:text-primary dark:border dark:bg-neutral ${
+                  isFixed && "border border-primary"
+                }`}
+              >
+                <Link to="/monitor" className="flex items-center gap-2 p-2">
+                  Monitor <FaAngleDown />
+                </Link>
+
+                <div className="absolute top-12 left-0 z-50 hidden h-full  w-40   rounded-lg bg-base-100 text-neutral group-hover:flex group-hover:flex-col">
+                  <ul className="space-y-2 rounded-lg  bg-base-100 shadow">
+                    {allcategories[2].subcategories.map(
+                      (subcategory, index) => (
+                        <Link key={index} to={`/monitor/${subcategory.brand}`}>
+                          <li className="cursor-pointer p-3 font-semibold transition-all duration-300 hover:text-primary ">
+                            {subcategory.name}
+                          </li>
+                        </Link>
+                      )
+                    )}
+                  </ul>
+                </div>
+              </div>
+              <div className="group relative flex w-32 cursor-pointer items-center justify-center gap-1 rounded-full text-sm  font-semibold text-neutral transition-all duration-300 hover:bg-accent hover:text-primary dark:text-base-100 dark:hover:bg-neutral dark:hover:text-primary">
+                <Link to="/laptop" className="flex items-center gap-2 p-2">
+                  Laptops <FaAngleDown />
+                </Link>
+
+                <div className="absolute top-12 left-0 z-50 hidden h-full  w-40   rounded-lg bg-base-100 text-neutral group-hover:flex group-hover:flex-col">
+                  <ul className="space-y-2 rounded-lg  bg-base-100 shadow">
+                    {allcategories[1].subcategories.map(
+                      (subcategory, index) => (
+                        <Link key={index} to={`/laptop/${subcategory.brand}`}>
+                          <li className="cursor-pointer p-3 font-semibold transition-all duration-300 hover:text-primary ">
+                            {subcategory.name}
+                          </li>
+                        </Link>
+                      )
+                    )}
+                  </ul>
+                </div>
+              </div>
+              <div className="group relative flex w-32 cursor-pointer items-center justify-center gap-1 rounded-full text-sm  font-semibold text-neutral transition-all duration-300 hover:bg-accent hover:text-primary dark:text-base-100 dark:hover:bg-neutral dark:hover:text-primary">
+                <Link to="/smartphone" className="flex items-center gap-2 p-2">
+                  Smartphone <FaAngleDown />
+                </Link>
+
+                <div className="absolute top-12 left-0 z-50 hidden h-full  w-40   rounded-lg bg-base-100 text-neutral group-hover:flex group-hover:flex-col">
+                  <ul className="space-y-2 rounded-lg  bg-base-100 shadow">
+                    {allcategories[3].subcategories.map(
+                      (subcategory, index) => (
+                        <Link
+                          key={index}
+                          to={`/smartphone/${subcategory.brand}`}
+                        >
+                          <li className="cursor-pointer p-3 font-semibold transition-all duration-300 hover:text-primary ">
+                            {subcategory.name}
+                          </li>
+                        </Link>
+                      )
+                    )}
+                  </ul>
+                </div>
+              </div>
+              <div className="group relative flex w-32 cursor-pointer items-center justify-center gap-1 rounded-full text-sm  font-semibold text-neutral transition-all duration-300 hover:bg-accent hover:text-primary dark:text-base-100 dark:hover:bg-neutral dark:hover:text-primary">
+                <Link to="/tablet" className="flex items-center gap-2 p-2">
+                  Tablet <FaAngleDown />
+                </Link>
+
+                <div className="absolute top-12 left-0 z-50 hidden h-full  w-40   rounded-lg bg-base-100 text-neutral group-hover:flex group-hover:flex-col">
+                  <ul className="space-y-2 rounded-lg  bg-base-100 shadow">
+                    {allcategories[4].subcategories.map(
+                      (subcategory, index) => (
+                        <Link key={index} to={`/tablet/${subcategory.brand}`}>
+                          <li className="cursor-pointer p-3 font-semibold transition-all duration-300 hover:text-primary ">
+                            {subcategory.name}
+                          </li>
+                        </Link>
+                      )
+                    )}
+                  </ul>
+                </div>
+              </div>
+              <div className="group relative flex w-32 cursor-pointer items-center justify-center gap-1 rounded-full text-sm  font-semibold text-neutral transition-all duration-300 hover:bg-accent hover:text-primary dark:text-base-100 dark:hover:bg-neutral dark:hover:text-primary">
+                <Link to="/camera" className="flex items-center gap-2 p-2">
+                  Camera <FaAngleDown />
+                </Link>
+
+                <div className="absolute top-12 left-0 z-50 hidden h-full  w-40   rounded-lg bg-base-100 text-neutral group-hover:flex group-hover:flex-col">
+                  <ul className="space-y-2 rounded-lg  bg-base-100 shadow">
+                    {allcategories[5].subcategories.map(
+                      (subcategory, index) => (
+                        <Link key={index} to={`/camera/${subcategory.brand}`}>
+                          <li className="cursor-pointer p-3 font-semibold transition-all duration-300 hover:text-primary ">
+                            {subcategory.name}
+                          </li>
+                        </Link>
+                      )
+                    )}
+                  </ul>
+                </div>
+              </div>
+              <div className="group relative flex w-32 cursor-pointer items-center justify-center gap-1 rounded-full text-sm  font-semibold text-neutral transition-all duration-300 hover:bg-accent hover:text-primary dark:text-base-100 dark:hover:bg-neutral dark:hover:text-primary">
+                <Link to="/accessories" className="flex items-center gap-2 p-2">
+                  Accessories <FaAngleDown />
+                </Link>
+
+                <div className="absolute top-12 left-0 z-50 hidden h-full  w-40   rounded-lg bg-base-100 text-neutral group-hover:flex group-hover:flex-col">
+                  <ul className="space-y-2 rounded-lg  bg-base-100 shadow">
+                    {allcategories[8].subcategories.map(
+                      (subcategory, index) => (
+                        <Link
+                          key={index}
+                          to={`/accessories/${subcategory.type}`}
+                        >
+                          <li className="cursor-pointer p-3 font-semibold transition-all duration-300 hover:text-primary ">
+                            {subcategory.name}
+                          </li>
+                        </Link>
+                      )
+                    )}
+                  </ul>
+                </div>
+              </div>
+              <div className="group relative flex w-32 cursor-pointer items-center justify-center gap-1 rounded-full text-sm  font-semibold text-neutral transition-all duration-300 hover:bg-accent hover:text-primary dark:text-base-100 dark:hover:bg-neutral dark:hover:text-primary">
+                <Link to="/tv" className="flex items-center gap-2 p-2">
+                  TV <FaAngleDown />
+                </Link>
+
+                <div className="absolute top-12 left-0 z-50 hidden h-full  w-40   rounded-lg bg-base-100 text-neutral group-hover:flex group-hover:flex-col">
+                  <ul className="space-y-2 rounded-lg  bg-base-100 shadow">
+                    {allcategories[7].subcategories.map(
+                      (subcategory, index) => (
+                        <Link key={index} to={`/tv/${subcategory.brand}`}>
+                          <li className="cursor-pointer p-3 font-semibold transition-all duration-300 hover:text-primary ">
+                            {subcategory.name}
+                          </li>
+                        </Link>
+                      )
+                    )}
+                  </ul>
+                </div>
+              </div>
+            </div>
+          </div>
+        </div>
+      </div>
+    </div>
+  );
 };
 
 export default Header;
