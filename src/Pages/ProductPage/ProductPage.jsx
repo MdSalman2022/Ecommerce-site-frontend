@@ -124,7 +124,7 @@ function ProductPage() {
                   </li>
                 ))}
                 <li className="list-none font-semibold text-primary">
-                  Sell All
+                  See All
                 </li>
               </ul>
               <span className="flex items-center justify-between border-t pt-5">
@@ -166,7 +166,7 @@ function ProductPage() {
                   />
                   Asus
                 </li>
-                <li className="font-semibold text-primary">Sell All</li>
+                <li className="font-semibold text-primary">See All</li>
               </ul>
               <div className="flex flex-col gap-2">
                 <span className="flex items-center justify-between border-t pt-5">
@@ -185,7 +185,7 @@ function ProductPage() {
                   />
                 </div>
                 <div className="flex justify-center">
-                  <button className="btn btn-primary">Apply</button>
+                  <button className="btn-primary btn">Apply</button>
                 </div>
               </div>
               <span className="flex items-center justify-between border-t pt-5">
@@ -265,7 +265,7 @@ function ProductPage() {
               <div className="flex w-full items-center justify-between">
                 <div>
                   <button
-                    className="btn"
+                    className="btn block md:hidden"
                     onClick={() =>
                       document.getElementById("filter").showModal()
                     }
@@ -348,7 +348,7 @@ function ProductPage() {
                             />
                           </div>
                           <div className="flex justify-center">
-                            <button className="btn btn-primary">Apply</button>
+                            <button className="btn-primary btn">Apply</button>
                           </div>
                         </div>
                         <span className="flex items-center justify-between border-t pt-5">
@@ -443,13 +443,13 @@ function ProductPage() {
                   <div className="dropdown-end dropdown">
                     <label
                       tabIndex={0}
-                      className="btn-outline btn btn-primary m-1"
+                      className="btn-primary btn-outline btn m-1"
                     >
                       Sort
                     </label>
                     <ul
                       tabIndex={0}
-                      className="dropdown-content menu rounded-box w-52 bg-white p-2 shadow"
+                      className="dropdown-content menu w-52 rounded-box bg-white p-2 shadow"
                     >
                       <li onClick={() => handleSortTypeChange("low-to-high")}>
                         <a>Low to High</a>
@@ -486,7 +486,7 @@ function ProductPage() {
                 </h1>
                 <Link
                   to="/"
-                  className="btn-outline btn btn-primary rounded px-8 py-3 font-semibold"
+                  className="btn-primary btn-outline btn rounded px-8 py-3 font-semibold"
                 >
                   Back to homepage
                 </Link>

@@ -17,7 +17,7 @@ const FeaturedCategory = () => {
     {
       queryKey: ["featured"],
       queryFn: () =>
-        fetch(`${import.meta.env.VITE_SERVER_URL}/featured`).then(res =>
+        fetch(`${import.meta.env.VITE_SERVER_URL}/featured`).then((res) =>
           res.json()
         ),
     },
@@ -39,8 +39,8 @@ const FeaturedCategory = () => {
         ></span>
       </div>
 
-      <div className="container mx-auto flex flex-col items-center justify-center gap-3 rounded-3xl bg-accent py-5 dark:bg-gray-300 md:py-0 md:pr-3 md:drop-shadow-xl lg:grid lg:grid-cols-4 lg:gap-14">
-        <div className="image-full relative flex h-96 w-72 items-center justify-center overflow-hidden  rounded-3xl border-b-2 bg-white shadow dark:bg-gray-300 md:w-80 md:rounded-l-3xl md:border-b-0 lg:col-span-1 lg:h-[600px] lg:w-96 lg:border-r-2">
+      <div className="container mx-auto flex flex-col items-center justify-center gap-3 rounded-3xl bg-accent py-5 dark:bg-gray-300 md:border md:py-0 md:pr-3 lg:grid lg:grid-cols-4 lg:gap-14">
+        <div className="image-full relative flex h-96 w-72 items-center justify-center overflow-hidden  rounded-3xl border border-b-2 bg-white dark:bg-gray-300 md:w-80 md:rounded-l-3xl md:border-b-0 lg:col-span-1 lg:h-[600px] lg:w-96 lg:border-r">
           <h1 className="absolute top-5 z-50 text-center text-3xl font-bold text-primary md:text-4xl lg:top-24">
             Smartphones
           </h1>

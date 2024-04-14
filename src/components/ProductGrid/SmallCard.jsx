@@ -15,7 +15,7 @@ function SmallCard({ latestItem, len }) {
 
   const [count, setCount] = useState(0);
 
-  const handleChange = e => {
+  const handleChange = (e) => {
     const newCount = Number(e.target.value);
     if (newCount <= 10) {
       setCount(newCount);
@@ -23,10 +23,10 @@ function SmallCard({ latestItem, len }) {
   };
 
   const handleCart = (data, count) => {
-    const cartItem = cart.find(item => item._id === data._id);
+    const cartItem = cart.find((item) => item._id === data._id);
 
     if (cartItem) {
-      const updatedCart = cart.map(item => {
+      const updatedCart = cart.map((item) => {
         if (item._id === data._id) {
           return {
             ...item,
@@ -51,7 +51,7 @@ function SmallCard({ latestItem, len }) {
   };
 
   return (
-    <div className="card-compact card relative h-full w-full items-center bg-base-100 drop-shadow-md lg:card-side">
+    <div className="card-compact card relative h-full w-full items-center border bg-base-100 lg:card-side">
       <figure className="w-80 object-cover">
         <LazyLoadImage
           src={latestItem?.image}

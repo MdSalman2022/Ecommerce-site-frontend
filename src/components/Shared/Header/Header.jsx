@@ -188,7 +188,7 @@ const Header = () => {
                 className="absolute top-20 left-0 h-full w-full"
               ></div>
             )}
-            <div onChange={handleSearch} className="join input-group w-full">
+            <div onChange={handleSearch} className="input-group join w-full">
               <input
                 value={searchText}
                 type="text"
@@ -271,7 +271,7 @@ const Header = () => {
                     </label>
                     <ul
                       tabIndex={0}
-                      className="dropdown-content menu rounded-box w-52 gap-1 bg-base-100 p-2 text-sm shadow"
+                      className="dropdown-content menu w-52 gap-1 rounded-box bg-base-100 p-2 text-sm shadow"
                     >
                       <li>
                         <span className="flex items-center justify-between">
@@ -301,7 +301,7 @@ const Header = () => {
                     </label>
                     <ul
                       tabIndex={0}
-                      className="dropdown-content menu rounded-box z-[100] w-52 gap-1 bg-base-100 p-2 text-sm shadow"
+                      className="dropdown-content menu z-[100] w-52 gap-1 rounded-box bg-base-100 p-2 text-sm shadow"
                     >
                       <li>
                         <Link to="/orderhistory">Order History</Link>
@@ -323,7 +323,7 @@ const Header = () => {
                 </label>
                 <ul
                   tabIndex={0}
-                  className="dropdown-content menu rounded-box w-52 gap-1 bg-base-100 p-2 text-sm shadow"
+                  className="dropdown-content menu w-52 gap-1 rounded-box bg-base-100 p-2 text-sm shadow"
                 >
                   <li>
                     <Link to="/login">Login</Link>
@@ -344,7 +344,7 @@ const Header = () => {
               </label>
               <ul
                 tabIndex={0}
-                className="dropdown-content menu rounded-box w-52 gap-1 bg-base-100 p-2 text-sm shadow dark:bg-neutral"
+                className="dropdown-content menu z-[100] w-52 gap-1 rounded-box bg-base-100 p-2 text-sm shadow dark:bg-neutral"
               >
                 <li>
                   <Link

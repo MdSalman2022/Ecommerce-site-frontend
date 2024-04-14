@@ -27,7 +27,7 @@ const BackInStore = () => {
     {
       queryKey: ["backInStore"],
       queryFn: () =>
-        fetch(`${import.meta.env.VITE_SERVER_URL}/backInStore`).then(res =>
+        fetch(`${import.meta.env.VITE_SERVER_URL}/backInStore`).then((res) =>
           res.json()
         ),
     },
