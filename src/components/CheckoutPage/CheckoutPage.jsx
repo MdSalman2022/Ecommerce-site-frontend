@@ -17,12 +17,12 @@ function CheckoutPage() {
 
   const [active, setActive] = useState(false);
   console.log(active);
-  let info = allUsers.find(u => u.email === user?.email);
+  let info = allUsers.find((u) => u.email === user?.email);
   console.log(info);
 
   const { name, address, contact, city } = info;
 
-  const handleDelivery = data => {
+  const handleDelivery = (data) => {
     console.log(data);
     let email = user.email;
     let orderName = data.name;
@@ -36,20 +36,20 @@ function CheckoutPage() {
       },
       body: JSON.stringify({ email, orderName, address, contact, city }),
     })
-      .then(res => res.json())
-      .then(data => {
+      .then((res) => res.json())
+      .then((data) => {
         console.log(data);
         setActive(true);
         if (data.modifiedCount > 0) {
           toast.success("Delivery Details Updated successfully");
         }
       })
-      .catch(err => console.error(err));
+      .catch((err) => console.error(err));
   };
 
   return (
     <div>
-      <div className="checkoutpage container mx-auto my-10">
+      <div className="checkoutpage container mx-auto my-10 px-4 md:px-0">
         <div className="flex flex-col items-center">
           <h2 className="text-center text-4xl font-bold">Shipping</h2>
           <form
@@ -63,7 +63,7 @@ function CheckoutPage() {
               type="text"
               defaultValue={name ? name : info.orderName}
               {...register("name", {
-                validate: value =>
+                validate: (value) =>
                   value !== "" || value === (name ? name : info?.orderName),
                 required: "Name is required",
               })}
@@ -79,7 +79,7 @@ function CheckoutPage() {
               type="text"
               defaultValue={address}
               {...register("address", {
-                validate: value => value !== "" || value === address,
+                validate: (value) => value !== "" || value === address,
                 required: "Shipping Address is required",
               })}
               className="input-bordered input w-full max-w-xl"
@@ -94,7 +94,7 @@ function CheckoutPage() {
               type="number"
               defaultValue={contact}
               {...register("contact", {
-                validate: value => value !== "" || value === contact,
+                validate: (value) => value !== "" || value === contact,
                 required: "Contact number is required",
               })}
               className="input-bordered input w-full max-w-xl"
@@ -110,7 +110,7 @@ function CheckoutPage() {
               type="text"
               defaultValue={city}
               {...register("city", {
-                validate: value => value !== "" || value === city,
+                validate: (value) => value !== "" || value === city,
                 required: "City Name is required",
               })}
               className="input-bordered input w-full max-w-xl"

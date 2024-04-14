@@ -38,11 +38,11 @@ const Header = () => {
     formState: { errors },
   } = useForm();
 
-  const onSubmit = data => {
+  const onSubmit = (data) => {
     navigate(`/search/${data.name}`);
     setSearchText(data.name);
   };
-  const handleSearch = event => {
+  const handleSearch = (event) => {
     let search = event.target.value;
     console.log(search);
     // navigate(`/search/${data.name}`)
@@ -68,7 +68,7 @@ const Header = () => {
       const searchResults = fuse
         .search(searchText)
         .sort((a, b) => b.score - a.score);
-      const formattedResults = searchResults.map(result => result.item);
+      const formattedResults = searchResults.map((result) => result.item);
       setSearchResult(formattedResults);
     }
   }, [searchText]);
@@ -76,16 +76,16 @@ const Header = () => {
   const handleLogOut = () => {
     logOut()
       .then(() => {})
-      .catch(error => console.error(error));
+      .catch((error) => console.error(error));
   };
 
   const [options, setOptions] = useState(0);
   const [subOptions, setSubOptions] = useState(0);
 
-  const handleOptions = id => {
+  const handleOptions = (id) => {
     setOptions(id);
   };
-  const handleSubOptions = id => {
+  const handleSubOptions = (id) => {
     setSubOptions(id);
   };
 
@@ -181,27 +181,34 @@ const Header = () => {
             onSubmit={handleSubmit(onSubmit)}
             className="search col-span-3 w-full pl-3 lg:pl-0"
           >
-            <div onChange={handleSearch} className="input-group">
+            {" "}
+            {isOpen && (
+              <div
+                onClick={() => setIsOpen(!isOpen)}
+                className="absolute top-20 left-0 h-full w-full"
+              ></div>
+            )}
+            <div onChange={handleSearch} className="join input-group w-full">
               <input
                 value={searchText}
                 type="text"
                 autoComplete="off"
                 placeholder="Search..."
-                className="input-bordered input w-full border-r-0 border-primary dark:bg-neutral dark:text-accent"
+                className="input-bordered input w-full rounded-r-none border-r-0 border-primary dark:bg-neutral dark:text-accent "
                 {...register("name", { required: true, maxLength: 80 })}
               />
               {/* {searchResult.length > <button className='bg-white text-neutral border-primary border-y font-bold px-3 text-2xl'><IoClose /></button>} */}
               {searchText.length > 0 && (
                 <span
                   onClick={handleClear}
-                  className="border-y border-primary bg-white px-3 text-2xl font-bold text-neutral dark:bg-neutral dark:text-accent"
+                  className="flex h-12 items-center border-y border-primary bg-white px-3 text-2xl font-bold text-neutral dark:bg-neutral dark:text-accent"
                 >
                   <IoClose />
                 </span>
               )}
               <button
                 type="submit"
-                className="bg-primary px-3 text-2xl font-bold text-base-100"
+                className="rounded-lg rounded-l-none bg-primary px-3 text-2xl font-bold text-base-100"
               >
                 <AiOutlineSearch />
               </button>
@@ -250,7 +257,7 @@ const Header = () => {
                   <div className="dropdown-end dropdown">
                     <label
                       tabIndex={0}
-                      className="btn-ghost btn-sm btn mb-1 h-10 w-10 cursor-pointer rounded-full border border-gray-200 p-0  "
+                      className="btn-ghost btn btn-sm mb-1 h-10 w-10 cursor-pointer rounded-full border border-gray-200 p-0  "
                     >
                       <img
                         src={
@@ -288,13 +295,13 @@ const Header = () => {
                   <div className="dropdown-end dropdown">
                     <label
                       tabIndex={0}
-                      className="btn-ghost btn-sm btn mb-1 h-10 w-10 cursor-pointer rounded-full border border-gray-200 p-0 text-2xl transition-all duration-300 ease-in-out hover:border-none hover:bg-primary hover:text-base-100"
+                      className="btn-ghost btn btn-sm mb-1 h-10 w-10 cursor-pointer rounded-full border border-gray-200 p-0 text-2xl transition-all duration-300 ease-in-out hover:border-none hover:bg-primary hover:text-base-100"
                     >
                       <BsPerson />
                     </label>
                     <ul
                       tabIndex={0}
-                      className="dropdown-content menu rounded-box w-52 gap-1 bg-base-100 p-2 text-sm shadow"
+                      className="dropdown-content menu rounded-box z-[100] w-52 gap-1 bg-base-100 p-2 text-sm shadow"
                     >
                       <li>
                         <Link to="/orderhistory">Order History</Link>
@@ -310,7 +317,7 @@ const Header = () => {
               <div className="dropdown-end dropdown">
                 <label
                   tabIndex={0}
-                  className="btn-ghost btn-sm btn mb-1 h-10 w-10 cursor-pointer rounded-full border border-gray-200 p-0 text-2xl transition-all duration-300 ease-in-out hover:border-none hover:bg-primary hover:text-base-100"
+                  className="btn-ghost btn btn-sm mb-1 h-10 w-10 cursor-pointer rounded-full border border-gray-200 p-0 text-2xl transition-all duration-300 ease-in-out hover:border-none hover:bg-primary hover:text-base-100"
                 >
                   <BsPerson />
                 </label>
@@ -331,7 +338,7 @@ const Header = () => {
             <div className="dropdown-end dropdown">
               <label
                 tabIndex={0}
-                className="btn-ghost btn-sm btn mb-1 h-10 w-10 cursor-pointer rounded-full border border-gray-200 p-0 text-2xl transition-all duration-300 ease-in-out hover:border-none hover:bg-primary hover:text-base-100 dark:text-base-100"
+                className="btn-ghost btn btn-sm mb-1 h-10 w-10 cursor-pointer rounded-full border border-gray-200 p-0 text-2xl transition-all duration-300 ease-in-out hover:border-none hover:bg-primary hover:text-base-100 dark:text-base-100"
               >
                 <IoNotificationsOutline />
               </label>
@@ -364,7 +371,7 @@ const Header = () => {
                       <p>
                         <span className="text-red-500">50% </span> discount on{" "}
                         <span className="p-0 font-bold text-secondary dark:text-accent">
-                          Accessories
+                          border-gray-600 Accessories
                         </span>{" "}
                       </p>
                       <span className="text-xs ">2 hour</span>
@@ -396,7 +403,7 @@ const Header = () => {
       {/* Category Header  */}
 
       <div
-        className={`hidden w-full border-y bg-base-100  py-4 dark:border-gray-600 md:flex md:flex-wrap  ${
+        className={`dark: hidden w-full border-y  bg-base-100 py-4 md:flex md:flex-wrap  ${
           isFixed
             ? "fixed top-0 z-50 rounded-md bg-opacity-80 bg-clip-padding backdrop-blur-sm backdrop-filter transition-all duration-300 dark:bg-opacity-30"
             : "dark:bg-neutral"
@@ -409,7 +416,7 @@ const Header = () => {
                 All Categories <FaAngleDown />{" "}
               </p>
               <div className="absolute top-12 z-50 hidden h-full  py-5 group-hover:flex  group-hover:flex-col lg:w-56 ">
-                <ul className="z-50  bg-base-100 shadow">
+                <ul className="z-40  bg-base-100 shadow">
                   {allcategories.map((category, index) => (
                     <li
                       key={index}
