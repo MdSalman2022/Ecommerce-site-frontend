@@ -33,7 +33,7 @@ function Banner() {
   useEffect(() => {
     const mediaQuery = window.matchMedia("(min-width: 768px)");
 
-    const handleMediaQueryChange = event => {
+    const handleMediaQueryChange = (event) => {
       setIsDesktop(event.matches);
     };
 
@@ -55,7 +55,7 @@ function Banner() {
     ];
 
     // Create an Image object for each image and set the src property
-    imageUrls.forEach(url => {
+    imageUrls.forEach((url) => {
       const img = new Image();
       img.src = url;
     });
@@ -157,7 +157,10 @@ function Banner() {
                       Laptop Intel <br />
                       Core I9 13900K
                     </div>
-                    <Link to="/laptop" className="btn-primary btn h-10 w-32 ">
+                    <Link
+                      to="/laptop"
+                      className="btn-primary btn h-10 w-32 text-white"
+                    >
                       Shop Now
                     </Link>
                   </div>
@@ -180,7 +183,10 @@ function Banner() {
                       Apple M2 Pro Chip
                     </div>
 
-                    <Link to="/laptop" className="btn-primary btn h-10 w-32 ">
+                    <Link
+                      to="/laptop"
+                      className="btn-primary btn h-10 w-32 text-white"
+                    >
                       Shop Now
                     </Link>
                   </div>
@@ -206,7 +212,7 @@ function Banner() {
                     </div>
                     <Link
                       to="/smartphone"
-                      className="btn-primary btn h-10 w-32 "
+                      className="btn-primary btn h-10 w-32 text-white"
                     >
                       Shop Now
                     </Link>
