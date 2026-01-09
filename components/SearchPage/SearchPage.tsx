@@ -1,0 +1,162 @@
+'use client';
+
+import React, { useState, useEffect } from 'react';
+import Link from 'next/link';
+import { useParams } from 'next/navigation';
+
+import ProductCard from '@/components/product/ProductCard';
+import { Button } from '@/components/ui/button';
+import { ProductGridSkeleton } from '@/components/Skeletons';
+import { Sparkles, Info, Search } from 'lucide-react';
+import {
+  Tooltip,
+  TooltipContent,
+  TooltipProvider,
+  TooltipTrigger,
+} from "@/components/ui/tooltip";
+
+const SearchPage = () => {
+  const params = useParams();
+  const searchName = params?.name as string;
+  const decodedQuery = decodeURIComponent(searchName || '');
+
+  const [displayProducts, setDisplayProducts] = useState<any[]>([]);
+  const [isLoading, setIsLoading] = useState(true);
+  const [isAiPowered, setIsAiPowered] = useState(false);
+  const [searchCriteria, setSearchCriteria] = useState<any>(null);
+
+  useEffect(() => {
+    const fetchSearchResults = async () => {
+      if (!decodedQuery) return;
+      
+      setIsLoading(true);
+      try {
+        const res = await fetch(`${process.env.NEXT_PUBLIC_SERVER_URL}/api/ai/search?q=${encodeURIComponent(decodedQuery)}`);
+        const data = await res.json();
+        
+        if (data.success) {
+          setDisplayProducts(data.products || []);
+          setIsAiPowered(data.aiPowered || false);
+          setSearchCriteria(data.searchCriteria || null);
+        }
+      } catch (error) {
+        console.error('Search error:', error);
+      } finally {
+        setIsLoading(false);
+      }
+    };
+
+    fetchSearchResults();
+  }, [decodedQuery]);
+
+  // Pagination
+  const [currentPage, setCurrentPage] = useState(1);
+  const [postsPerPage] = useState(12);
+
+  const indexOfLastPost = currentPage * postsPerPage;
+  const indexOfFirstPost = indexOfLastPost - postsPerPage;
+  const productsPerPage = displayProducts.slice(indexOfFirstPost, indexOfLastPost);
+
+  const paginate = (pageNumber: number) => {
+    setCurrentPage(pageNumber);
+    window.scrollTo({ top: 0, behavior: 'smooth' });
+  };
+
+  const pageNumbers: number[] = [];
+  for (let i = 1; i <= Math.ceil(displayProducts.length / postsPerPage); i++) {
+    pageNumbers.push(i);
+  }
+
+  return (
+    <div className="container mx-auto my-10 space-y-8 px-4 min-h-screen">
+      {/* Search Header */}
+      <div className="flex flex-col md:flex-row md:items-end justify-between gap-4 border-b border-gray-100 pb-6">
+        <div className="space-y-2">
+          <div className="flex items-center gap-3">
+            <h1 className="text-2xl lg:text-4xl font-bold text-foreground">
+              {decodedQuery ? `Results for "${decodedQuery}"` : 'All Products'}
+            </h1>
+            {isAiPowered && (
+              <TooltipProvider>
+                <Tooltip>
+                  <TooltipTrigger asChild>
+                    <div className="flex items-center gap-1 bg-gradient-to-r from-purple-500 to-blue-500 text-white px-2 py-1 rounded-full text-[10px] font-bold cursor-help animate-pulse">
+                      <Sparkles className="w-3 h-3" />
+                      AI POWERED
+                    </div>
+                  </TooltipTrigger>
+                  <TooltipContent>
+                    <p className="w-48 text-xs">Gemini AI interpreted your natural language search to find the best matches.</p>
+                  </TooltipContent>
+                </Tooltip>
+              </TooltipProvider>
+            )}
+          </div>
+          
+          <p className="text-muted-foreground flex items-center gap-2">
+            {isLoading ? (
+              <span className="h-4 w-32 bg-gray-100 animate-pulse rounded" />
+            ) : (
+              <>
+                <strong>{displayProducts.length}</strong> products found
+                {searchCriteria && (
+                  <span className="text-xs bg-gray-100 px-2 py-0.5 rounded flex items-center gap-1">
+                    <Info className="w-3 h-3" />
+                    Filters applied by AI
+                  </span>
+                )}
+              </>
+            )}
+          </p>
+        </div>
+      </div>
+
+      {/* Product Grid */}
+      {isLoading ? (
+        <ProductGridSkeleton count={8} />
+      ) : displayProducts.length > 0 ? (
+        <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-6">
+          {productsPerPage.map((item: any, index: number) => (
+            <ProductCard product={item} key={item._id || index} />
+          ))}
+        </div>
+      ) : (
+        <div className="text-center py-20 bg-gray-50 rounded-2xl">
+          <div className="max-w-md mx-auto space-y-4">
+            <div className="bg-white p-6 rounded-full w-20 h-20 flex items-center justify-center mx-auto shadow-sm">
+              <Search className="w-10 h-10 text-gray-300" />
+            </div>
+            <h3 className="text-xl font-bold text-gray-900">No results found</h3>
+            <p className="text-gray-500">
+              We couldn&apos;t find anything matching &quot;{decodedQuery}&quot;. Try adjusting your search or check for typos.
+            </p>
+            <Link href="/">
+              <Button variant="outline" className="mt-4">
+                Continue Shopping
+              </Button>
+            </Link>
+          </div>
+        </div>
+      )}
+
+      {/* Pagination */}
+      {!isLoading && pageNumbers.length > 1 && (
+        <div className="flex justify-center gap-2 pt-10">
+          {pageNumbers.map((number) => (
+            <Button
+              key={number}
+              onClick={() => paginate(number)}
+              variant={currentPage === number ? 'default' : 'outline'}
+              size="sm"
+              className={currentPage === number ? 'bg-primary hover:bg-primary/90' : ''}
+            >
+              {number}
+            </Button>
+          ))}
+        </div>
+      )}
+    </div>
+  );
+};
+
+export default SearchPage;

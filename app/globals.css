@@ -1,0 +1,414 @@
+@import url("https://fonts.googleapis.com/css2?family=Open+Sans:wght@300;400;500;600;700&display=swap");
+@import url("https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700&display=swap");
+
+@tailwind base;
+@tailwind components;
+@tailwind utilities;
+
+/* ============================================================================
+   THEME CONFIGURATION - Royal Blue
+   ============================================================================
+   To change the entire color scheme, update these CSS variables.
+   All colors are defined in HSL format for easy manipulation.
+   
+   Primary: Royal Blue (#2563EB)
+   ============================================================================ */
+
+@layer base {
+  :root {
+    /* Background & Foreground */
+    --background: 0 0% 100%;
+    --foreground: 222 47% 11%;
+
+    /* Card */
+    --card: 0 0% 100%;
+    --card-foreground: 222 47% 11%;
+
+    /* Popover */
+    --popover: 0 0% 100%;
+    --popover-foreground: 222 47% 11%;
+
+    /* ========================================
+       PRIMARY - Royal Blue
+       Change these values to change the theme
+       ======================================== */
+    --primary: 221 83% 53%; /* #2563EB */
+    --primary-hover: 221 83% 46%; /* #1D4ED8 - darker for hover */
+    --primary-light: 217 91% 60%; /* #3B82F6 - lighter accent */
+    --primary-foreground: 0 0% 100%; /* white text on primary */
+
+    /* Secondary - Slate gray */
+    --secondary: 215 16% 47%;
+    --secondary-foreground: 0 0% 100%;
+
+    /* Muted */
+    --muted: 210 40% 96%;
+    --muted-foreground: 215 16% 47%;
+
+    /* Accent - Light blue tint */
+    --accent: 214 95% 93%;
+    --accent-foreground: 221 83% 53%;
+
+    /* Destructive - Red */
+    --destructive: 0 84% 60%;
+    --destructive-foreground: 0 0% 98%;
+
+    /* Success - Green */
+    --success: 142 71% 45%;
+    --success-foreground: 0 0% 100%;
+
+    /* Warning - Amber */
+    --warning: 38 92% 50%;
+    --warning-foreground: 0 0% 100%;
+
+    /* Borders & Inputs */
+    --border: 214 32% 91%;
+    --input: 214 32% 91%;
+    --ring: 221 83% 53%;
+
+    /* Charts - harmonious with primary */
+    --chart-1: 221 83% 53%; /* Primary blue */
+    --chart-2: 142 71% 45%; /* Success green */
+    --chart-3: 38 92% 50%; /* Warning amber */
+    --chart-4: 199 89% 48%; /* Cyan accent */
+    --chart-5: 262 83% 58%; /* Purple accent */
+
+    --radius: 0.5rem;
+
+    /* ========================================
+       BRAND TOKENS - Use these in components
+       ======================================== */
+    --brand-primary: #2563eb;
+    --brand-primary-hover: #1d4ed8;
+    --brand-primary-light: #3b82f6;
+    --brand-secondary: #64748b;
+    --brand-neutral: #1e293b;
+    --brand-success: #22c55e;
+    --brand-warning: #f59e0b;
+    --brand-error: #ef4444;
+    --brand-info: #0ea5e9;
+    --brand-light-bg: #f8fafc;
+    --brand-accent-bg: #eff6ff;
+  }
+
+  /* Dark Mode Theme */
+  .dark {
+    --background: 222 47% 11%;
+    --foreground: 210 40% 98%;
+
+    --card: 222 47% 13%;
+    --card-foreground: 210 40% 98%;
+
+    --popover: 222 47% 13%;
+    --popover-foreground: 210 40% 98%;
+
+    --primary: 217 91% 60%;
+    --primary-hover: 221 83% 53%;
+    --primary-light: 214 95% 93%;
+    --primary-foreground: 0 0% 100%;
+
+    --secondary: 215 20% 65%;
+    --secondary-foreground: 222 47% 11%;
+
+    --muted: 217 33% 17%;
+    --muted-foreground: 215 20% 65%;
+
+    --accent: 217 33% 17%;
+    --accent-foreground: 217 91% 60%;
+
+    --destructive: 0 62% 30%;
+    --destructive-foreground: 0 0% 98%;
+
+    --border: 217 33% 17%;
+    --input: 217 33% 17%;
+    --ring: 217 91% 60%;
+
+    --chart-1: 217 91% 60%;
+    --chart-2: 160 60% 45%;
+    --chart-3: 30 80% 55%;
+    --chart-4: 199 89% 48%;
+    --chart-5: 262 83% 58%;
+  }
+}
+
+@layer base {
+  * {
+    @apply border-border;
+  }
+  body {
+    @apply bg-background text-foreground;
+    font-family: "Inter", "Open Sans", -apple-system, BlinkMacSystemFont,
+      "Segoe UI", "Oxygen", "Ubuntu", "Cantarell", "Fira Sans", "Droid Sans",
+      "Helvetica Neue", sans-serif;
+    -webkit-font-smoothing: antialiased;
+    -moz-osx-font-smoothing: grayscale;
+  }
+}
+
+/* Custom scrollbar - matches theme */
+::-webkit-scrollbar {
+  width: 8px;
+  height: 8px;
+}
+
+::-webkit-scrollbar-track {
+  background: hsl(var(--muted));
+}
+
+::-webkit-scrollbar-thumb {
+  background: hsl(var(--muted-foreground));
+  border-radius: 4px;
+}
+
+::-webkit-scrollbar-thumb:hover {
+  background: hsl(var(--primary));
+}
+
+/* Custom table styling */
+.table :where(thead, tfoot) :where(th, td) {
+  background-color: hsl(var(--primary));
+  color: white;
+}
+
+@layer components {
+  /* ========================================
+     BUTTONS - Primary & Secondary
+     ======================================== */
+  .primary-btn {
+    @apply rounded-lg bg-primary py-2 px-4 md:py-3 md:px-6 font-semibold text-primary-foreground shadow-md transition-all duration-300 hover:opacity-90 hover:shadow-lg active:scale-95;
+  }
+
+  .primary-outline-btn {
+    @apply rounded-lg border-2 border-primary py-2 px-4 md:py-3 md:px-6 font-semibold text-primary transition-all duration-300 hover:bg-primary hover:text-primary-foreground focus:outline-none active:scale-95;
+  }
+
+  .secondary-btn {
+    @apply rounded-lg bg-secondary py-2 px-4 md:py-3 md:px-6 font-semibold text-secondary-foreground shadow-md transition-all duration-300 hover:opacity-90 active:scale-95;
+  }
+
+  /* ========================================
+     FORM ELEMENTS
+     ======================================== */
+  .input-box {
+    @apply mt-1 block rounded-md border border-border bg-white px-3 py-2 text-sm placeholder-muted-foreground shadow-sm
+    focus:border-primary focus:outline-none focus:ring-2 focus:ring-primary/20
+    disabled:border-muted disabled:bg-muted disabled:text-muted-foreground disabled:shadow-none 
+    dark:bg-card dark:text-foreground dark:border-border;
+  }
+
+  /* ========================================
+     SECTION STYLING
+     ======================================== */
+  .section-container {
+    @apply container mx-auto px-3 md:px-4 lg:px-6;
+  }
+
+  .section-header {
+    @apply flex items-center justify-between mb-4 md:mb-6;
+  }
+
+  .section-title {
+    @apply text-lg md:text-xl lg:text-2xl font-bold text-foreground relative;
+  }
+
+  .section-title::after {
+    content: "";
+    @apply absolute -bottom-1 left-0 w-12 md:w-16 h-1 bg-primary rounded-full;
+  }
+
+  .view-all-link {
+    @apply text-sm md:text-base text-primary font-medium hover:underline transition-colors;
+  }
+
+  /* ========================================
+     PRODUCT CARDS
+     ======================================== */
+  .product-card {
+    @apply bg-white dark:bg-card rounded-xl border border-border shadow-sm hover:shadow-lg hover:border-primary/30 transition-all duration-300 overflow-hidden;
+  }
+
+  .product-image-wrapper {
+    @apply relative overflow-hidden bg-white;
+  }
+
+  .product-image {
+    @apply w-full h-full object-contain transition-transform duration-300;
+  }
+
+  .product-badge {
+    @apply absolute top-2 left-2 md:top-3 md:left-3 px-2 py-0.5 md:px-3 md:py-1 text-xs md:text-sm font-bold text-white rounded-md z-10;
+  }
+
+  .discount-badge {
+    @apply bg-primary;
+  }
+
+  .hot-badge {
+    @apply bg-destructive;
+  }
+
+  .new-badge {
+    @apply bg-[hsl(var(--success))];
+  }
+
+  .product-price {
+    @apply text-primary font-bold text-base md:text-lg lg:text-xl;
+  }
+
+  .product-original-price {
+    @apply text-muted-foreground line-through text-xs md:text-sm;
+  }
+
+  /* ========================================
+     CATEGORY CARDS
+     ======================================== */
+  .category-card {
+    @apply flex flex-col items-center justify-center p-3 md:p-4 bg-white dark:bg-card rounded-xl border border-border hover:border-primary hover:shadow-md transition-all duration-300 cursor-pointer;
+  }
+
+  .category-icon {
+    @apply text-3xl md:text-4xl lg:text-5xl text-primary mb-2;
+  }
+
+  .category-name {
+    @apply text-xs md:text-sm font-medium text-center text-foreground;
+  }
+
+  /* ========================================
+     BADGES & TAGS
+     ======================================== */
+  .badge-primary {
+    @apply inline-flex items-center px-2.5 py-0.5 rounded-full text-xs font-medium bg-primary/10 text-primary;
+  }
+
+  .badge-success {
+    @apply inline-flex items-center px-2.5 py-0.5 rounded-full text-xs font-medium bg-green-100 text-green-800;
+  }
+
+  .badge-warning {
+    @apply inline-flex items-center px-2.5 py-0.5 rounded-full text-xs font-medium bg-amber-100 text-amber-800;
+  }
+
+  .badge-error {
+    @apply inline-flex items-center px-2.5 py-0.5 rounded-full text-xs font-medium bg-red-100 text-red-800;
+  }
+
+  /* ========================================
+     MOBILE COMPONENTS
+     ======================================== */
+  .mobile-bottom-bar {
+    @apply fixed bottom-0 left-0 right-0 bg-white dark:bg-card border-t border-border py-2 px-4 flex items-center justify-around z-50 md:hidden;
+  }
+
+  .bottom-bar-item {
+    @apply flex flex-col items-center justify-center text-muted-foreground hover:text-primary transition-colors;
+  }
+
+  .bottom-bar-icon {
+    @apply text-xl mb-0.5;
+  }
+
+  .bottom-bar-label {
+    @apply text-[10px] font-medium;
+  }
+
+  .side-drawer {
+    @apply fixed inset-y-0 left-0 w-[280px] md:w-[320px] bg-white dark:bg-card z-[100] transform transition-transform duration-300 ease-in-out;
+  }
+
+  .side-drawer-overlay {
+    @apply fixed inset-0 bg-black/50 z-[99] transition-opacity duration-300;
+  }
+
+  /* ========================================
+     ACCORDION
+     ======================================== */
+  .accordion-item {
+    @apply border-b border-border;
+  }
+
+  .accordion-trigger {
+    @apply flex items-center justify-between w-full py-3 px-4 text-left font-medium hover:bg-muted transition-colors;
+  }
+
+  .accordion-content {
+    @apply px-4 pb-3 text-sm text-muted-foreground;
+  }
+}
+
+/* ========================================
+   ANIMATIONS
+   ======================================== */
+@keyframes scroll-left {
+  0% {
+    transform: translateX(0);
+  }
+  100% {
+    transform: translateX(-100%);
+  }
+}
+
+@keyframes fadeIn {
+  from {
+    opacity: 0;
+    transform: translateY(10px);
+  }
+  to {
+    opacity: 1;
+    transform: translateY(0);
+  }
+}
+
+@keyframes slideInLeft {
+  from {
+    transform: translateX(-100%);
+  }
+  to {
+    transform: translateX(0);
+  }
+}
+
+@keyframes slideInRight {
+  from {
+    transform: translateX(100%);
+  }
+  to {
+    transform: translateX(0);
+  }
+}
+
+@keyframes pulse-ring {
+  0% {
+    transform: scale(0.95);
+    opacity: 1;
+  }
+  50% {
+    transform: scale(1);
+    opacity: 0.5;
+  }
+  100% {
+    transform: scale(0.95);
+    opacity: 1;
+  }
+}
+
+.animate-scrolling-text {
+  animation: scroll-left 10s linear infinite;
+}
+
+.animate-fade-in {
+  animation: fadeIn 0.3s ease-out forwards;
+}
+
+.animate-slide-in-left {
+  animation: slideInLeft 0.3s ease-out forwards;
+}
+
+.animate-slide-in-right {
+  animation: slideInRight 0.3s ease-out forwards;
+}
+
+.animate-pulse-ring {
+  animation: pulse-ring 2s ease-in-out infinite;
+}
+
