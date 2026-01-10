@@ -1,6 +1,6 @@
 'use client';
 
-import React, { useState } from 'react';
+import React, { useState, useEffect } from 'react';
 import Link from 'next/link';
 import Image from 'next/image';
 import { useRouter, useSearchParams } from 'next/navigation';
@@ -20,7 +20,7 @@ interface RegisterFormData {
 }
 
 const Register = () => {
-  const { register: registerUser, loginWithGoogle, loginWithFacebook } = useAuth();
+  const { user, register: registerUser, loginWithGoogle, loginWithFacebook } = useAuth();
   const { register, handleSubmit, formState: { errors } } = useForm<RegisterFormData>();
   const [signUpError, setSignUpError] = useState('');
   const [showPassword, setShowPassword] = useState(false);
@@ -30,6 +30,14 @@ const Register = () => {
   const { requestPermission, isSupported, permission } = useNotifications();
 
   const router = useRouter();
+  
+  // Redirect if already logged in
+  useEffect(() => {
+    if (user) {
+      router.push('/');
+    }
+  }, [user, router]);
+
   const searchParams = useSearchParams();
   const from = searchParams.get('from') || '/';
   

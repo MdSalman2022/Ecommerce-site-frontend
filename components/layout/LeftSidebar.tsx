@@ -62,6 +62,7 @@ export default function LeftSidebar() {
           ) : categories.map((category) => {
              // Dynamic icon lookup matching Header.tsx
              const Icon = (LucideIcons as any)[category.icon || 'Circle'] || CircuitBoard;
+             const hasImage = category.image && category.image.trim() !== '';
             
             return (
               <div key={category._id}>
@@ -73,8 +74,17 @@ export default function LeftSidebar() {
                   )}
                   onMouseEnter={() => setActiveCategoryId(category._id)}
                 >
-                  <Icon className="w-5 h-5 shrink-0" strokeWidth={1.25} />
-                  
+                  {hasImage ? (
+                    <div className="w-5 h-5 shrink-0 relative overflow-hidden flex items-center justify-center">
+                      <img 
+                        src={category.image} 
+                        alt={category.name} 
+                        className="w-full h-full object-contain"
+                      />
+                    </div>
+                  ) : (
+                    <Icon className="w-5 h-5 shrink-0" strokeWidth={1.25} />
+                  )}
                  
                   <span className={cn(
                     "ml-4 font-medium whitespace-nowrap overflow-hidden transition-all duration-300",

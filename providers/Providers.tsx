@@ -8,6 +8,7 @@ import { ShopProvider } from '@/contexts/ShopProvider';
 import { SearchProvider } from '@/contexts/SearchProvider';
 import { UserActivityProvider } from '@/contexts/UserActivityProvider';
 import { UIProvider } from '@/contexts/UIProvider';
+import MaintenanceGuard from '@/components/Shared/MaintenanceGuard';
 
 interface ProvidersProps {
   children: ReactNode;
@@ -21,7 +22,9 @@ export default function Providers({ children }: ProvidersProps) {
           <ShopProvider>
             <SearchProvider>
               <UserActivityProvider>
-                {children}
+                <MaintenanceGuard>
+                  {children}
+                </MaintenanceGuard>
                 <Toaster position="top-center" reverseOrder={false} />
               </UserActivityProvider>
             </SearchProvider>

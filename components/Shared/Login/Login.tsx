@@ -3,11 +3,12 @@
 import React, { useState, useEffect } from 'react';
 import Link from 'next/link';
 import Image from 'next/image';
+import { cn } from '@/lib/utils';
 import { useRouter, useSearchParams } from 'next/navigation';
 import { useForm } from 'react-hook-form';
 import { useAuth } from '@/contexts/AuthProvider';
 import { FaGoogle, FaFacebook } from 'react-icons/fa';
-import { Eye, EyeOff, Mail, Lock, ArrowRight } from 'lucide-react';
+import { Eye, EyeOff, Mail, Lock, ArrowRight, User } from 'lucide-react';
 import { toast } from 'react-hot-toast';
 import { Button } from '@/components/ui/button';
 import { Input } from '@/components/ui/input';
@@ -18,16 +19,24 @@ interface LoginFormData {
 }
 
 const Login = () => {
-  const { register, formState: { errors }, handleSubmit } = useForm<LoginFormData>();
-  const { login, loginWithGoogle, loginWithFacebook } = useAuth();
+  const { register, formState: { errors }, handleSubmit, setValue } = useForm<LoginFormData>();
+  const { user, login, loginWithGoogle, loginWithFacebook } = useAuth();
 
   const [loginError, setLoginError] = useState('');
   const [showPassword, setShowPassword] = useState(false);
   const [isLoading, setIsLoading] = useState(false);
+  const [selectedRole, setSelectedRole] = useState<'admin' | 'user' | null>(null);
 
   const router = useRouter();
   const searchParams = useSearchParams();
   const from = searchParams.get('from') || '/';
+
+  // Redirect if already logged in
+  useEffect(() => {
+    if (user) {
+      router.push('/');
+    }
+  }, [user, router]);
 
   // Check for OAuth errors
   useEffect(() => {
@@ -128,9 +137,60 @@ const Login = () => {
           </div>
 
           {/* Form Header */}
-          <div className="text-center mb-8">
-            <h2 className="text-3xl font-bold text-gray-900">Sign In</h2>
+          <div className="text-center mb-10">
+            <h2 className="text-3xl font-black text-gray-900 tracking-tight">Sign In</h2>
             <p className="text-gray-500 mt-2">Enter your credentials to access your account</p>
+          </div>
+
+          {/* Quick Login Options */}
+          <div className="grid grid-cols-2 gap-4 mb-10">
+            <button
+              type="button"
+              onClick={() => {
+                setValue('email', 'mehedi.salman102@gmail.com');
+                setValue('password', '123456');
+                setSelectedRole('admin');
+              }}
+              className={cn(
+                "flex flex-col items-center justify-center p-4 rounded-2xl border transition-all group",
+                selectedRole === 'admin' 
+                  ? "bg-primary border-primary shadow-md shadow-primary/20" 
+                  : "bg-white border-gray-100 hover:border-primary/30 hover:bg-gray-50"
+              )}
+            >
+              <div className={cn(
+                "w-10 h-10 rounded-full flex items-center justify-center mb-2 transition-colors",
+                selectedRole === 'admin' ? "bg-white/20 text-white" : "bg-indigo-50 text-indigo-600 group-hover:bg-primary/10"
+              )}>
+                <Lock className="w-5 h-5" />
+              </div>
+              <span className={cn("text-sm font-bold", selectedRole === 'admin' ? "text-white" : "text-gray-900")}>Admin</span>
+              <span className={cn("text-[10px]", selectedRole === 'admin' ? "text-white/80" : "text-gray-500")}>Full Access</span>
+            </button>
+            
+            <button
+              type="button"
+              onClick={() => {
+                setValue('email', 'user@gmail.com');
+                setValue('password', '123456');
+                setSelectedRole('user');
+              }}
+              className={cn(
+                "flex flex-col items-center justify-center p-4 rounded-2xl border transition-all group",
+                selectedRole === 'user' 
+                  ? "bg-primary border-primary shadow-md shadow-primary/20" 
+                  : "bg-white border-gray-100 hover:border-primary/30 hover:bg-gray-50"
+              )}
+            >
+              <div className={cn(
+                "w-10 h-10 rounded-full flex items-center justify-center mb-2 transition-colors",
+                selectedRole === 'user' ? "bg-white/20 text-white" : "bg-emerald-50 text-emerald-600 group-hover:bg-primary/10"
+              )}>
+                <User className="w-5 h-5" />
+              </div>
+              <span className={cn("text-sm font-bold", selectedRole === 'user' ? "text-white" : "text-gray-900")}>User</span>
+              <span className={cn("text-[10px]", selectedRole === 'user' ? "text-white/80" : "text-gray-500")}>Customer View</span>
+            </button>
           </div>
 
           {/* Login Form */}

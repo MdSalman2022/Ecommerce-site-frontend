@@ -192,11 +192,13 @@ export default function Header() {
                   </DropdownMenuContent>
                 </DropdownMenu>
               ) : (
-                <Link 
-                  href="/login" 
-                  className="flex items-center justify-center min-w-11 min-h-11 text-gray-600 hover:text-primary transition-colors"
-                >
-                  <User className="w-5 h-5" />
+                <Link href="/login">
+                  <Button size="sm" className="hidden sm:flex rounded-full px-6 bg-primary hover:bg-primary/90 text-white shadow-md shadow-primary/20">
+                    Login
+                  </Button>
+                  <Button size="icon" variant="ghost" className="sm:hidden text-gray-600">
+                    <User className="w-5 h-5" />
+                  </Button>
                 </Link>
               )}
 
@@ -223,13 +225,25 @@ export default function Header() {
               <nav className="flex items-center gap-6">
                 {categories.filter(c => c.showInHeader && !c.parent).slice(0, 5).map((category) => {
                   const Icon = (LucideIcons as any)[category.icon || 'Circle'] || LucideIcons.Circle;
+                  const hasImage = category.image && category.image.trim() !== '';
+
                   return (
                     <Link
                       key={category._id}
                       href={`/category/${category.slug}`}
                       className="flex items-center gap-2 text-sm text-gray-700 hover:text-primary font-medium transition-colors"
                     >
-                      <Icon className="w-4 h-4 text-primary" />
+                      {hasImage ? (
+                        <div className="w-4 h-4 relative overflow-hidden flex items-center justify-center">
+                          <img 
+                            src={category.image} 
+                            alt={category.name} 
+                            className="w-full h-full object-contain"
+                          />
+                        </div>
+                      ) : (
+                        <Icon className="w-4 h-4 text-primary" />
+                      )}
                       {category.name}
                     </Link>
                   );

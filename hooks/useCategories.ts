@@ -30,14 +30,17 @@ export function useCategories() {
 
     const fetchCategories = useCallback(async () => {
         try {
-            setIsLoading(true);
+            const token = localStorage.getItem('accessToken');
+            const headers: any = {};
+            if (token) headers['Authorization'] = `Bearer ${token}`;
+
             // Fetch nested structure for sidebar/menus
-            const resNested = await fetch(`${API_URL}/api/categories?nested=true`);
+            const resNested = await fetch(`${API_URL}/api/categories?nested=true`, { headers });
             const dataNested = await resNested.json();
             
             // Fetch flat structure for admin tables/selectors (or flatten the nested one)
             // It's often easier to fetch flat list for editing references
-            const resFlat = await fetch(`${API_URL}/api/categories`);
+            const resFlat = await fetch(`${API_URL}/api/categories`, { headers });
             const dataFlat = await resFlat.json();
 
             if (dataNested.success) {

@@ -8,8 +8,7 @@ import { Switch } from '@/components/ui/switch';
 import { Tabs, TabsContent, TabsList, TabsTrigger } from '@/components/ui/tabs';
 import { Card, CardContent, CardDescription, CardHeader, CardTitle } from '@/components/ui/card';
 import { toast } from 'react-hot-toast';
-import { Megaphone, Loader2, Store, Share2, Layout, Bell, ShoppingCart } from 'lucide-react';
-import NotificationSettings from './NotificationSettings';
+import { Megaphone, Loader2, Store, Share2, Layout, Bell, ShoppingCart, Search, Settings } from 'lucide-react'; 
 import { useSiteSettings, StoreSettings } from '@/hooks/useSiteSettings';
 
 const API_URL = process.env.NEXT_PUBLIC_SERVER_URL;
@@ -90,8 +89,8 @@ function DashboardSettings() {
     { id: 'layout', label: 'Layout', icon: Layout },
     { id: 'store', label: 'Store Info', icon: Store },
     { id: 'social', label: 'Social', icon: Share2 },
-    { id: 'ecommerce', label: 'E-commerce', icon: ShoppingCart },
-    { id: 'notifications', label: 'Notifications', icon: Bell },
+    { id: 'seo', label: 'SEO', icon: Search },
+    { id: 'maintenance', label: 'Maintenance', icon: Settings },
   ];
 
   if (initialLoading) {
@@ -374,76 +373,59 @@ function DashboardSettings() {
         </TabsContent>
 
         
-        <TabsContent value="ecommerce" className="space-y-6">
+        {/* SEO Tab Content */}
+        <TabsContent value="seo" className="space-y-6">
           <Card>
             <CardHeader>
-              <CardTitle>Store Functionality</CardTitle>
+              <CardTitle>SEO & Metadata</CardTitle>
+              <CardDescription>Optimize your store for search engines</CardDescription>
             </CardHeader>
-            <CardContent className="space-y-6">
-              <div className="flex items-center justify-between">
-                <div>
-                  <p className="font-medium">Enable Guest Checkout</p>
-                  <p className="text-sm text-muted-foreground">Allow users to buy without account</p>
-                </div>
-                <Switch 
-                  checked={settings.ecommerce.enableGuestCheckout}
-                  onCheckedChange={(checked) => updateSetting('ecommerce', 'enableGuestCheckout', checked)}
+            <CardContent className="space-y-4">
+              <div>
+                <Label>Meta Title</Label>
+                <Input 
+                  value={settings.seo.metaTitle}
+                  onChange={(e) => updateSetting('seo', 'metaTitle', e.target.value)}
+                  placeholder="BestDeal - E-commerce"
                 />
+                <p className="text-[10px] text-muted-foreground mt-1">Recommended: 50-60 characters</p>
+              </div>
+              
+              <div>
+                <Label>Meta Description</Label>
+                <textarea 
+                  className="w-full min-h-[100px] p-3 rounded-md border border-input bg-background"
+                  value={settings.seo.metaDescription}
+                  onChange={(e) => updateSetting('seo', 'metaDescription', e.target.value)}
+                  placeholder="High quality electronics at best prices..."
+                />
+                <p className="text-[10px] text-muted-foreground mt-1">Recommended: 150-160 characters</p>
               </div>
 
-              <div className="flex items-center justify-between">
-                <div>
-                  <p className="font-medium">Show Out of Stock Items</p>
-                  <p className="text-sm text-muted-foreground">Keep sold out items visible in catalog</p>
-                </div>
-                <Switch 
-                  checked={settings.ecommerce.showOutOfStock}
-                  onCheckedChange={(checked) => updateSetting('ecommerce', 'showOutOfStock', checked)}
-                />
-              </div>
-
-              <div className="flex items-center justify-between">
-                <div>
-                  <p className="font-medium">Enable Reviews</p>
-                  <p className="text-sm text-muted-foreground">Allow customers to review products</p>
-                </div>
-                <Switch 
-                  checked={settings.ecommerce.enableReviews}
-                  onCheckedChange={(checked) => updateSetting('ecommerce', 'enableReviews', checked)}
+              <div>
+                <Label>Meta Keywords</Label>
+                <Input 
+                  value={settings.seo.metaKeywords}
+                  onChange={(e) => updateSetting('seo', 'metaKeywords', e.target.value)}
+                  placeholder="electronics, gaming, best deals"
                 />
               </div>
 
               <div className="grid grid-cols-2 gap-4 pt-4 border-t">
                 <div>
-                  <Label>Min Order Amount</Label>
+                  <Label>Google Analytics ID</Label>
                   <Input 
-                    type="number"
-                    value={settings.ecommerce.minOrderAmount}
-                    onChange={(e) => updateSetting('ecommerce', 'minOrderAmount', Number(e.target.value))}
+                    value={settings.seo.googleAnalyticsId}
+                    onChange={(e) => updateSetting('seo', 'googleAnalyticsId', e.target.value)}
+                    placeholder="UA-XXXXX-Y"
                   />
                 </div>
                 <div>
-                  <Label>Free Shipping Threshold</Label>
+                  <Label>Facebook Pixel ID</Label>
                   <Input 
-                    type="number"
-                    value={settings.ecommerce.freeShippingThreshold}
-                    onChange={(e) => updateSetting('ecommerce', 'freeShippingThreshold', Number(e.target.value))}
-                  />
-                </div>
-                <div>
-                  <Label>Default Shipping Cost</Label>
-                  <Input 
-                    type="number"
-                    value={settings.ecommerce.defaultShippingCost}
-                    onChange={(e) => updateSetting('ecommerce', 'defaultShippingCost', Number(e.target.value))}
-                  />
-                </div>
-                <div>
-                  <Label>Low Stock Threshold</Label>
-                  <Input 
-                    type="number"
-                    value={settings.ecommerce.lowStockThreshold}
-                    onChange={(e) => updateSetting('ecommerce', 'lowStockThreshold', Number(e.target.value))}
+                    value={settings.seo.facebookPixelId}
+                    onChange={(e) => updateSetting('seo', 'facebookPixelId', e.target.value)}
+                    placeholder="1234567890"
                   />
                 </div>
               </div>
@@ -451,68 +433,45 @@ function DashboardSettings() {
           </Card>
 
           <div className="flex justify-end">
-            <Button onClick={() => handleSave('ecommerce')} disabled={isSaving}>
-              {isSaving && <Loader2 className="w-4 h-4 mr-2 animate-spin" />} Save E-commerce Settings
+            <Button onClick={() => handleSave('seo')} disabled={isSaving}>
+              {isSaving && <Loader2 className="w-4 h-4 mr-2 animate-spin" />} Save SEO Settings
             </Button>
           </div>
         </TabsContent>
 
-        
-        <TabsContent value="notifications" className="space-y-6">
+        {/* Maintenance Tab Content */}
+        <TabsContent value="maintenance" className="space-y-6">
           <Card>
             <CardHeader>
-              <CardTitle>Email & Alerts</CardTitle>
+              <CardTitle>Maintenance Mode</CardTitle>
+              <CardDescription>Take your site offline for updates</CardDescription>
             </CardHeader>
             <CardContent className="space-y-6">
-              <div>
-                <Label>Admin Notification Email</Label>
-                <Input 
-                  value={settings.notifications.adminEmail}
-                  onChange={(e) => updateSetting('notifications', 'adminEmail', e.target.value)}
-                  placeholder="admin@example.com"
+              <div className="flex items-center justify-between p-4 bg-amber-50 border border-amber-100 rounded-xl">
+                <div>
+                  <p className="font-bold text-amber-900">Enable Maintenance Mode</p>
+                  <p className="text-sm text-amber-700">Only admins can access the site when this is active</p>
+                </div>
+                <Switch 
+                  checked={settings.maintenance.enabled}
+                  onCheckedChange={(checked) => updateSetting('maintenance', 'enabled', checked)}
                 />
               </div>
 
-              <div className="space-y-4 pt-4">
-                <div className="flex items-center justify-between">
-                  <div>
-                    <p className="font-medium">New Order Alerts</p>
-                    <p className="text-sm text-muted-foreground">Notify admin when order is placed</p>
-                  </div>
-                  <Switch 
-                    checked={settings.notifications.newOrderAlert}
-                    onCheckedChange={(checked) => updateSetting('notifications', 'newOrderAlert', checked)}
-                  />
-                </div>
-
-                <div className="flex items-center justify-between">
-                  <div>
-                    <p className="font-medium">Low Stock Alerts</p>
-                    <p className="text-sm text-muted-foreground">Notify when stock is low</p>
-                  </div>
-                  <Switch 
-                    checked={settings.notifications.lowStockAlert}
-                    onCheckedChange={(checked) => updateSetting('notifications', 'lowStockAlert', checked)}
-                  />
-                </div>
-
-                <div className="flex items-center justify-between">
-                  <div>
-                    <p className="font-medium">Customer Order Confirmation</p>
-                    <p className="text-sm text-muted-foreground">Send email to customer on purchase</p>
-                  </div>
-                  <Switch 
-                    checked={settings.notifications.orderConfirmationEmail}
-                    onCheckedChange={(checked) => updateSetting('notifications', 'orderConfirmationEmail', checked)}
-                  />
-                </div>
+              <div>
+                <Label>Maintenance Message</Label>
+                <Input 
+                  value={settings.maintenance.message}
+                  onChange={(e) => updateSetting('maintenance', 'message', e.target.value)}
+                  placeholder="We are currently under maintenance..."
+                />
               </div>
             </CardContent>
           </Card>
 
           <div className="flex justify-end">
-            <Button onClick={() => handleSave('notifications')} disabled={isSaving}>
-              {isSaving && <Loader2 className="w-4 h-4 mr-2 animate-spin" />} Save Notification Settings
+            <Button onClick={() => handleSave('maintenance')} disabled={isSaving}>
+              {isSaving && <Loader2 className="w-4 h-4 mr-2 animate-spin" />} Save Maintenance Settings
             </Button>
           </div>
         </TabsContent>

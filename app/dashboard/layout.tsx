@@ -10,7 +10,7 @@ import { useUI } from '@/contexts/UIProvider';
 import { AiOutlineShoppingCart, AiOutlineSetting, AiOutlinePercentage } from 'react-icons/ai';
 import { BiCategory } from 'react-icons/bi';
 import { MdOutlineLocalShipping, MdOutlineLogout, MdCategory } from 'react-icons/md';
-import { BsCreditCard2Back, BsPeople, BsGrid1X2, BsBell } from 'react-icons/bs';
+import { BsCreditCard2Back, BsPeople, BsGrid1X2, BsBell, BsDisplay } from 'react-icons/bs';
 import { HiUserGroup } from 'react-icons/hi';
 import { IoStatsChart } from 'react-icons/io5';
 import { Menu, Search, Bell, User } from 'lucide-react';
@@ -59,16 +59,17 @@ export default function DashboardLayout({
 
     const sidebarItems = [
         { name: 'Dashboard', icon: <BsGrid1X2 />, path: '/dashboard', id: 'dashboard' },
+        { name: 'Orders', icon: <AiOutlineShoppingCart />, path: '/dashboard/orders', id: 'orders' },
         { name: 'Products', icon: <BiCategory />, path: '/dashboard/products', id: 'products' },
         { name: 'Categories', icon: <MdCategory />, path: '/dashboard/categories', id: 'categories' },
-        { name: 'Promo Codes', icon: <AiOutlinePercentage />, path: '/dashboard/promocodes', id: 'promocodes' },
-        { name: 'Orders', icon: <AiOutlineShoppingCart />, path: '/dashboard/orders', id: 'orders' },
-        { name: 'Transactions', icon: <BsCreditCard2Back />, path: '/dashboard/transactions', id: 'transactions' },
         { name: 'Customers', icon: <BsPeople />, path: '/dashboard/customers', id: 'customers' },
-        { name: 'Notifications', icon: <BsBell />, path: '/dashboard/notifications', id: 'notifications' },
-        ...(user?.role === 'admin' ? [{ name: 'Team', icon: <HiUserGroup />, path: '/dashboard/team', id: 'team' }] : []),
+        { name: 'Page Builder', icon: <BsDisplay />, path: '/dashboard/page-builder', id: 'page-builder' },
+        { name: 'Promo Codes', icon: <AiOutlinePercentage />, path: '/dashboard/promocodes', id: 'promocodes' },
+        { name: 'Transactions', icon: <BsCreditCard2Back />, path: '/dashboard/transactions', id: 'transactions' },
         { name: 'Analytics', icon: <IoStatsChart />, path: '/dashboard/analytics', id: 'analytics' },
         { name: 'Statistics', icon: <MdOutlineLocalShipping />, path: '/dashboard/statistics', id: 'statistics' },
+        { name: 'Notifications', icon: <BsBell />, path: '/dashboard/notifications', id: 'notifications' },
+        ...(user?.role === 'admin' ? [{ name: 'Team', icon: <HiUserGroup />, path: '/dashboard/team', id: 'team' }] : []),
         { name: 'Settings', icon: <AiOutlineSetting />, path: '/dashboard/settings', id: 'settings' },
     ];
 

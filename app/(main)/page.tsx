@@ -3,27 +3,42 @@ import { HeroBanner, Categories, ServiceBar } from '@/components/home';
 import ProductSection from './ProductSection';
 import { ProductGridSkeleton } from '@/components/Skeletons';
 import { AIRecommendations } from '@/components/AI';
+import { fetchPublishedPageConfig } from '@/lib/pageBuilderApi';
+import SectionRenderer from '@/components/home/SectionRenderer';
 
-export const revalidate = 60; // Revalidate every 60 seconds
+// No caching - instant updates!
+export const dynamic = 'force-dynamic';
+export const revalidate = 0;
 
-export default function HomePage() {
+export default async function HomePage() {
+  const pageConfig = await fetchPublishedPageConfig('home');
+
+  // If no config found (first time), render default layout
+  if (!pageConfig || !pageConfig.sections || pageConfig.sections.length === 0) {
+    return (
+      <> 
+        <HeroBanner />
+        <Categories />
+        <div className="container mx-auto px-4">
+          <AIRecommendations title="Selected For You" limit={4} />
+        </div>
+        <Suspense fallback={<ProductSectionSkeleton />}>
+          <ProductSection />
+        </Suspense>
+        <ServiceBar />
+      </>
+    );
+  }
+
   return (
-    <> 
-      <HeroBanner />
- 
-      <Categories />
- 
-      <div className="container mx-auto px-4">
-        <AIRecommendations 
-          title="Selected For You" 
-          limit={4} 
-        />
-      </div>
- 
-      <Suspense fallback={<ProductSectionSkeleton />}>
-        <ProductSection />
-      </Suspense>
-      <ServiceBar />
+    <>
+      {pageConfig.sections
+        .filter((s: any) => s.isVisible)
+        .sort((a: any, b: any) => a.order - b.order)
+        .map((section: any, index: number) => (
+          <SectionRenderer key={section.id || `section-${index}`} section={section} />
+        ))
+      }
     </>
   );
 }
@@ -43,4 +58,3 @@ function ProductSectionSkeleton() {
     </div>
   );
 }
-

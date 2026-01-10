@@ -1,14 +1,13 @@
 'use client';
 
-import React, { useState, useEffect } from 'react';
+import React, { useState, useEffect, useMemo } from 'react';
 import Link from 'next/link';
+import { useRouter, useSearchParams, usePathname } from 'next/navigation';
 import { BsDot } from 'react-icons/bs';
-import { FaAngleDown, FaPlus } from 'react-icons/fa';
+import { FaAngleDown, FaPlus, FaFilter } from 'react-icons/fa';
 import { FiEdit, FiX } from 'react-icons/fi';
-import { useForm } from 'react-hook-form';
-import Fuse from 'fuse.js';
+import { useQuery } from '@tanstack/react-query';
 import { useShop } from '@/contexts/ShopProvider';
-import { useSearch } from '@/contexts/SearchProvider';
 import { Button } from '@/components/ui/button';
 import { Input } from '@/components/ui/input';
 import {
@@ -27,46 +26,98 @@ import {
 } from '@/components/ui/dropdown-menu';
 import { toast } from 'react-hot-toast';
 
+const API_URL = process.env.NEXT_PUBLIC_SERVER_URL;
+
 function DashboardProducts() {
-  const { products, refetchProducts } = useShop();
-  const { dashboardSearch, setResults, results } = useSearch();
-  
-  useEffect(() => {
-    refetchProducts();
-  }, [refetchProducts]);
-  
-  const [currentPage, setCurrentPage] = useState(1);
-  const [postsPerPage, setPostsPerPage] = useState(20);
-  const [sortType, setSortType] = useState('');
+  const router = useRouter();
+  const pathname = usePathname();
+  const searchParams = useSearchParams();
+  const { categories } = useShop();
+
+  // State from URL parameters
+  const [page, setPage] = useState(parseInt(searchParams.get('page') || '1'));
+  const [limit, setLimit] = useState(parseInt(searchParams.get('limit') || '20'));
+  const [sortBy, setSortBy] = useState(searchParams.get('sortBy') || '');
+  const [sortOrder, setSortOrder] = useState(searchParams.get('sortOrder') || 'desc');
+  const [selectedCategory, setSelectedCategory] = useState(searchParams.get('category') || '');
+  const [selectedBrand, setSelectedBrand] = useState(searchParams.get('brand') || '');
+  const [stockStatus, setStockStatus] = useState(searchParams.get('stockStatus') || '');
+  const [minPrice, setMinPrice] = useState(searchParams.get('minPrice') || '');
+  const [maxPrice, setMaxPrice] = useState(searchParams.get('maxPrice') || '');
+  const [search, setSearch] = useState(searchParams.get('search') || '');
+  const [searchInput, setSearchInput] = useState(searchParams.get('search') || '');
   const [selectedIds, setSelectedIds] = useState<string[]>([]);
+  const [showFilters, setShowFilters] = useState(false);
 
-  // Fuse search
+  // Debounce search input
   useEffect(() => {
-    if (!dashboardSearch || dashboardSearch === '') {
-      setResults([]);
-    } else {
-      const fuse = new Fuse(products, {
-        keys: ['name', 'brand', 'slug'],
-        threshold: 0.3,
-        includeScore: true,
-      });
-      const searchResults = fuse.search(dashboardSearch);
-      setResults(searchResults.map((result: any) => result.item));
-    }
-  }, [dashboardSearch, products, setResults]);
+    const timer = setTimeout(() => {
+      setSearch(searchInput);
+      setPage(1); // Reset to page 1 when searching
+    }, 500);
+    return () => clearTimeout(timer);
+  }, [searchInput]);
 
-  // Use filtered results or all products
-  const displayProducts = results.length > 0 ? results : products;
+  // Update URL when filters change
+  useEffect(() => {
+    const params = new URLSearchParams();
+    if (page > 1) params.set('page', page.toString());
+    if (limit !== 20) params.set('limit', limit.toString());
+    if (sortBy) params.set('sortBy', sortBy);
+    if (sortOrder !== 'desc') params.set('sortOrder', sortOrder);
+    if (selectedCategory) params.set('category', selectedCategory);
+    if (selectedBrand) params.set('brand', selectedBrand);
+    if (stockStatus) params.set('stockStatus', stockStatus);
+    if (minPrice) params.set('minPrice', minPrice);
+    if (maxPrice) params.set('maxPrice', maxPrice);
+    if (search) params.set('search', search);
 
-  // Pagination
-  const indexOfLastPost = currentPage * postsPerPage;
-  const indexOfFirstPost = indexOfLastPost - postsPerPage;
-  const productsPerPage = displayProducts.slice(indexOfFirstPost, indexOfLastPost);
+    const newUrl = params.toString() ? `${pathname}?${params.toString()}` : pathname;
+    router.replace(newUrl, { scroll: false });
+  }, [page, limit, sortBy, sortOrder, selectedCategory, selectedBrand, stockStatus, minPrice, maxPrice, search, pathname, router]);
 
-  const pageNumbers: number[] = [];
-  for (let i = 1; i <= Math.ceil(displayProducts.length / postsPerPage); i++) {
-    pageNumbers.push(i);
-  }
+  // Fetch paginated products
+  const { data, isLoading, refetch } = useQuery({
+    queryKey: ['admin-products', page, limit, sortBy, sortOrder, selectedCategory, selectedBrand, stockStatus, minPrice, maxPrice, search],
+    queryFn: async () => {
+      const params = new URLSearchParams();
+      params.set('page', page.toString());
+      params.set('limit', limit.toString());
+      if (sortBy) {
+        params.set('sortBy', sortBy);
+        params.set('sortOrder', sortOrder);
+      }
+      if (selectedCategory) params.set('category', selectedCategory);
+      if (selectedBrand) params.set('brand', selectedBrand);
+      if (stockStatus) params.set('stockStatus', stockStatus);
+      if (minPrice) params.set('minPrice', minPrice);
+      if (maxPrice) params.set('maxPrice', maxPrice);
+      if (search) params.set('search', search);
+
+      const res = await fetch(`${API_URL}/api/products?${params.toString()}`);
+      if (!res.ok) throw new Error('Failed to fetch products');
+      return await res.json();
+    },
+  });
+
+  const products = data?.data || [];
+  const pagination = data?.pagination || { page: 1, limit: 20, total: 0, pages: 0 };
+
+  // Get unique brands from all products for filter dropdown
+  const { data: allProductsForFilters } = useQuery({
+    queryKey: ['all-products-brands'],
+    queryFn: async () => {
+      const res = await fetch(`${API_URL}/api/products`);
+      if (!res.ok) throw new Error('Failed to fetch products');
+      return await res.json();
+    },
+  });
+
+  const availableBrands = useMemo(() => {
+    if (!allProductsForFilters) return [];
+    const brands = new Set(allProductsForFilters.map((p: any) => p.brand).filter(Boolean));
+    return Array.from(brands).sort();
+  }, [allProductsForFilters]);
 
   // Helper to get display price
   const getPrice = (p: any) => {
@@ -81,25 +132,6 @@ function DashboardProducts() {
     return p.variants.reduce((sum: number, v: any) => sum + (v.stock || 0), 0);
   };
 
-  // Sorting
-  const sortedItems = () => {
-    const items = [...productsPerPage];
-    switch (sortType) {
-      case 'high-to-low':
-        return items.sort((a: any, b: any) => getPrice(b) - getPrice(a));
-      case 'low-to-high':
-        return items.sort((a: any, b: any) => getPrice(a) - getPrice(b));
-      case 'latest':
-        return items.sort((a: any, b: any) => new Date(b.createdAt || b.date).getTime() - new Date(a.createdAt || a.date).getTime());
-      case 'old':
-        return items.sort((a: any, b: any) => new Date(a.createdAt || a.date).getTime() - new Date(b.createdAt || b.date).getTime());
-      default:
-        return items;
-    }
-  };
-
-  const displayItems = sortType === '' ? productsPerPage : sortedItems();
-
   // Checkbox handling
   const handleCheckboxClick = (id: string) => {
     setSelectedIds((prev) =>
@@ -111,98 +143,279 @@ function DashboardProducts() {
   const handleDelete = async () => {
     if (selectedIds.length === 0) return;
     try {
-      await fetch(`${process.env.NEXT_PUBLIC_SERVER_URL}/delete`, {
+      await fetch(`${API_URL}/api/products`, {
         method: 'DELETE',
         headers: { 'Content-Type': 'application/json' },
         body: JSON.stringify({ ids: selectedIds }),
       });
       setSelectedIds([]);
       toast.success('Products deleted');
-      refetchProducts();
+      refetch();
     } catch (err) {
       console.error(err);
       toast.error('Failed to delete products');
     }
   };
 
+  // Clear all filters
+  const clearFilters = () => {
+    setPage(1);
+    setLimit(20);
+    setSortBy('');
+    setSortOrder('desc');
+    setSelectedCategory('');
+    setSelectedBrand('');
+    setStockStatus('');
+    setMinPrice('');
+    setMaxPrice('');
+    setSearch('');
+    setSearchInput('');
+  };
+
+  const hasActiveFilters = selectedCategory || selectedBrand || stockStatus || minPrice || maxPrice || search;
 
   return (
     <div className="flex flex-col gap-5 relative">
-      {/* Products Overview */}
-      <>
-          {/* Controls */}
-          <div className="flex justify-end items-center gap-3">
-            <DropdownMenu>
-              <DropdownMenuTrigger asChild>
-                <Button variant="outline">
-                  Options <FaAngleDown className="ml-2" />
-                </Button>
-              </DropdownMenuTrigger>
-              <DropdownMenuContent>
-                <DropdownMenuItem onClick={handleDelete}>
-                  Delete Selected ({selectedIds.length})
-                </DropdownMenuItem>
-              </DropdownMenuContent>
-            </DropdownMenu>
+      {/* Search and Filter Toggle */}
+      <div className="flex gap-3 items-center justify-between">
+        <Input
+          type="text"
+          placeholder="Search products by name, brand, or tags..."
+          value={searchInput}
+          onChange={(e) => setSearchInput(e.target.value)}
+          className="max-w-md"
+        />
+        <Button
+          variant={showFilters ? 'default' : 'outline'}
+          onClick={() => setShowFilters(!showFilters)}
+        >
+          <FaFilter className="mr-2" />
+          Filters {hasActiveFilters && `(${[selectedCategory, selectedBrand, stockStatus, minPrice || maxPrice, search].filter(Boolean).length})`}
+        </Button>
+      </div>
 
-            <select
-              value={postsPerPage}
-              onChange={(e) => {
-                setPostsPerPage(Number(e.target.value));
-                setCurrentPage(1);
-              }}
-              className="border border-border rounded-md px-3 py-2 bg-background"
-            >
-              <option value={20}>20</option>
-              <option value={40}>40</option>
-              <option value={60}>60</option>
-              <option value={80}>80</option>
-            </select>
+      {/* Filters Panel */}
+      {showFilters && (
+        <div className="bg-card rounded-xl border border-border p-4">
+          <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-4">
+            {/* Category Filter */}
+            <div>
+              <label className="text-sm font-medium mb-2 block">Category</label>
+              <select
+                value={selectedCategory}
+                onChange={(e) => {
+                  setSelectedCategory(e.target.value);
+                  setPage(1);
+                }}
+                className="w-full border border-border rounded-md px-3 py-2 bg-background"
+              >
+                <option value="">All Categories</option>
+                {categories.map((cat: any) => (
+                  <option key={cat._id} value={cat._id}>
+                    {cat.name}
+                  </option>
+                ))}
+              </select>
+            </div>
 
-            <DropdownMenu>
-              <DropdownMenuTrigger asChild>
-                <Button variant="outline">Sort</Button>
-              </DropdownMenuTrigger>
-              <DropdownMenuContent>
-                <DropdownMenuItem onClick={() => setSortType('low-to-high')}>
-                  Low to High
-                </DropdownMenuItem>
-                <DropdownMenuItem onClick={() => setSortType('high-to-low')}>
-                  High to Low
-                </DropdownMenuItem>
-                <DropdownMenuItem onClick={() => setSortType('latest')}>
-                  Latest
-                </DropdownMenuItem>
-                <DropdownMenuItem onClick={() => setSortType('old')}>
-                  Oldest
-                </DropdownMenuItem>
-              </DropdownMenuContent>
-            </DropdownMenu>
+            {/* Brand Filter */}
+            <div>
+              <label className="text-sm font-medium mb-2 block">Brand</label>
+              <select
+                value={selectedBrand}
+                onChange={(e) => {
+                  setSelectedBrand(e.target.value);
+                  setPage(1);
+                }}
+                className="w-full border border-border rounded-md px-3 py-2 bg-background"
+              >
+                <option value="">All Brands</option>
+                {availableBrands.map((brand: string) => (
+                  <option key={brand} value={brand}>
+                    {brand}
+                  </option>
+                ))}
+              </select>
+            </div>
+
+            {/* Stock Status Filter */}
+            <div>
+              <label className="text-sm font-medium mb-2 block">Stock Status</label>
+              <select
+                value={stockStatus}
+                onChange={(e) => {
+                  setStockStatus(e.target.value);
+                  setPage(1);
+                }}
+                className="w-full border border-border rounded-md px-3 py-2 bg-background"
+              >
+                <option value="">All Stock Levels</option>
+                <option value="in-stock">In Stock (&gt;10)</option>
+                <option value="low-stock">Low Stock (1-10)</option>
+                <option value="out-of-stock">Out of Stock</option>
+              </select>
+            </div>
+
+            {/* Price Range Filter */}
+            <div>
+              <label className="text-sm font-medium mb-2 block">Price Range</label>
+              <div className="flex gap-2">
+                <Input
+                  type="number"
+                  placeholder="Min"
+                  value={minPrice}
+                  onChange={(e) => {
+                    setMinPrice(e.target.value);
+                    setPage(1);
+                  }}
+                  className="w-full"
+                />
+                <Input
+                  type="number"
+                  placeholder="Max"
+                  value={maxPrice}
+                  onChange={(e) => {
+                    setMaxPrice(e.target.value);
+                    setPage(1);
+                  }}
+                  className="w-full"
+                />
+              </div>
+            </div>
           </div>
 
-          {/* Products Table */}
-          <div className="bg-card rounded-xl border border-border overflow-hidden">
-            <Table>
-              <TableHeader>
-                <TableRow>
-                  <TableHead className="w-12"></TableHead>
-                  <TableHead className="w-12">#</TableHead>
-                  <TableHead>Product</TableHead>
-                  <TableHead>Brand</TableHead>
-                  <TableHead>Category</TableHead>
-                  <TableHead>Slug</TableHead>
-                  <TableHead>Date</TableHead>
-                  <TableHead>Stock</TableHead>
-                  <TableHead>Price</TableHead>
-                </TableRow>
-              </TableHeader>
-              <TableBody>
-                {displayItems.map((item: any, index: number) => {
-                   const price = getPrice(item);
-                   const stock = getTotalStock(item);
-                   const categoryName = item.category?.name || 'N/A';
-                   
-                   return (
+          {/* Clear Filters Button */}
+          {hasActiveFilters && (
+            <div className="mt-4 flex justify-end">
+              <Button variant="outline" onClick={clearFilters} size="sm">
+                <FiX className="mr-2" />
+                Clear All Filters
+              </Button>
+            </div>
+          )}
+        </div>
+      )}
+
+      {/* Controls */}
+      <div className="flex justify-between items-center gap-3">
+        <div className="text-sm text-muted-foreground">
+          Showing {products.length > 0 ? ((page - 1) * limit + 1) : 0} - {Math.min(page * limit, pagination.total)} of {pagination.total} products
+        </div>
+        
+        <div className="flex gap-3">
+          <DropdownMenu>
+            <DropdownMenuTrigger asChild>
+              <Button variant="outline" disabled={selectedIds.length === 0}>
+                Options <FaAngleDown className="ml-2" />
+              </Button>
+            </DropdownMenuTrigger>
+            <DropdownMenuContent>
+              <DropdownMenuItem onClick={handleDelete}>
+                Delete Selected ({selectedIds.length})
+              </DropdownMenuItem>
+            </DropdownMenuContent>
+          </DropdownMenu>
+
+          <select
+            value={limit}
+            onChange={(e) => {
+              setLimit(Number(e.target.value));
+              setPage(1);
+            }}
+            className="border border-border rounded-md px-3 py-2 bg-background"
+          >
+            <option value={20}>20 per page</option>
+            <option value={40}>40 per page</option>
+            <option value={60}>60 per page</option>
+            <option value={80}>80 per page</option>
+          </select>
+
+          <DropdownMenu>
+            <DropdownMenuTrigger asChild>
+              <Button variant="outline">
+                Sort {sortBy && `(${sortBy})`}
+              </Button>
+            </DropdownMenuTrigger>
+            <DropdownMenuContent>
+              <DropdownMenuItem onClick={() => {
+                setSortBy('price');
+                setSortOrder('asc');
+                setPage(1);
+              }}>
+                Price: Low to High
+              </DropdownMenuItem>
+              <DropdownMenuItem onClick={() => {
+                setSortBy('price');
+                setSortOrder('desc');
+                setPage(1);
+              }}>
+                Price: High to Low
+              </DropdownMenuItem>
+              <DropdownMenuItem onClick={() => {
+                setSortBy('date');
+                setSortOrder('desc');
+                setPage(1);
+              }}>
+                Date: Latest
+              </DropdownMenuItem>
+              <DropdownMenuItem onClick={() => {
+                setSortBy('date');
+                setSortOrder('asc');
+                setPage(1);
+              }}>
+                Date: Oldest
+              </DropdownMenuItem>
+              <DropdownMenuItem onClick={() => {
+                setSortBy('stock');
+                setSortOrder('desc');
+                setPage(1);
+              }}>
+                Stock: High to Low
+              </DropdownMenuItem>
+              <DropdownMenuItem onClick={() => {
+                setSortBy('name');
+                setSortOrder('asc');
+                setPage(1);
+              }}>
+                Name: A-Z
+              </DropdownMenuItem>
+            </DropdownMenuContent>
+          </DropdownMenu>
+        </div>
+      </div>
+
+      {/* Products Table */}
+      <div className="bg-card rounded-xl border border-border overflow-hidden">
+        {isLoading ? (
+          <div className="p-8 text-center text-muted-foreground">
+            Loading products...
+          </div>
+        ) : products.length === 0 ? (
+          <div className="p-8 text-center text-muted-foreground">
+            No products found. Try adjusting your filters.
+          </div>
+        ) : (
+          <Table>
+            <TableHeader>
+              <TableRow>
+                <TableHead className="w-12"></TableHead>
+                <TableHead className="w-12">#</TableHead>
+                <TableHead>Product</TableHead>
+                <TableHead>Brand</TableHead>
+                <TableHead>Category</TableHead>
+                <TableHead>Slug</TableHead>
+                <TableHead>Date</TableHead>
+                <TableHead>Stock</TableHead>
+                <TableHead>Price</TableHead>
+              </TableRow>
+            </TableHeader>
+            <TableBody>
+              {products.map((item: any, index: number) => {
+                const price = getPrice(item);
+                const stock = getTotalStock(item);
+                const categoryName = item.category?.name || 'N/A';
+                
+                return (
                   <TableRow key={item._id}>
                     <TableCell>
                       <input
@@ -212,7 +425,7 @@ function DashboardProducts() {
                         className="w-4 h-4"
                       />
                     </TableCell>
-                    <TableCell>{indexOfFirstPost + index + 1}</TableCell>
+                    <TableCell>{(page - 1) * limit + index + 1}</TableCell>
                     <TableCell>
                       <div className="flex items-center gap-3">
                         <Link
@@ -246,7 +459,7 @@ function DashboardProducts() {
                     <TableCell>
                       <span
                         className={`flex items-center gap-1 ${
-                          stock > 0 ? 'text-green-600' : 'text-red-600'
+                          stock > 10 ? 'text-green-600' : stock > 0 ? 'text-yellow-600' : 'text-red-600'
                         }`}
                       >
                         <BsDot className="text-2xl" />
@@ -257,27 +470,59 @@ function DashboardProducts() {
                       ${price.toFixed(2)}
                     </TableCell>
                   </TableRow>
-                )})}
-              </TableBody>
-            </Table>
-          </div>
+                );
+              })}
+            </TableBody>
+          </Table>
+        )}
+      </div>
 
-          {/* Pagination */}
-          {pageNumbers.length > 1 && (
-            <div className="flex justify-center gap-2">
-              {pageNumbers.map((number) => (
-                <Button
-                  key={number}
-                  variant={currentPage === number ? 'default' : 'outline'}
-                  size="sm"
-                  onClick={() => setCurrentPage(number)}
-                >
-                  {number}
-                </Button>
-              ))}
-            </div>
-          )}
-      </>
+      {/* Pagination */}
+      {pagination.pages > 1 && (
+        <div className="flex justify-center gap-2 items-center">
+          <Button
+            variant="outline"
+            size="sm"
+            onClick={() => setPage(Math.max(1, page - 1))}
+            disabled={page === 1}
+          >
+            Previous
+          </Button>
+          
+          {Array.from({ length: Math.min(5, pagination.pages) }, (_, i) => {
+            let pageNum;
+            if (pagination.pages <= 5) {
+              pageNum = i + 1;
+            } else if (page <= 3) {
+              pageNum = i + 1;
+            } else if (page >= pagination.pages - 2) {
+              pageNum = pagination.pages - 4 + i;
+            } else {
+              pageNum = page - 2 + i;
+            }
+            
+            return (
+              <Button
+                key={pageNum}
+                variant={page === pageNum ? 'default' : 'outline'}
+                size="sm"
+                onClick={() => setPage(pageNum)}
+              >
+                {pageNum}
+              </Button>
+            );
+          })}
+          
+          <Button
+            variant="outline"
+            size="sm"
+            onClick={() => setPage(Math.min(pagination.pages, page + 1))}
+            disabled={page === pagination.pages}
+          >
+            Next
+          </Button>
+        </div>
+      )}
 
       {/* Fixed Add Product FAB */}
       <Link
@@ -287,7 +532,6 @@ function DashboardProducts() {
       >
         <FaPlus className="text-xl group-hover:scale-110 transition-transform" />
       </Link>
-
     </div>
   );
 }

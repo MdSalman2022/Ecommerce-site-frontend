@@ -150,11 +150,11 @@ export function useSiteSettings(): UseSiteSettingsReturn {
 
     const fetchSettings = useCallback(async () => {
         try {
-            // Keep loading true only on initial fetch if needed, 
-            // but here we might want to be silent if re-fetching
-            // For now, simple approach:
-            
-            const response = await fetch(`${API_URL}/api/settings`);
+            const token = localStorage.getItem('accessToken');
+            const headers: any = {};
+            if (token) headers['Authorization'] = `Bearer ${token}`;
+
+            const response = await fetch(`${API_URL}/api/settings`, { headers });
             // Handle non-200 responses
             if (!response.ok) {
                 // throw new Error('Network response was not ok'); // Don't throw, just log

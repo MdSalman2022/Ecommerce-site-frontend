@@ -2,7 +2,7 @@
 
 import React, { useState } from 'react';
 import Link from 'next/link';
-import { useParams } from 'next/navigation';
+import { useParams, useSearchParams } from 'next/navigation';
 import { HiEmojiSad } from 'react-icons/hi';
 import { FaChevronUp, FaStar } from 'react-icons/fa';
 import { useShop } from '@/contexts/ShopProvider';
@@ -33,6 +33,7 @@ function ProductPage() {
   let { products, isLoadingProducts, categories: dbCategories, isLoadingCategories } = useShop();
   const { ecommerce } = useSiteSettings();
   const params = useParams();
+  const searchParams = useSearchParams();
 
   // Derive unique brands from products
   const brands = React.useMemo(() => {
@@ -59,9 +60,21 @@ function ProductPage() {
   const category = params?.category as string | undefined;
   const subcategory = params?.subcategory as string | undefined;
   const brand = params?.brand as string | undefined;
+  const filterFlag = searchParams.get('filter');
 
   // Filter products based on route params
   let filteredProducts = [...products];
+
+  // Apply flag filter from query param
+  if (filterFlag) {
+    filteredProducts = filteredProducts.filter((product: any) => {
+      if (filterFlag === 'special') return product.flags?.special === true;
+      if (filterFlag === 'featured') return product.flags?.featured === true;
+      if (filterFlag === 'bestseller') return product.flags?.bestseller === true;
+      if (filterFlag === 'latest') return product.flags?.latest === true;
+      return true;
+    });
+  }
   
   if (category && subcategory && brand) {
     filteredProducts = filteredProducts.filter(
@@ -76,8 +89,8 @@ function ProductPage() {
         (product.category?.slug?.toLowerCase() === category.toLowerCase() && product.subCategory?.slug?.toLowerCase() === subcategory.toLowerCase()) ||
         (product.category?.slug?.toLowerCase() === category.toLowerCase() && product.brand?.toLowerCase() === subcategory.toLowerCase())
     );
-  } else if (category === 'products' && !subcategory && !brand) {
-    // Show all products
+  } else if ((category === 'products' || !category) && !subcategory && !brand) {
+    // Show all products (or filtered by flag)
   } else if (category && !subcategory && !brand) {
     filteredProducts = filteredProducts.filter((product: any) => product.category?.slug?.toLowerCase() === category.toLowerCase());
   }
@@ -226,10 +239,10 @@ function ProductPage() {
         <div className="w-full bg-white border border-gray-100 rounded-2xl p-8 mb-10 shadow-sm text-center relative overflow-hidden">
           <div className="absolute top-0 left-0 w-full h-1 bg-gradient-to-r from-primary to-primary/70 opacity-80" />
           <h1 className="text-3xl md:text-5xl font-black capitalize text-gray-900 tracking-tight mb-3">
-             {subcategory || brand || category || 'All Products'}
+             {filterFlag ? `${filterFlag} Products` : (subcategory || brand || category || 'All Products')}
           </h1>
           <p className="text-gray-500 max-w-2xl mx-auto">
-            Explore our premium collection of {subcategory || brand || category || 'products'}. 
+            Explore our premium collection of {filterFlag ? `${filterFlag} products` : (subcategory || brand || category || 'products')}. 
             Best deals and top quality guaranteed.
           </p>
         </div>

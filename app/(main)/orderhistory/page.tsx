@@ -64,7 +64,7 @@ export default function OrdersPage() {
     );
   }
 
-  const myOrders = orders.filter((o: any) => o.email === user.email);
+  const myOrders = orders?.filter((o: any) => o.email === user.email) || [];
 
   if (myOrders.length === 0) {
     return (
