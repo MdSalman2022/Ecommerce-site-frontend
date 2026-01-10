@@ -261,10 +261,10 @@ function ProductDetails() {
                {hasDiscount ? (
                   <>
                     <span className="text-2xl line-through text-gray-400">
-                        ${originalPrice?.toLocaleString()}
+                        ৳{originalPrice?.toLocaleString()}
                     </span>
                     <span className="text-4xl font-bold text-primary">
-                        ${displayPrice.toFixed(2)}
+                        ৳{displayPrice.toLocaleString()}
                     </span>
                     <span className="flex items-center gap-1 bg-red-100 text-red-600 px-3 py-1 rounded-full text-sm font-bold">
                         <TbDiscount className="w-4 h-4" /> 
@@ -273,7 +273,7 @@ function ProductDetails() {
                   </>
                ) : (
                   <span className="text-4xl text-primary font-bold">
-                    ${displayPrice.toLocaleString()}
+                    ৳{displayPrice.toLocaleString()}
                   </span>
                )}
             </div>

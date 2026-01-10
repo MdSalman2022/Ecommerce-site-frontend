@@ -48,11 +48,20 @@ function OrderConfirm() {
       address: userInfo.address,
       contact: userInfo.contact, 
       city: userInfo.city,
-      email: user?.email || userInfo.email,
+      email: (user?.email || userInfo.email) || null,
       isGuest: !user,
       transactionId: paymentDetails?.id || 'Cash on Delivery',
-      amount: paymentDetails?.amount || Math.round(subTotal * 100),
-      items: cart,
+      amount: paymentDetails?.amount ? (paymentDetails.amount / 100) : subTotal, // amount in Taka
+      items: cart.map(item => ({
+        productId: item.productId || item._id,
+        variantId: item.variantId,
+        name: item.name,
+        price: item.price,
+        quantity: item.quantity,
+        totalPrice: item.price * item.quantity,
+        image: item.image,
+        variantName: item.variantName
+      })),
       date: new Date().toDateString(),
       orderStatus: 'pending',
       shipment: 'picked',
@@ -72,18 +81,26 @@ function OrderConfirm() {
         
         // Mark cart as converted for abandoned cart tracking
         const sessionId = localStorage.getItem('cart_session_id');
-        if (sessionId) {
+        const token = localStorage.getItem('accessToken');
+        
+        if (sessionId || token) {
           try {
+            const headers: any = { 'Content-Type': 'application/json' };
+            if (token) headers['Authorization'] = `Bearer ${token}`;
+            if (sessionId) headers['x-session-id'] = sessionId;
+
             await fetch(`${process.env.NEXT_PUBLIC_SERVER_URL}/api/cart/converted`, {
               method: 'POST',
-              headers: { 'Content-Type': 'application/json' },
+              headers,
               body: JSON.stringify({ 
-                sessionId, 
-                orderId: orderResult.order?._id || orderResult._id 
+                orderId: orderResult.orderId || orderResult._id 
               })
             });
+            
             // Clear session ID for next cart session
-            localStorage.removeItem('cart_session_id');
+            if (sessionId) {
+              localStorage.removeItem('cart_session_id');
+            }
           } catch (err) {
             console.debug('Cart conversion tracking error:', err);
           }
@@ -104,7 +121,7 @@ function OrderConfirm() {
         setOrderPlaced(true);
         setCart([]);
         setPaymentDetails({});
-        localStorage.setItem('cart', '[]');
+        localStorage.removeItem('cart');
       }
     } catch (error) {
       console.error('Order placement failed:', error);
@@ -115,11 +132,11 @@ function OrderConfirm() {
     return (
       <div className="flex flex-col items-center justify-center min-h-screen gap-6 bg-background">
         <div className="bg-green-100 dark:bg-green-900/30 p-6 rounded-full">
-          <AiFillCreditCard className="text-5xl text-green-600" />
+          <TiTick className="text-5xl text-green-600" />
         </div>
         <h1 className="text-3xl font-bold text-foreground">Order Placed Successfully!</h1>
         <p className="text-lg text-muted-foreground text-center max-w-md">
-          Thank you for shopping with us. Your order will be delivered in 3-5 business days.
+          Thank you for shopping with us. Your order will be delivered soon.
         </p>
         <Link href="/">
           <Button size="lg">Continue Shopping</Button>
@@ -202,7 +219,7 @@ function OrderConfirm() {
                     <span className="font-medium">Transaction ID:</span> {paymentDetails.id}
                   </p>
                   <p className="text-sm">
-                    <span className="font-medium">Amount:</span> ${((paymentDetails.amount || 0) / 100).toFixed(2)}
+                    <span className="font-medium">Amount:</span> ৳{paymentDetails.amount?.toLocaleString()}
                   </p>
                 </div>
               )}
@@ -235,11 +252,20 @@ function OrderConfirm() {
               </TableHeader>
               <TableBody>
                 {cart.map((item: any, index: number) => (
-                  <TableRow key={item._id || index}>
+                  <TableRow key={(item.productId || item._id) + (item.variantId || '') || index}>
                     <TableCell>{index + 1}</TableCell>
-                    <TableCell>{item.name}</TableCell>
-                    <TableCell>${item.price}</TableCell>
-                    <TableCell>${item.totalPrice || item.price}</TableCell>
+                    <TableCell>
+                        <div className="flex flex-col">
+                            <span className="font-medium">{item.name}</span>
+                            {item.variantName && (
+                                <span className="text-[10px] text-primary font-semibold uppercase">
+                                    {item.variantName}
+                                </span>
+                            )}
+                        </div>
+                    </TableCell>
+                    <TableCell>৳{item.price.toLocaleString()}</TableCell>
+                    <TableCell>৳{(item.price * item.quantity).toLocaleString()}</TableCell>
                   </TableRow>
                 ))}
                 
@@ -248,27 +274,27 @@ function OrderConfirm() {
                   <TableCell colSpan={2}></TableCell>
                   <TableCell className="font-medium border-t">Subtotal:</TableCell>
                   <TableCell className="font-bold border-t">
-                    ${(subTotal + (appliedPromo?.discount || 0) - 10).toFixed(2)}
+                    ৳{(subTotal + (appliedPromo?.discount || 0) - 10).toLocaleString()}
                   </TableCell>
                 </TableRow>
                 <TableRow>
                   <TableCell colSpan={2}></TableCell>
                   <TableCell className="font-medium">Delivery:</TableCell>
-                  <TableCell className="font-bold">$10.00</TableCell>
+                  <TableCell className="font-bold">৳10</TableCell>
                 </TableRow>
                 
                 {appliedPromo && (
                   <TableRow>
                     <TableCell colSpan={2}></TableCell>
                     <TableCell className="font-medium text-green-600">Discount ({appliedPromo.code}):</TableCell>
-                    <TableCell className="font-bold text-green-600">-${appliedPromo.discount.toFixed(2)}</TableCell>
+                    <TableCell className="font-bold text-green-600">-৳{appliedPromo.discount.toLocaleString()}</TableCell>
                   </TableRow>
                 )}
 
                 <TableRow>
                   <TableCell colSpan={2}></TableCell>
                   <TableCell className="font-medium text-xl">Total:</TableCell>
-                  <TableCell className="font-bold text-xl text-primary">${subTotal.toFixed(2)}</TableCell>
+                  <TableCell className="font-bold text-xl text-primary">৳{subTotal.toLocaleString()}</TableCell>
                 </TableRow>
               </TableBody>
             </Table>

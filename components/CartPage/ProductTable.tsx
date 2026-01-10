@@ -27,17 +27,20 @@ function ProductTable({ item, index }: ProductTableProps) {
   };
 
   useEffect(() => {
-    const cartItem = cart.find((cartItem: any) => cartItem._id === item._id);
+    const cartItem = cart.find((cartItem: any) => 
+        (cartItem.productId || cartItem._id) === (item.productId || item._id) && 
+        cartItem.variantId === item.variantId
+    );
     if (cartItem?.quantity !== count) {
       setHasChanged(true);
     } else {
       setHasChanged(false);
     }
-  }, [count, cart, item._id]);
+  }, [count, cart, item.productId, item._id, item.variantId]);
 
   const handleConfirm = () => {
     const updatedCart = cart.map((cartItem: any) => {
-      if (cartItem._id === item._id) {
+      if ((cartItem.productId || cartItem._id) === (item.productId || item._id) && cartItem.variantId === item.variantId) {
         return {
           ...cartItem,
           quantity: count,
@@ -47,24 +50,31 @@ function ProductTable({ item, index }: ProductTableProps) {
       return cartItem;
     });
     setCart(updatedCart);
-    localStorage.setItem('cart', JSON.stringify(updatedCart));
     setHasChanged(false);
   };
 
   const removeFromCart = () => {
-    const updatedCart = cart.filter((cartItem: any) => cartItem._id !== item._id);
+    const updatedCart = cart.filter((cartItem: any) => 
+        !((cartItem.productId || cartItem._id) === (item.productId || item._id) && cartItem.variantId === item.variantId)
+    );
     setCart(updatedCart);
-    localStorage.setItem('cart', JSON.stringify(updatedCart));
   };
 
   return (
     <div className="col-span-5 grid grid-cols-5 gap-4 place-items-center py-4 border-b border-border" key={index}>
       {/* Item */}
       <div className="flex items-center gap-3">
-        <div className="hidden md:block relative w-16 h-16">
+        <div className="hidden md:block relative w-16 h-16 shrink-0">
           <Image src={item.image} alt={item.name} fill className="object-contain" />
         </div>
-        <p className="font-medium text-sm line-clamp-2">{item.name}</p>
+        <div>
+            <p className="font-medium text-sm line-clamp-2">{item.name}</p>
+            {item.variantName && (
+                <p className="text-[10px] text-primary font-semibold uppercase mt-1">
+                    {item.variantName}
+                </p>
+            )}
+        </div>
       </div>
 
       {/* Quantity */}
@@ -98,16 +108,16 @@ function ProductTable({ item, index }: ProductTableProps) {
       </div>
 
       {/* Unit Price */}
-      <p className="font-medium">${item.price}</p>
+      <p className="font-medium">৳{item.price.toLocaleString()}</p>
 
       {/* Total Price */}
-      <p className="font-bold text-primary">${(item.price * count).toFixed(2)}</p>
+      <p className="font-bold text-primary">৳{(item.price * count).toLocaleString()}</p>
 
       {/* Actions */}
       <div className="flex items-center gap-2">
         {hasChanged && (
           <Button size="sm" onClick={handleConfirm}>
-            Confirm
+            Update
           </Button>
         )}
         <Button

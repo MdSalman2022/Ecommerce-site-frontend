@@ -6,11 +6,14 @@ import { useAuth } from './AuthProvider';
 import { toast } from 'react-hot-toast';
 
 interface CartItem {
-  _id: string;
+  _id: string; // Product ID
+  productId: string; // Explicit Product ID
+  variantId: string; // Specific variant ID
   name: string;
   price: number;
   quantity: number;
   image?: string;
+  sku?: string;
   [key: string]: any;
 }
 
@@ -62,88 +65,112 @@ const API_URL = process.env.NEXT_PUBLIC_SERVER_URL;
 
 export const UserActivityProvider = ({ children }: { children: ReactNode }) => {
   const { user } = useAuth();
+  const token = typeof window !== 'undefined' ? localStorage.getItem('accessToken') : null;
   
   // ==================== CART STATE ====================
-  const [cart, setCart] = useState<CartItem[]>(() => {
-    if (typeof window !== 'undefined') {
-      const savedCart = localStorage.getItem('cart');
-      return savedCart ? JSON.parse(savedCart) : [];
-    }
-    return [];
-  });
+  // ==================== CART STATE ====================
+  const [cart, setCart] = useState<CartItem[]>([]);
   
   const [subTotal, setSubPrice] = useState(0);
   const [paymentDetails, setPaymentDetails] = useState<PaymentDetails>({});
   const [deliveryDetails, setDeliveryDetails] = useState<DeliveryDetails | null>(null);
 
-  // ==================== SESSION ID FOR ABANDONED CART TRACKING ====================
+  // ==================== SESSION ID MANAGEMENT ====================
+  // Persistent Session ID for Guest Carts
   const getSessionId = (): string => {
     if (typeof window === 'undefined') return '';
     let sessionId = localStorage.getItem('cart_session_id');
     if (!sessionId) {
-      sessionId = `sess_${Date.now()}_${Math.random().toString(36).substring(2, 9)}`;
+      sessionId = `guest_${Date.now()}_${Math.random().toString(36).substring(2, 9)}`;
       localStorage.setItem('cart_session_id', sessionId);
     }
     return sessionId;
   };
 
-  // Sync cart with localStorage
+  // ==================== CART SYNC (DB FIRST) ====================
+  
+  // 1. Initial Load & Auth Change Refetch
   useEffect(() => {
-    if (typeof window !== 'undefined') {
-      localStorage.setItem('cart', JSON.stringify(cart));
-    }
-  }, [cart]);
+    const initCart = async () => {
+       const sessionId = getSessionId();
+       const currentToken = localStorage.getItem('accessToken');
+       
+       const headers: any = { 'Content-Type': 'application/json' };
+       if (currentToken) headers['Authorization'] = `Bearer ${currentToken}`;
+       if (sessionId) headers['x-session-id'] = sessionId; // Always send session ID
 
-  // Track cart updates to backend for abandoned cart analytics
-  useEffect(() => {
-    if (typeof window === 'undefined' || cart.length === 0) return;
+       try {
+         // Merge Check: If logging in, attempt merge first
+         if (user && sessionId) {
+            // We tell backend to merge this session into the user
+            await fetch(`${API_URL}/api/cart/merge`, {
+                method: 'POST',
+                headers,
+                body: JSON.stringify({}) // Empty body relies on backend finding DB session
+            });
+         }
 
-    const trackCart = async () => {
-      try {
-        const sessionId = getSessionId();
-        const cartTotal = cart.reduce((sum, item) => sum + (item.price * item.quantity), 0);
-        
-        await fetch(`${API_URL}/api/cart/track`, {
-          method: 'POST',
-          headers: { 'Content-Type': 'application/json' },
-          body: JSON.stringify({
-            sessionId,
-            userId: user?._id,
-            email: user?.email,
-            items: cart.map(item => ({
-              productId: item._id,
-              name: item.name,
-              image: item.image,
-              price: item.price,
-              quantity: item.quantity,
-              totalPrice: item.price * item.quantity
-            })),
-            cartTotal
-          })
-        });
-      } catch (error) {
-        // Silent fail - don't disrupt user experience for analytics
-        console.debug('Cart tracking error:', error);
-      }
+         // Fetch Latest Cart
+         const response = await fetch(`${API_URL}/api/cart`, { headers });
+         const result = await response.json();
+
+         if (result.success && result.data?.items) {
+             const mappedItems = result.data.items.map((item: any) => ({
+                _id: item.product._id,
+                productId: item.product._id,
+                variantId: item.variantId,
+                name: item.product.name,
+                slug: item.product.slug,
+                quantity: item.quantity,
+                // Safe Price Access (Variant or Base)
+                price: (item.product.variants?.find((v: any) => v._id === item.variantId) || item.product.variants?.[0])?.salePrice || item.product.variants?.[0]?.regularPrice || 0,
+                image: (item.product.variants?.find((v: any) => v._id === item.variantId) || item.product.variants?.[0])?.images?.[0] || item.product.images?.[0],
+                variantName: (item.product.variants?.find((v: any) => v._id === item.variantId) || item.product.variants?.[0])?.attributes ? Object.values((item.product.variants?.find((v: any) => v._id === item.variantId) || item.product.variants?.[0])?.attributes).join(' / ') : ''
+             }));
+             setCart(mappedItems);
+         }
+       } catch (error) {
+         console.error('Cart init error:', error);
+       }
     };
 
-    // Debounce cart tracking (1 second after last change)
-    const timeout = setTimeout(trackCart, 1000);
-    return () => clearTimeout(timeout);
-  }, [cart, user]);
+    initCart();
+  }, [user]); // Re-run on login/logout
 
-  // Load cart from localStorage on mount (double check)
-  useEffect(() => {
-    if (typeof window !== 'undefined') {
-      const cartFromLocalStorage = localStorage.getItem('cart');
-      if (cartFromLocalStorage) {
-        const parsed = JSON.parse(cartFromLocalStorage);
-        if (JSON.stringify(parsed) !== JSON.stringify(cart)) {
-          setCart(parsed);
-        }
+  // 2. Update Cart -> Sync DB Immediately
+  // Note: We use a separate function for updates to avoid circular dependency with useEffect
+  const updateCartInDb = async (newCart: CartItem[]) => {
+      const sessionId = getSessionId();
+      const currentToken = localStorage.getItem('accessToken');
+      
+      const headers: any = { 'Content-Type': 'application/json' };
+      if (currentToken) headers['Authorization'] = `Bearer ${currentToken}`;
+      if (sessionId) headers['x-session-id'] = sessionId;
+
+      try {
+        await fetch(`${API_URL}/api/cart`, {
+            method: 'POST',
+            headers,
+            body: JSON.stringify({ items: newCart.map(item => ({
+                productId: item.productId || item._id,
+                variantId: item.variantId,
+                quantity: item.quantity
+            }))})
+        });
+      } catch (err) {
+          console.error('Cart update failed', err);
       }
-    }
-  }, []);
+  };
+
+  // Wrapper for setCart to also trigger DB update
+  const handleSetCart = (newCart: CartItem[] | ((prev: CartItem[]) => CartItem[])) => {
+      setCart(prev => {
+          const updated = typeof newCart === 'function' ? newCart(prev) : newCart;
+          // Fire and forget DB update (Optimistic UI)
+          updateCartInDb(updated);
+          return updated;
+      });
+  };
 
   // ==================== WISHLIST STATE ====================
   const [wishlist, setWishlist] = useState<string[]>([]);
@@ -218,7 +245,7 @@ export const UserActivityProvider = ({ children }: { children: ReactNode }) => {
 
   const value = {
     cart,
-    setCart,
+    setCart: handleSetCart,
     subTotal,
     setSubPrice,
     wishlist,

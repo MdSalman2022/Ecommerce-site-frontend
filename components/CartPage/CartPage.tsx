@@ -52,7 +52,7 @@ function CartPage() {
               <div className="flex items-center gap-6">
                 <div className="flex items-center gap-2">
                   <span className="text-muted-foreground">Subtotal:</span>
-                  <span className="text-2xl font-bold text-foreground">${subTotal.toFixed(2)}</span>
+                  <span className="text-2xl font-bold text-foreground">৳{subTotal.toLocaleString()}</span>
                 </div>
 
                 <Link href="/checkout">

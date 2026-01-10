@@ -215,8 +215,8 @@ export default function OrderDetailsPage() {
                           </div>
                        </td>
                        <td className="py-6 text-center font-bold">{item.quantity}</td>
-                       <td className="py-6 text-right font-medium">${item.price.toFixed(2)}</td>
-                       <td className="py-6 text-right font-bold text-gray-900">${(item.price * item.quantity).toFixed(2)}</td>
+                       <td className="py-6 text-right font-medium">৳{item.price?.toLocaleString()}</td>
+                       <td className="py-6 text-right font-bold text-gray-900">৳{(item.price * item.quantity)?.toLocaleString()}</td>
                     </tr>
                   ))}
                </tbody>
@@ -227,12 +227,12 @@ export default function OrderDetailsPage() {
                <div className="w-full max-w-xs space-y-4">
                   <div className="flex justify-between text-gray-500 font-medium">
                     <span>Subtotal</span>
-                    <span>${(order.amount / 100).toFixed(2)}</span>
+                     <span>৳{order.amount?.toLocaleString()}</span>
                   </div>
                   {order.discountAmount > 0 && (
                     <div className="flex justify-between text-red-500 font-bold bg-red-50 px-3 py-1 rounded">
                       <span>Discount {order.promoCode && `(${order.promoCode})`}</span>
-                      <span>-${order.discountAmount.toFixed(2)}</span>
+                       <span>-৳{order.discountAmount?.toLocaleString()}</span>
                     </div>
                   )}
                   <div className="flex justify-between text-gray-500 font-medium border-b border-gray-100 pb-4">
@@ -241,7 +241,7 @@ export default function OrderDetailsPage() {
                   </div>
                   <div className="flex justify-between text-2xl font-black text-gray-900 pt-2">
                     <span>Total</span>
-                    <span className="text-primary">${(order.amount / 100 - (order.discountAmount || 0)).toFixed(2)}</span>
+                     <span className="text-primary">৳{(order.amount - (order.discountAmount || 0))?.toLocaleString()}</span>
                   </div>
                </div>
             </div>

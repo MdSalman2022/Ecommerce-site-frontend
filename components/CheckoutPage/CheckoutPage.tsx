@@ -53,37 +53,22 @@ function CheckoutPage() {
   const isMinOrderNotMet = ecommerce?.minOrderAmount > 0 && cartTotal < ecommerce.minOrderAmount;
   const isMaxOrderExceeded = ecommerce?.maxOrderAmount > 0 && cartTotal > ecommerce.maxOrderAmount;
 
-  // Track checkout started when page loads
-  useEffect(() => {
-    const trackCheckoutStarted = async () => {
-      const sessionId = localStorage.getItem('cart_session_id');
-      if (!sessionId || cart.length === 0) return;
-
-      try {
-        await fetch(`${API_URL}/api/cart/checkout-started`, {
-          method: 'POST',
-          headers: { 'Content-Type': 'application/json' },
-          body: JSON.stringify({ sessionId })
-        });
-      } catch (error) {
-        console.debug('Checkout tracking error:', error);
-      }
-    };
-
-    trackCheckoutStarted();
-  }, [cart.length]);
 
   const handleDelivery = async (data: any) => {
     const sessionId = localStorage.getItem('cart_session_id');
+    const token = localStorage.getItem('accessToken');
 
     // Track checkout info filled (for abandoned cart recovery with contact info)
-    if (sessionId) {
+    if (sessionId || token) {
       try {
+        const headers: any = { 'Content-Type': 'application/json' };
+        if (token) headers['Authorization'] = `Bearer ${token}`;
+        if (sessionId) headers['x-session-id'] = sessionId;
+
         await fetch(`${API_URL}/api/cart/checkout-started`, {
           method: 'POST',
-          headers: { 'Content-Type': 'application/json' },
+          headers,
           body: JSON.stringify({
-            sessionId,
             checkoutInfo: {
               name: data.name,
               address: data.address,
@@ -155,33 +140,33 @@ function CheckoutPage() {
              <div className="w-full bg-red-50 border border-red-200 text-red-700 p-4 rounded-lg mb-6">
                <p className="font-medium">Minimum Order Required</p>
                <p className="text-sm">
-                 Your cart total is ${cartTotal.toFixed(2)}. You need to spend at least ${ecommerce.minOrderAmount.toFixed(2)} to checkout.
+                Your cart total is ৳{cartTotal.toLocaleString()}. You need to spend at least ৳{ecommerce.minOrderAmount.toLocaleString()} to checkout.
                </p>
                <Link href="/" className="text-primary text-sm hover:underline mt-2 inline-block">
                  Continue Shopping
                </Link>
              </div>
           )}
-
-          {!isGuestCheckoutDisabled && isMaxOrderExceeded && (
-             <div className="w-full bg-red-50 border border-red-200 text-red-700 p-4 rounded-lg mb-6">
-               <p className="font-medium">Order Limit Exceeded</p>
-               <p className="text-sm">
-                 Your cart total is ${cartTotal.toFixed(2)}. The maximum order limit is ${ecommerce.maxOrderAmount.toFixed(2)}. Please reduce your cart items.
-               </p>
-             </div>
-          )}
+ 
+           {!isGuestCheckoutDisabled && isMaxOrderExceeded && (
+              <div className="w-full bg-red-50 border border-red-200 text-red-700 p-4 rounded-lg mb-6">
+                <p className="font-medium">Order Limit Exceeded</p>
+                <p className="text-sm">
+                 Your cart total is ৳{cartTotal.toLocaleString()}. The maximum order limit is ৳{ecommerce.maxOrderAmount.toLocaleString()}. Please reduce your cart items.
+                </p>
+              </div>
+           )}
 
           {!isGuestCheckoutDisabled && !isMinOrderNotMet && !isMaxOrderExceeded && (
           <form onSubmit={handleSubmit(handleDelivery)} className="w-full space-y-6"> 
             <div className="space-y-2">
-              <Label htmlFor="email">Email Address {user ? '(Optional)' : '(Required for Receipt)'}</Label>
+              <Label htmlFor="email">Email Address (Optional)</Label>
               <Input
                 id="email"
                 type="email"
                 defaultValue={user?.email || ''}
                 {...register('email', { 
-                    required: !user ? 'Email is required for guest checkout' : false,
+                    required: false,
                     pattern: { value: /^\S+@\S+$/i, message: "Invalid email address" }
                 })}
               />

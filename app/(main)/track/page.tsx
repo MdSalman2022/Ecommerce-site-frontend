@@ -147,7 +147,7 @@ export default function TrackOrderPage() {
                       {statusConfig[order.orderStatus]?.icon}
                       {statusConfig[order.orderStatus]?.label || order.orderStatus}
                     </div>
-                    <p className="text-lg font-bold text-gray-900 mt-2">৳{(order.amount / 100).toFixed(2)}</p>
+                    <p className="text-lg font-bold text-gray-900 mt-2">৳{order.amount?.toLocaleString()}</p>
                   </div>
                 </div>
                 <div className="mt-3 text-sm text-primary font-medium group-hover:underline">
@@ -299,13 +299,13 @@ export default function TrackOrderPage() {
                       <p className="font-medium text-gray-900 text-sm">{item.name}</p>
                       <p className="text-xs text-gray-500">Qty: {item.quantity}</p>
                     </div>
-                    <p className="font-semibold">৳{item.totalPrice || item.price}</p>
+                    <p className="font-semibold">৳{(item.totalPrice || item.price)?.toLocaleString()}</p>
                   </div>
                 ))}
               </div>
               <div className="mt-4 pt-4 border-t border-gray-200 flex justify-between">
                 <span className="font-semibold">Total</span>
-                <span className="text-xl font-bold text-primary">৳{(selectedOrder.amount / 100).toFixed(2)}</span>
+                <span className="text-xl font-bold text-primary">৳{selectedOrder.amount?.toLocaleString()}</span>
               </div>
             </div>
           </div>

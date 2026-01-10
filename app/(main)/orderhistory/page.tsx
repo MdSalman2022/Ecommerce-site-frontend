@@ -105,7 +105,7 @@ export default function OrdersPage() {
                   </div>
                   <div>
                     <p className="text-xs uppercase font-bold text-gray-400 tracking-wider mb-1">Total</p>
-                    <p className="text-sm font-semibold text-gray-900">${(order.amount / 100).toFixed(2)}</p>
+                    <p className="text-sm font-semibold text-gray-900">৳{order.amount?.toLocaleString()}</p>
                   </div>
                   <div>
                     <p className="text-xs uppercase font-bold text-gray-400 tracking-wider mb-1">Status</p>
@@ -134,7 +134,7 @@ export default function OrdersPage() {
                         <div className="flex-1">
                            <h4 className="font-bold text-gray-900 line-clamp-1">{item.name}</h4>
                            <p className="text-sm text-gray-500">Qty: {item.quantity}</p>
-                           <p className="text-sm font-bold text-primary">${item.price.toFixed(2)}</p>
+                           <p className="text-sm font-bold text-primary">৳{item.price?.toLocaleString()}</p>
                         </div>
                         <Link href={`/productDetails/${item._id}`}>
                            <Button variant="ghost" size="sm" className="gap-1 rounded-full text-gray-400 hover:text-primary">

@@ -740,7 +740,7 @@ function DashboardOrders() {
                       )}
                     </TableCell>
                     <TableCell className="font-semibold text-right">
-                      ${(order.amount / 100).toFixed(2)}
+                      ৳{order.amount?.toLocaleString()}
                     </TableCell>
                   </TableRow>
                 ))}

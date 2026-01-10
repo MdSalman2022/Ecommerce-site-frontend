@@ -62,7 +62,7 @@ function DashboardTransactions() {
         <h1 className="text-3xl font-bold text-foreground">Transactions</h1>
         <div className="text-right">
           <p className="text-muted-foreground">Total Revenue</p>
-          <p className="text-2xl font-bold text-primary">${(totalRevenue / 100).toFixed(2)}</p>
+          <p className="text-2xl font-bold text-primary">৳{totalRevenue?.toLocaleString()}</p>
         </div>
       </div>
 
@@ -128,7 +128,7 @@ function DashboardTransactions() {
                     : order.transactionId?.slice(0, 12) + '...'}
                 </TableCell>
                 <TableCell className="font-semibold text-primary">
-                  ${(order.amount / 100).toFixed(2)}
+                  ৳{order.amount?.toLocaleString()}
                 </TableCell>
               </TableRow>
             ))}

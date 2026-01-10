@@ -159,7 +159,7 @@ function DashboardCustomers() {
                      </span>
                 </TableCell>
                 <TableCell className="font-bold text-green-600">
-                  ${(customer.totalSpent / 100).toFixed(2)}
+                  ৳{customer.totalSpent?.toLocaleString()}
                 </TableCell>
                  <TableCell className="text-xs text-muted-foreground">
                     {new Date(customer.lastOrder).toLocaleDateString()}
@@ -201,7 +201,7 @@ function DashboardCustomers() {
                             <p className="text-xs">{order.items.length} Items</p>
                         </div>
                         <div className="text-right">
-                             <p className="font-bold text-primary">${(order.amount / 100).toFixed(2)}</p>
+                             <p className="font-bold text-primary">৳{order.amount?.toLocaleString()}</p>
                              <span className={`text-xs px-2 py-1 rounded-full ${order.shipment === 'delivered' ? 'bg-green-100 text-green-700' : 'bg-yellow-100 text-yellow-700'}`}>
                                  {order.shipment}
                              </span>

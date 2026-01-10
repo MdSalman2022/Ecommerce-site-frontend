@@ -13,7 +13,7 @@ interface CheckoutFormProps {
 
 function CheckoutForm({ subTotal }: CheckoutFormProps) {
   const { user } = useAuth();
-  const { setPaymentDetails } = useUserActivity();
+  const { cart, setPaymentDetails } = useUserActivity();
   const [cardError, setCardError] = useState('');
   const [clientSecret, setClientSecret] = useState('');
   const [processing, setProcessing] = useState(false);
@@ -24,22 +24,30 @@ function CheckoutForm({ subTotal }: CheckoutFormProps) {
   const price = subTotal;
 
   useEffect(() => {
-    if (price > 0) {
+    if (price > 0 && cart.length > 0) {
+      // Send items for server-side price calculation (Super Safe)
       fetch(`${process.env.NEXT_PUBLIC_SERVER_URL}/create-payment-intent`, {
         method: 'POST',
         headers: { 'Content-Type': 'application/json' },
-        body: JSON.stringify({ price }),
+        body: JSON.stringify({ 
+            price, // Keep for legacy but backend will override if items present
+            items: cart.map(item => ({
+                productId: item.productId || item._id,
+                variantId: item.variantId,
+                quantity: item.quantity
+            }))
+        }),
       })
         .then((res) => res.json())
         .then((data) => setClientSecret(data.clientSecret))
         .catch((err) => console.error('Payment intent error:', err));
     }
-  }, [price]);
+  }, [price, cart.length]);
 
   const handleSubmit = async (event: React.FormEvent) => {
     event.preventDefault();
 
-    if (!stripe || !elements) {
+    if (!stripe || !elements || !clientSecret) {
       return;
     }
 
@@ -121,7 +129,7 @@ function CheckoutForm({ subTotal }: CheckoutFormProps) {
           disabled={!stripe || !clientSecret || processing}
           className="w-full"
         >
-          {processing ? 'Processing...' : `Pay $${subTotal}`}
+          {processing ? 'Processing...' : `Pay ৳${subTotal.toLocaleString()}`}
         </Button>
       </form>
       {cardError && <p className="text-destructive text-sm mt-2">{cardError}</p>}

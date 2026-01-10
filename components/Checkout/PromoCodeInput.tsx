@@ -59,7 +59,7 @@ export default function PromoCodeInput({
       if (data.success) {
         onApply(data.discount, code.trim().toUpperCase());
         setCode('');
-        toast.success(`Promo code applied! You saved $${data.discount.toFixed(2)}`);
+        toast.success(`Promo code applied! You saved ৳${data.discount.toLocaleString()}`);
       } else {
         setError(data.error || 'Invalid promo code');
         toast.error(data.error || 'Invalid promo code');
@@ -93,7 +93,7 @@ export default function PromoCodeInput({
                 {appliedCode}
               </p>
               <p className="text-sm text-green-600">
-                You save ${appliedDiscount.toFixed(2)}
+                You save ৳{appliedDiscount.toLocaleString()}
               </p>
             </div>
           </div>

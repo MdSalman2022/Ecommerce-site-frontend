@@ -21,7 +21,7 @@ function DashboardStatistics() {
   const cancelledOrders = ordersArray.filter((o: any) => !o.orderStatus).length;
 
   const stats = [
-    { label: 'Total Revenue', value: `$${(totalRevenue / 100).toFixed(2)}`, color: 'bg-primary/10 text-primary' },
+    { label: 'Total Revenue', value: `৳${totalRevenue.toLocaleString()}`, color: 'bg-primary/10 text-primary' },
     { label: 'Total Orders', value: totalOrders, color: 'bg-blue-500/10 text-blue-500' },
     { label: 'Total Products', value: totalProducts, color: 'bg-green-500/10 text-green-500' },
     { label: 'Total Customers', value: totalCustomers, color: 'bg-purple-500/10 text-purple-500' },

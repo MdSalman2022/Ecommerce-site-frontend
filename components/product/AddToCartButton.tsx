@@ -36,18 +36,25 @@ export default function AddToCartButton({ product, disabled = false }: AddToCart
         return;
     }
 
-    const existingItem = cart.find((c: any) => c._id === product._id);
+    const existingItem = cart.find((c: any) => 
+        c.productId === product._id && 
+        c.variantId === (mainVariant?._id || 'default')
+    );
     
     let updatedCart;
     if (existingItem) {
       updatedCart = cart.map((c: any) =>
-        c._id === product._id
+        (c.productId === product._id && c.variantId === (mainVariant?._id || 'default'))
           ? { ...c, quantity: c.quantity + 1, totalPrice: c.price * (c.quantity + 1) }
           : c
       );
     } else {
       updatedCart = [...cart, { 
-          ...product, 
+          _id: product._id, // Legacy compat
+          productId: product._id,
+          variantId: mainVariant?._id || 'default',
+          name: product.name,
+          slug: product.slug,
           price, 
           image,
           quantity: 1, 
