@@ -15,23 +15,16 @@
    ============================================================================ */
 
 @layer base {
-  :root {
-    /* Background & Foreground */
+  :root { 
     --background: 0 0% 100%;
     --foreground: 222 47% 11%;
-
-    /* Card */
+ 
     --card: 0 0% 100%;
     --card-foreground: 222 47% 11%;
-
-    /* Popover */
+ 
     --popover: 0 0% 100%;
     --popover-foreground: 222 47% 11%;
-
-    /* ========================================
-       PRIMARY - Royal Blue
-       Change these values to change the theme
-       ======================================== */
+ 
     --primary: 221 83% 53%; /* #2563EB */
     --primary-hover: 221 83% 46%; /* #1D4ED8 - darker for hover */
     --primary-light: 217 91% 60%; /* #3B82F6 - lighter accent */

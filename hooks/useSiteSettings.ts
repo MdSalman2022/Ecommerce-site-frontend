@@ -156,7 +156,13 @@ export function useSiteSettings(): UseSiteSettingsReturn {
             
             const response = await fetch(`${API_URL}/api/settings`);
             // Handle non-200 responses
-            if (!response.ok) throw new Error('Network response was not ok');
+            if (!response.ok) {
+                // throw new Error('Network response was not ok'); // Don't throw, just log
+                console.warn('Failed to fetch settings, using defaults');
+                setError('Failed to load settings');
+                setIsLoading(false);
+                return;
+            }
             
             const data = await response.json();
 

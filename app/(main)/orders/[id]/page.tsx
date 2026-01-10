@@ -75,7 +75,7 @@ export default function OrderDetailsPage() {
   return (
     <div className="bg-gray-50 min-h-screen py-12 px-4">
       <div className="container mx-auto max-w-4xl">
-        {/* Header - Not shown in print */}
+        
         <div className="flex flex-col sm:flex-row sm:items-center justify-between gap-4 mb-8 print:hidden">
           <button 
             onClick={() => router.back()}
@@ -99,9 +99,9 @@ export default function OrderDetailsPage() {
           </div>
         </div>
 
-        {/* Invoice Printable Content */}
+        
         <div className="bg-white rounded-2xl shadow-sm border border-gray-100 overflow-hidden print:shadow-none print:border-none">
-          {/* Status Bar - Not shown in print */}
+          
           <div className="bg-gray-900 text-white p-8 print:hidden">
             <div className="flex flex-wrap items-center justify-between gap-6">
               <div>
@@ -119,7 +119,7 @@ export default function OrderDetailsPage() {
               </div>
             </div>
 
-            {/* Tracking Steps */}
+            
             <div className="mt-10 relative">
                <div className="absolute top-1/2 left-0 w-full h-1 bg-gray-800 -translate-y-1/2 rounded-full"></div>
                <div className="flex justify-between relative z-10">
@@ -136,7 +136,7 @@ export default function OrderDetailsPage() {
           </div>
 
           <div className="p-8 md:p-12">
-            {/* Invoice Header (Logo & Address) */}
+            
             <div className="flex justify-between items-start mb-12">
                <div className="space-y-4">
                   <div className="flex items-center gap-3">
@@ -164,7 +164,7 @@ export default function OrderDetailsPage() {
                </div>
             </div>
 
-            {/* Bill To & Ship To */}
+            
             <div className="grid grid-cols-2 gap-12 border-t border-b border-gray-100 py-10 mb-12">
                <div>
                   <h3 className="text-gray-400 text-xs font-bold uppercase tracking-widest mb-4 flex items-center gap-2">
@@ -190,7 +190,7 @@ export default function OrderDetailsPage() {
                </div>
             </div>
 
-            {/* Order Items */}
+            
             <table className="w-full mb-12">
                <thead>
                   <tr className="border-b-2 border-gray-900 text-left">
@@ -222,7 +222,7 @@ export default function OrderDetailsPage() {
                </tbody>
             </table>
 
-            {/* Totals */}
+            
             <div className="flex justify-end pt-8 border-t-2 border-gray-100">
                <div className="w-full max-w-xs space-y-4">
                   <div className="flex justify-between text-gray-500 font-medium">
@@ -246,7 +246,7 @@ export default function OrderDetailsPage() {
                </div>
             </div>
 
-            {/* Footer */}
+            
             <div className="mt-20 pt-12 border-t border-gray-100 text-center">
                <h4 className="text-xl font-black text-gray-900 mb-2">Thank you for your business!</h4>
                <p className="text-gray-500 text-sm max-w-sm mx-auto">

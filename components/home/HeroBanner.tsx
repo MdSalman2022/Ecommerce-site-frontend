@@ -97,8 +97,7 @@ export default function HeroBanner() {
     <section>
       {/* Hero Section */}
       <div className="container mx-auto px-4 py-4 lg:py-6">
-        <div className="grid grid-cols-1 lg:grid-cols-3 gap-4">
-          {/* Main Carousel - 2 columns on desktop */}
+        <div className="grid grid-cols-1 lg:grid-cols-3 gap-4"> 
           <div className="lg:col-span-2 relative group">
             <Swiper
               onSwiper={setSwiperRef}
@@ -161,9 +160,7 @@ export default function HeroBanner() {
             >
               <ChevronRight className="w-5 h-5 text-gray-700" />
             </button>
-          </div>
-
-          {/* Right Side Promo Cards - 1 column on desktop */}
+          </div> 
           <div className="hidden lg:flex flex-col gap-3">
             {promoCards.map((card) => (
               <Link

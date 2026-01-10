@@ -29,8 +29,6 @@ interface ProductFormData {
   brand: string;
   category: string; // ObjectId
   subCategory: string; // ObjectId
-  cat: string; // Derived name/slug (legacy)
-  subcat: string; // Derived name/slug (legacy)
   
   // Pricing
   regularPrice: number;
@@ -139,8 +137,11 @@ export default function ProductForm({ initialData }: { initialData?: any }) {
   const salePrice = watch('salePrice');
   const costPrice = watch('costPrice');
   const mainStock = watch('stock');
-  const profit = (regularPrice || 0) - (costPrice || 0);
-  const profitMargin = regularPrice > 0 ? ((profit / regularPrice) * 100).toFixed(1) : 0;
+  
+  // Calculate profit based on Sale Price if active, otherwise Regular Price
+  const effectivePrice = (salePrice && salePrice > 0) ? salePrice : (regularPrice || 0);
+  const profit = effectivePrice - (costPrice || 0);
+  const profitMargin = effectivePrice > 0 ? ((profit / effectivePrice) * 100).toFixed(1) : 0;
   
   const productName = watch('name');
   const productDesc = watch('description');
@@ -149,24 +150,6 @@ export default function ProductForm({ initialData }: { initialData?: any }) {
   const selectedSubCategoryId = watch('subCategory');
   const subCategories = flatCategories.filter(c => c.parent === selectedCategoryId);
 
-  // Sync 'cat' and 'subcat' (slugs) with 'category' and 'subCategory'
-  useEffect(() => {
-    if (selectedCategoryId && flatCategories.length > 0) {
-      const cat = flatCategories.find(c => c._id === selectedCategoryId);
-      if (cat) setValue('cat', cat.slug);
-    } else {
-      setValue('cat', '');
-    }
-  }, [selectedCategoryId, flatCategories, setValue]);
-
-  useEffect(() => {
-    if (selectedSubCategoryId && flatCategories.length > 0) {
-      const subCat = flatCategories.find(c => c._id === selectedSubCategoryId);
-      if (subCat) setValue('subcat', subCat.slug);
-    } else {
-      setValue('subcat', '');
-    }
-  }, [selectedSubCategoryId, flatCategories, setValue]);
 
   // Prefill category from URL
   useEffect(() => {
@@ -261,7 +244,7 @@ export default function ProductForm({ initialData }: { initialData?: any }) {
           salePrice: salePrice || 0,
           costPrice: costPrice || 0,
           stock: mainStock || 0,
-          images: [] // Initialize with empty images array
+          images: imageList || [] // Use all main images by default
         }));
       }
       
@@ -278,7 +261,7 @@ export default function ProductForm({ initialData }: { initialData?: any }) {
             salePrice: combo.salePrice,
             costPrice: combo.costPrice,
             stock: combo.stock,
-            images: [], // Initialize with empty images array
+            images: imageList || [], // Use all main images by default
           });
         }
       }
@@ -315,7 +298,6 @@ export default function ProductForm({ initialData }: { initialData?: any }) {
       try {
           const res = await createCategory({ name: newCatName.trim(), slug: newCatName.trim().toLowerCase().replace(/ /g, '-'), parent: null });
           setValue('category', res.data._id);
-          setValue('cat', res.data.slug);
           setIsCreatingCat(false);
           setNewCatName('');
           toast.success(`Category "${newCatName}" created!`);
@@ -327,7 +309,6 @@ export default function ProductForm({ initialData }: { initialData?: any }) {
     try {
         const res = await createCategory({ name: newSubCatName.trim(), slug: newSubCatName.trim().toLowerCase().replace(/ /g, '-'), parent: selectedCategoryId });
         setValue('subCategory', res.data._id);
-        setValue('subcat', res.data.slug);
         setIsCreatingSubCat(false);
         setNewSubCatName('');
         toast.success(`Subcategory "${newSubCatName}" created!`);
@@ -709,6 +690,24 @@ export default function ProductForm({ initialData }: { initialData?: any }) {
                                 </div>
                             )}
                         </div>
+                        
+                        {/* Bulk Actions */}
+                        {variantConfigs.length > 0 && (
+                          <div className="flex justify-end mb-2">
+                             <Button
+                               type="button"
+                               variant="outline"
+                               size="sm"
+                               onClick={() => {
+                                 setVariantConfigs(prev => prev.map(c => ({ ...c, images: imageList })));
+                                 toast.success('Applied all main images to variants');
+                               }}
+                             >
+                               <ImageIcon className="w-4 h-4 mr-2" />
+                               Use Main Images for All
+                             </Button>
+                          </div>
+                        )}
                         
                         {/* Variant Configuration Table */}
                         {variantConfigs.length > 0 && (

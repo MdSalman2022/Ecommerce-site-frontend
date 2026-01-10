@@ -682,8 +682,7 @@ function DashboardOrders() {
                             </DropdownMenuItem>
                           </DropdownMenuContent>
                         </DropdownMenu>
-                        
-                        {/* Fixed width container for save button to prevent layout shift */}
+                         
                         <div className="w-16">
                           {pendingStatusChanges[order._id] && (
                             <Button 

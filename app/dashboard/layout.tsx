@@ -122,16 +122,16 @@ export default function DashboardLayout({
     return (
         <AdminGuard>
             <div className="fixed inset-0 z-0 bg-gray-50 flex overflow-hidden">
-            {/* Desktop Sidebar - Fixed */}
+            
             <aside className="hidden md:flex w-64 bg-white border-r border-gray-200 flex-col flex-shrink-0">
                 <SidebarContent />
             </aside>
 
-            {/* Main Area */}
+            
             <div className="flex-1 flex flex-col min-w-0">
-                {/* Fixed Header */}
+                
                 <header className="h-16 bg-white border-b border-gray-200 px-4 md:px-6 flex items-center gap-4 flex-shrink-0 z-10">
-                    {/* Mobile Menu Button */}
+                    
                     <div className="md:hidden">
                         <Sheet open={sheetOpen} onOpenChange={setSheetOpen}>
                             <SheetTrigger asChild>
@@ -148,14 +148,14 @@ export default function DashboardLayout({
                         </Sheet>
                     </div>
 
-                    {/* Page Title */}
+                    
                     <div className="flex items-center min-w-0 max-w-[200px] sm:max-w-[400px] lg:max-w-[600px]">
                         <h1 className="text-lg md:text-xl font-semibold text-gray-900 truncate" title={typeof pageTitle === 'string' ? pageTitle : undefined}>
                             {pageTitle}
                         </h1>
                     </div>
 
-                    {/* Search Bar */}
+                    
                     <div className={`flex-1 max-w-xl mx-auto hidden sm:block px-8 ${
                         (pathname.includes('/products/edit/') || pathname.includes('/products/add')) ? 'invisible' : ''
                     }`}>
@@ -168,7 +168,7 @@ export default function DashboardLayout({
                         </div>
                     </div>
 
-                    {/* Right Section */}
+                    
                     <div className="flex items-center gap-2 ml-auto">
                         <Button variant="ghost" size="icon" className="h-9 w-9 hidden sm:flex">
                             <Bell className="h-5 w-5 text-gray-500" />
@@ -184,7 +184,7 @@ export default function DashboardLayout({
                     </div>
                 </header>
 
-                {/* Scrollable Content Area */}
+                
                 <main className="flex-1 overflow-y-auto p-4 md:p-[20px]">
 
                     

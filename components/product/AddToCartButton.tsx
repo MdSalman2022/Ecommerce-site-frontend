@@ -1,6 +1,6 @@
 'use client';
 
-import { Product } from '@/types';
+import { useRouter } from 'next/navigation';
 import { Product } from '@/types';
 import { useUserActivity } from '@/contexts/UserActivityProvider';
 import { Button } from '@/components/ui/button';
@@ -12,8 +12,30 @@ interface AddToCartButtonProps {
 
 export default function AddToCartButton({ product, disabled = false }: AddToCartButtonProps) {
   const { cart, setCart } = useUserActivity();
+  const router = useRouter();
 
-  const handleAddToCart = () => {
+  if (!product) return null;
+
+  const mainVariant = product.variants?.[0];
+  const price = mainVariant ? (mainVariant.salePrice > 0 ? mainVariant.salePrice : mainVariant.regularPrice) : 0;
+  const image = product.images?.[0] || '';
+  
+  // Check if product has distinct variants (more than 1 or attributes present)
+  // Logic: if attributes is not empty, it's a specific variant choice. 
+  // If >1 variants, definitely choices.
+  const hasOptions = product.variants && (
+      product.variants.length > 1 || 
+      (product.variants[0]?.attributes && Object.keys(product.variants[0].attributes).length > 0)
+  );
+
+  const handleAction = (e: React.MouseEvent) => {
+    e.preventDefault(); // Stop propagation
+    
+    if (hasOptions) {
+        router.push(`/product/${product.slug || product._id}`);
+        return;
+    }
+
     const existingItem = cart.find((c: any) => c._id === product._id);
     
     let updatedCart;
@@ -24,7 +46,13 @@ export default function AddToCartButton({ product, disabled = false }: AddToCart
           : c
       );
     } else {
-      updatedCart = [...cart, { ...product, quantity: 1, totalPrice: product.price }];
+      updatedCart = [...cart, { 
+          ...product, 
+          price, 
+          image,
+          quantity: 1, 
+          totalPrice: price 
+      }];
     }
     
     setCart(updatedCart);
@@ -33,11 +61,11 @@ export default function AddToCartButton({ product, disabled = false }: AddToCart
 
   return (
     <Button
-      onClick={handleAddToCart}
+      onClick={handleAction}
       disabled={disabled}
       className="w-full mt-2 bg-primary hover:bg-primary/90 text-white font-medium rounded-md h-10 disabled:bg-gray-300"
     >
-      {disabled ? 'Out of Stock' : 'Select Options'}
+      {disabled ? 'Out of Stock' : (hasOptions ? 'Select Options' : 'Add to Cart')}
     </Button>
   );
 }

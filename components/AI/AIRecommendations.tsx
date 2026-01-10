@@ -10,17 +10,6 @@ import { useUserActivity } from '@/contexts/UserActivityProvider';
 import { Button } from '@/components/ui/button';
 import { toast } from 'react-hot-toast';
 
-interface Product {
-  _id: string;
-  name: string;
-  price: number;
-  image: string;
-  brand: string;
-  cat: string;
-  rating: number;
-  stock: boolean;
-}
-
 interface AIRecommendationsProps {
   productId?: string | null;
   title?: string;
@@ -33,7 +22,7 @@ export default function AIRecommendations({
   limit = 4,
 }: AIRecommendationsProps) {
   const { cart, setCart } = useUserActivity();
-  const [products, setProducts] = useState<Product[]>([]);
+  const [products, setProducts] = useState<any[]>([]); 
   const [isLoading, setIsLoading] = useState(true);
   const [isAIPowered, setIsAIPowered] = useState(false);
 
@@ -93,18 +82,26 @@ export default function AIRecommendations({
       </div>
 
       <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-4">
-        {products.map((product) => (
+        {products.map((product) => {
+          const mainVariant = product.variants?.[0] || {};
+          const regularPrice = mainVariant.regularPrice || 0;
+          const salePrice = mainVariant.salePrice || 0;
+          const price = salePrice > 0 ? salePrice : regularPrice;
+          const stock = typeof mainVariant.stock === 'number' ? mainVariant.stock : 0;
+          const image = product.images?.[0] || 'https://via.placeholder.com/300';
+          
+          return (
           <div
             key={product._id}
             className="bg-white rounded-xl border border-gray-200 overflow-hidden hover:shadow-lg transition-all group"
           >
             {/* Image */}
             <Link
-              href={`/productDetails/${product._id}/${encodeURIComponent(product.name).replace(/%20/g, '-')}`}
+              href={`/product/${product.slug || product._id}`}
             >
               <div className="relative h-40 bg-gray-50">
                 <Image
-                  src={product.image || 'https://via.placeholder.com/300'}
+                  src={image}
                   alt={product.name}
                   fill
                   className="object-contain p-4 group-hover:scale-105 transition-transform"
@@ -120,7 +117,7 @@ export default function AIRecommendations({
             <div className="p-3">
               <p className="text-xs text-gray-500 mb-1">{product.brand}</p>
               <Link
-                href={`/productDetails/${product._id}/${encodeURIComponent(product.name).replace(/%20/g, '-')}`}
+                href={`/product/${product.slug || product._id}`}
               >
                 <h3 className="text-sm font-medium text-gray-900 line-clamp-2 hover:text-primary transition-colors">
                   {product.name}
@@ -137,11 +134,11 @@ export default function AIRecommendations({
 
               {/* Price & Add to Cart */}
               <div className="flex items-center justify-between mt-2">
-                <p className="text-lg font-bold text-primary">${product.price}</p>
+                <p className="text-lg font-bold text-primary">${typeof price === 'number' ? price.toFixed(2) : '0.00'}</p>
                 <Button
                   onClick={(e) => {
                     e.preventDefault();
-                    // Add to cart
+                    // Basic add to cart for AI recommendation (single item, main variant)
                     const existingItem = cart.find((item: any) => item._id === product._id);
                     if (existingItem) {
                       setCart(cart.map((item: any) =>
@@ -151,26 +148,28 @@ export default function AIRecommendations({
                       ));
                     } else {
                       setCart([...cart, {
+                        ...product,
                         _id: product._id,
                         name: product.name,
-                        price: product.price,
-                        image: product.image,
+                        price: price,
+                        image: image,
                         quantity: 1,
-                        totalPrice: product.price,
+                        totalPrice: price,
                       }]);
                     }
                     toast.success('Added to cart');
                   }}
-                  disabled={!product.stock}
+                  disabled={stock <= 0}
                   size="sm"
-                  className="bg-primary hover:bg-primary/90 h-8 px-3"
+                  variant="ghost"
+                  className="bg-primary/10 hover:bg-primary text-primary hover:text-white h-8 w-8 p-0 rounded-full"
                 >
                   <ShoppingCart className="w-4 h-4" />
                 </Button>
               </div>
             </div>
           </div>
-        ))}
+        )})}
       </div>
     </section>
   );

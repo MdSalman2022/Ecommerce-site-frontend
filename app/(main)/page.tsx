@@ -8,27 +8,21 @@ export const revalidate = 60; // Revalidate every 60 seconds
 
 export default function HomePage() {
   return (
-    <>
-      {/* Hero Section */}
+    <> 
       <HeroBanner />
-
-      {/* Popular Categories */}
+ 
       <Categories />
-
-      {/* AI-Powered Recommendations - New! */}
+ 
       <div className="container mx-auto px-4">
         <AIRecommendations 
           title="Selected For You" 
           limit={4} 
         />
       </div>
-
-      {/* Product Sections - Loaded with Suspense for SSR */}
+ 
       <Suspense fallback={<ProductSectionSkeleton />}>
         <ProductSection />
       </Suspense>
-
-      {/* Service Bar */}
       <ServiceBar />
     </>
   );

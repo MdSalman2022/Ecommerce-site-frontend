@@ -119,7 +119,7 @@ export default function AnalyticsPage() {
     <div className="space-y-8">
 
 
-      {/* Summary Cards */}
+      
       <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-5">
         <div className="bg-gradient-to-br from-blue-500 to-blue-600 text-white p-6 rounded-2xl shadow-lg">
           <div className="flex items-center gap-4">
@@ -171,9 +171,9 @@ export default function AnalyticsPage() {
         </div>
       </div>
 
-      {/* Charts Row */}
+      
       <div className="grid grid-cols-1 lg:grid-cols-3 gap-6">
-        {/* Revenue Chart */}
+        
         <div className="lg:col-span-2 bg-white rounded-2xl border border-gray-200 p-6 shadow-sm">
           <h3 className="text-lg font-semibold text-gray-800 mb-4">Revenue Trend (Last 30 Days)</h3>
           <ResponsiveContainer width="100%" height={300}>
@@ -201,7 +201,7 @@ export default function AnalyticsPage() {
           </ResponsiveContainer>
         </div>
 
-        {/* Orders by Status */}
+        
         <div className="bg-white rounded-2xl border border-gray-200 p-6 shadow-sm">
           <h3 className="text-lg font-semibold text-gray-800 mb-4">Orders by Status</h3>
           <ResponsiveContainer width="100%" height={300}>
@@ -241,7 +241,7 @@ export default function AnalyticsPage() {
         </div>
       </div>
 
-      {/* Top Products */}
+      
       <div className="bg-white rounded-2xl border border-gray-200 p-6 shadow-sm">
         <h3 className="text-lg font-semibold text-gray-800 mb-4">Top Selling Products</h3>
         <ResponsiveContainer width="100%" height={300}>

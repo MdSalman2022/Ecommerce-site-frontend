@@ -6,10 +6,10 @@ import { useParams } from 'next/navigation';
 import { HiEmojiSad } from 'react-icons/hi';
 import { FaChevronUp, FaStar } from 'react-icons/fa';
 import { useShop } from '@/contexts/ShopProvider';
-import { allcategories } from '@/data/NavbarItems';
 import { ProductCard } from '@/components/product';
 import { Button } from '@/components/ui/button';
 import { Input } from '@/components/ui/input';
+import { Skeleton } from '@/components/ui/skeleton';
 import {
   DropdownMenu,
   DropdownMenuContent,
@@ -30,9 +30,18 @@ import { Filter } from 'lucide-react';
 import { useSiteSettings } from '@/hooks/useSiteSettings';
 
 function ProductPage() {
-  let { products } = useShop();
+  let { products, isLoadingProducts, categories: dbCategories, isLoadingCategories } = useShop();
   const { ecommerce } = useSiteSettings();
   const params = useParams();
+
+  // Derive unique brands from products
+  const brands = React.useMemo(() => {
+    const uniqueBrands = new Set<string>();
+    products.forEach((p: any) => {
+      if (p.brand) uniqueBrands.add(p.brand);
+    });
+    return Array.from(uniqueBrands).sort();
+  }, [products]);
   
   // Local Filter State
   const [filters, setFilters] = useState({
@@ -40,6 +49,12 @@ function ProductPage() {
     selectedBrands: [] as string[],
     selectedRatings: [] as number[],
   });
+
+  const [isMounted, setIsMounted] = React.useState(false);
+  
+  React.useEffect(() => {
+    setIsMounted(true);
+  }, []);
   
   const category = params?.category as string | undefined;
   const subcategory = params?.subcategory as string | undefined;
@@ -51,30 +66,39 @@ function ProductPage() {
   if (category && subcategory && brand) {
     filteredProducts = filteredProducts.filter(
       (product: any) =>
-        product.cat?.toLowerCase() === category.toLowerCase() &&
-        (product.brand?.toLowerCase() === brand.toLowerCase() || product.type?.toLowerCase() === brand.toLowerCase()) &&
-        product.subcat?.toLowerCase() === subcategory.toLowerCase()
+        product.category?.slug?.toLowerCase() === category.toLowerCase() &&
+        (product.brand?.toLowerCase() === brand.toLowerCase()) &&
+        product.subCategory?.slug?.toLowerCase() === subcategory.toLowerCase()
     );
   } else if (category && subcategory && !brand) {
     filteredProducts = filteredProducts.filter(
       (product: any) =>
-        (product.cat?.toLowerCase() === category.toLowerCase() && product.subcat?.toLowerCase() === subcategory.toLowerCase()) ||
-        (product.cat?.toLowerCase() === category.toLowerCase() && product.brand?.toLowerCase() === subcategory.toLowerCase())
+        (product.category?.slug?.toLowerCase() === category.toLowerCase() && product.subCategory?.slug?.toLowerCase() === subcategory.toLowerCase()) ||
+        (product.category?.slug?.toLowerCase() === category.toLowerCase() && product.brand?.toLowerCase() === subcategory.toLowerCase())
     );
   } else if (category === 'products' && !subcategory && !brand) {
     // Show all products
   } else if (category && !subcategory && !brand) {
-    filteredProducts = filteredProducts.filter((product: any) => product.cat?.toLowerCase() === category.toLowerCase());
+    filteredProducts = filteredProducts.filter((product: any) => product.category?.slug?.toLowerCase() === category.toLowerCase());
   }
 
   // Filter out of stock products if setting is enabled
   const showOutOfStock = ecommerce?.showOutOfStock ?? true;
   if (!showOutOfStock) {
-    filteredProducts = filteredProducts.filter((product: any) => (product.stock || 0) > 0);
+    filteredProducts = filteredProducts.filter((product: any) => {
+        const stock = product.variants?.[0]?.stock || 0;
+        return stock > 0;
+    });
   }
 
+  const getProductPrice = (product: any) => {
+    const variant = product.variants?.[0];
+    if (!variant) return 0;
+    return variant.salePrice > 0 ? variant.salePrice : variant.regularPrice;
+  };
+
   // Calculate Min and Max Price from the currently available products (before local filtering)
-  const prices = filteredProducts.map((p: any) => p.price);
+  const prices = filteredProducts.map((p: any) => getProductPrice(p));
   const minPrice = prices.length > 0 ? Math.min(...prices) : 0;
   const maxPrice = prices.length > 0 ? Math.max(...prices) : 0;
 
@@ -93,9 +117,12 @@ function ProductPage() {
     );
   }
   // 2. Price
-  filteredProducts = filteredProducts.filter((product: any) => 
-    product.price >= filters.priceRange[0] && product.price <= filters.priceRange[1]
-  );
+  if (filters.priceRange[1] > 0) {
+    filteredProducts = filteredProducts.filter((product: any) => {
+      const price = getProductPrice(product);
+      return price >= filters.priceRange[0] && price <= filters.priceRange[1];
+    });
+  }
   // 3. Ratings
   if (filters.selectedRatings.length > 0) {
     filteredProducts = filteredProducts.filter((product: any) => 
@@ -137,9 +164,9 @@ function ProductPage() {
     const items = [...productsPerPage];
     switch (sortType) {
       case 'high-to-low':
-        return items.sort((a: any, b: any) => b.price - a.price);
+        return items.sort((a: any, b: any) => getProductPrice(b) - getProductPrice(a));
       case 'low-to-high':
-        return items.sort((a: any, b: any) => a.price - b.price);
+        return items.sort((a: any, b: any) => getProductPrice(a) - getProductPrice(b));
       default:
         return items;
     }
@@ -216,6 +243,8 @@ function ProductPage() {
                     setFilters={setFilters} 
                     minPrice={minPrice} 
                     maxPrice={maxPrice} 
+                    brands={brands}
+                    categories={dbCategories}
                 /> 
             </div>
           </div>
@@ -240,6 +269,8 @@ function ProductPage() {
                                 setFilters={setFilters}
                                 minPrice={minPrice} 
                                 maxPrice={maxPrice} 
+                                brands={brands}
+                                categories={dbCategories}
                                 closeMobileSheet={() => setIsSheetOpen(false)}
                             />
                         </SheetContent>
@@ -279,7 +310,17 @@ function ProductPage() {
             )}
 
             {/* Products */}
-            {displayProducts.length > 0 ? (
+            {(!isMounted || isLoadingProducts) ? (
+              <div className="grid gap-6 grid-cols-1 sm:grid-cols-2 lg:grid-cols-3">
+                {[1, 2, 3, 4, 5, 6].map((i) => (
+                  <div key={i} className="bg-white rounded-2xl border border-gray-100 p-4 shadow-sm">
+                    <Skeleton className="w-full h-48 rounded-xl mb-4" />
+                    <Skeleton className="h-4 w-3/4 mb-2" />
+                    <Skeleton className="h-4 w-1/2" />
+                  </div>
+                ))}
+              </div>
+            ) : displayProducts.length > 0 ? (
               <div className="grid gap-6 grid-cols-1 sm:grid-cols-2 lg:grid-cols-3">
                 {displayProducts.map((item: any, index: number) => (
                   <ProductCard key={index} product={item} />

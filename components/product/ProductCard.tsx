@@ -11,30 +11,51 @@ interface ProductCardProps {
 export default function ProductCard({ product }: ProductCardProps) {
   if (!product) return null;
 
-  const encodedName = encodeURIComponent(product.name).replace(/%20/g, '-');
+  // New Schema: variants[0] holds price/stock for single-variant products
+  const mainVariant = product.variants?.[0] || { 
+      regularPrice: 0, salePrice: 0, stock: 0, 
+      attributes: {}, images: [] 
+  };
+  // @ts-ignore
+  const regularPrice = mainVariant.regularPrice || 0;
+  // @ts-ignore
+  const salePrice = mainVariant.salePrice || 0;
+  // @ts-ignore
+  const stock = typeof mainVariant.stock === 'number' ? mainVariant.stock : 0;
+  
+  // Flags
+  const isSpecial = product.flags?.special || false;
+  const isFeatured = product.flags?.featured || false;
   
   // Calculate display price
-  let displayPrice = product.price;
+  let displayPrice = regularPrice;
   let originalPrice: number | null = null;
   let discountPercent: number | null = null;
   
-  if (product.special && product.discount) {
-    originalPrice = product.price;
-    displayPrice = Math.round(product.price - (product.price * product.discount / 100));
-    discountPercent = product.discount;
+  if (salePrice > 0 && salePrice < regularPrice) {
+    originalPrice = regularPrice;
+    displayPrice = salePrice;
+    discountPercent = Math.round(((regularPrice - salePrice) / regularPrice) * 100);
   }
 
-  const isOutOfStock = product.stock === 0;
+  const isOutOfStock = stock === 0;
+  const mainImage = product.images?.[0] || '/assets/placeholder.png'; // Fallback
+  
+  // Category display
+  // Check if category is object (populated) or string
+  const categoryName = (product.category as any)?.name || ''; 
+  const categorySlug = (product.category as any)?.slug || '';
+  const subCategoryName = (product.subCategory as any)?.name || '';
 
   return (
     <div className="bg-white border border-gray-200 rounded-lg overflow-hidden hover:border-primary hover:shadow-lg transition-all duration-300 flex flex-col h-full group">
       {/* Image Section */}
       <Link 
-        href={`/productDetails/${product._id}/${encodedName}`}
+        href={`/product/${product.slug || product._id}`}
         className="relative block bg-white p-4 aspect-square"
       >
         <Image
-          src={product.image}
+          src={mainImage}
           alt={product.name}
           fill
           className="object-contain p-2 group-hover:scale-105 transition-transform duration-300"
@@ -53,7 +74,7 @@ export default function ProductCard({ product }: ProductCardProps) {
           </span>
         )}
         
-        {product.featured && !discountPercent && (
+        {isFeatured && !discountPercent && (
           <span className="absolute top-2 right-2 bg-red-500 text-white text-[10px] font-bold px-2 py-0.5 rounded-full uppercase">
             Hot
           </span>
@@ -73,19 +94,19 @@ export default function ProductCard({ product }: ProductCardProps) {
       <div className="p-4 flex flex-col gap-2 flex-grow border-t border-gray-100">
         {/* Product Name */}
         <Link 
-          href={`/productDetails/${product._id}/${encodedName}`}
+          href={`/product/${product.slug || product._id}`}
           className="font-medium text-gray-800 hover:text-primary line-clamp-2 text-sm leading-snug min-h-[40px] transition-colors"
         >
           {product.name}
         </Link>
 
         {/* Category Link */}
-        {product.cat && (
+        {categoryName && (
           <Link 
-            href={`/category/${product.cat.toLowerCase()}`}
+            href={`/category/${categorySlug}`}
             className="text-xs text-primary hover:underline"
           >
-            {product.subcat || product.cat}
+            {subCategoryName || categoryName}
           </Link>
         )}
 

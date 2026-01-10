@@ -86,7 +86,7 @@ export default function TrackOrderPage() {
   return (
     <div className="min-h-screen bg-gradient-to-b from-gray-50 to-gray-100 py-12 px-4">
       <div className="max-w-4xl mx-auto">
-        {/* Header */}
+       
         <div className="text-center mb-10">
           <div className="inline-flex items-center justify-center w-16 h-16 rounded-full bg-primary/10 mb-4">
             <MdLocalShipping className="text-3xl text-primary" />
@@ -95,7 +95,7 @@ export default function TrackOrderPage() {
           <p className="text-gray-600 mt-2">Enter your phone number to view your orders and their status</p>
         </div>
 
-        {/* Search Form */}
+       
         <form onSubmit={handleSearch} className="mb-8">
           <div className="flex gap-3 max-w-md mx-auto">
             <div className="relative flex-1">
@@ -119,14 +119,14 @@ export default function TrackOrderPage() {
           </div>
         </form>
 
-        {/* Error Message */}
+       
         {error && (
           <div className="text-center text-red-600 bg-red-50 py-3 px-4 rounded-lg mb-6 max-w-md mx-auto">
             {error}
           </div>
         )}
 
-        {/* Orders List */}
+       
         {orders.length > 0 && !selectedOrder && (
           <div className="space-y-4">
             <h2 className="text-lg font-semibold text-gray-800 mb-4">Your Orders ({orders.length})</h2>
@@ -158,10 +158,10 @@ export default function TrackOrderPage() {
           </div>
         )}
 
-        {/* Order Timeline */}
+       
         {selectedOrder && (
           <div className="bg-white rounded-2xl border border-gray-200 shadow-lg overflow-hidden">
-            {/* Timeline Header */}
+           
             <div className="bg-gradient-to-r from-primary to-primary/80 text-white p-6">
               <button
                 onClick={() => setSelectedOrder(null)}
@@ -173,7 +173,7 @@ export default function TrackOrderPage() {
               <p className="text-white/80 mt-1">Placed on {formatDate(selectedOrder.createdAt)}</p>
             </div>
 
-            {/* Current Status */}
+           
             <div className="p-6 border-b border-gray-100">
               <div className="flex items-center gap-4">
                 <div className={`w-12 h-12 rounded-full flex items-center justify-center text-xl ${statusConfig[selectedOrder.orderStatus]?.color || 'bg-gray-100'}`}>
@@ -186,7 +186,7 @@ export default function TrackOrderPage() {
               </div>
             </div>
 
-            {/* Order Progress Stepper */}
+           
             <div className="p-6">
               <h3 className="font-semibold text-gray-800 mb-6">Order Progress</h3>
               {(() => {
@@ -204,7 +204,7 @@ export default function TrackOrderPage() {
 
                 return (
                   <div className="relative">
-                    {/* Progress Line */}
+                   
                     <div className="absolute top-5 left-0 right-0 h-1 bg-gray-200 mx-8">
                       <div 
                         className={`h-full transition-all duration-500 ${isCancelled ? 'bg-red-500' : 'bg-green-500'}`}
@@ -212,7 +212,7 @@ export default function TrackOrderPage() {
                       />
                     </div>
 
-                    {/* Status Steps */}
+                   
                     <div className="flex justify-between relative z-10">
                       {orderFlow.map((status, index) => {
                         const isCompleted = !isCancelled && index < currentIndex;
@@ -247,7 +247,7 @@ export default function TrackOrderPage() {
                       })}
                     </div>
 
-                    {/* Cancelled/Returned Notice */}
+                   
                     {isCancelled && (
                       <div className="mt-6 p-4 bg-red-50 border border-red-200 rounded-lg flex items-center gap-3">
                         <FaTimesCircle className="text-red-500 text-xl flex-shrink-0" />
@@ -268,7 +268,7 @@ export default function TrackOrderPage() {
               })()}
             </div>
 
-            {/* Detailed Timeline History */}
+           
             {selectedOrder.statusHistory && selectedOrder.statusHistory.length > 0 && (
               <div className="px-6 pb-6">
                 <h4 className="text-sm font-medium text-gray-600 mb-3">Status History</h4>
@@ -286,7 +286,7 @@ export default function TrackOrderPage() {
               </div>
             )}
 
-            {/* Order Items */}
+           
             <div className="p-6 bg-gray-50 border-t border-gray-100">
               <h3 className="font-semibold text-gray-800 mb-4">Order Items</h3>
               <div className="space-y-3">
@@ -311,7 +311,7 @@ export default function TrackOrderPage() {
           </div>
         )}
 
-        {/* Empty State */}
+       
         {searched && orders.length === 0 && !isLoading && !error && (
           <div className="text-center py-12">
             <FaBox className="text-5xl text-gray-300 mx-auto mb-4" />

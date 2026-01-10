@@ -173,8 +173,7 @@ function CheckoutPage() {
           )}
 
           {!isGuestCheckoutDisabled && !isMinOrderNotMet && !isMaxOrderExceeded && (
-          <form onSubmit={handleSubmit(handleDelivery)} className="w-full space-y-6">
-            {/* Email Field (Required for Guest, Optional if Logged In but good to verify) */}
+          <form onSubmit={handleSubmit(handleDelivery)} className="w-full space-y-6"> 
             <div className="space-y-2">
               <Label htmlFor="email">Email Address {user ? '(Optional)' : '(Required for Receipt)'}</Label>
               <Input

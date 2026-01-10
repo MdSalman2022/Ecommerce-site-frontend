@@ -11,7 +11,6 @@ import { useShop } from '@/contexts/ShopProvider';
 import { useSearch } from '@/contexts/SearchProvider';
 import { Button } from '@/components/ui/button';
 import { Input } from '@/components/ui/input';
-import { Textarea } from '@/components/ui/textarea';
 import {
   Table,
   TableBody,
@@ -26,40 +25,20 @@ import {
   DropdownMenuItem,
   DropdownMenuTrigger,
 } from '@/components/ui/dropdown-menu';
-import {
-  Dialog,
-  DialogContent,
-  DialogHeader,
-  DialogTitle,
-  DialogTrigger,
-} from '@/components/ui/dialog';
-import { Label } from '@/components/ui/label';
 import { toast } from 'react-hot-toast';
-import { Loader2, Plus, ImageIcon } from 'lucide-react';
-import { CloudinaryUploader } from '@/components/Upload';
-
-const CATEGORIES = [
-  { value: 'components', label: 'Components' },
-  { value: 'laptop', label: 'Laptop' },
-  { value: 'monitor', label: 'Monitor' },
-  { value: 'smartphone', label: 'Smartphone' },
-  { value: 'tablet', label: 'Tablet' },
-  { value: 'camera', label: 'Camera' },
-  { value: 'console', label: 'Console' },
-  { value: 'tv', label: 'TV' },
-  { value: 'accessories', label: 'Accessories' },
-];
 
 function DashboardProducts() {
-  const { products } = useShop();
+  const { products, refetchProducts } = useShop();
   const { dashboardSearch, setResults, results } = useSearch();
+  
+  useEffect(() => {
+    refetchProducts();
+  }, [refetchProducts]);
   
   const [currentPage, setCurrentPage] = useState(1);
   const [postsPerPage, setPostsPerPage] = useState(20);
   const [sortType, setSortType] = useState('');
   const [selectedIds, setSelectedIds] = useState<string[]>([]);
-
-  const { register, handleSubmit, reset, formState: { errors } } = useForm();
 
   // Fuse search
   useEffect(() => {
@@ -67,7 +46,7 @@ function DashboardProducts() {
       setResults([]);
     } else {
       const fuse = new Fuse(products, {
-        keys: ['name', 'brand'],
+        keys: ['name', 'brand', 'slug'],
         threshold: 0.3,
         includeScore: true,
       });
@@ -89,18 +68,31 @@ function DashboardProducts() {
     pageNumbers.push(i);
   }
 
+  // Helper to get display price
+  const getPrice = (p: any) => {
+    const v = p.variants?.[0];
+    if (!v) return 0;
+    return v.salePrice > 0 ? v.salePrice : v.regularPrice;
+  };
+
+  // Helper to get total stock
+  const getTotalStock = (p: any) => {
+    if (!p.variants) return 0;
+    return p.variants.reduce((sum: number, v: any) => sum + (v.stock || 0), 0);
+  };
+
   // Sorting
   const sortedItems = () => {
     const items = [...productsPerPage];
     switch (sortType) {
       case 'high-to-low':
-        return items.sort((a: any, b: any) => b.price - a.price);
+        return items.sort((a: any, b: any) => getPrice(b) - getPrice(a));
       case 'low-to-high':
-        return items.sort((a: any, b: any) => a.price - b.price);
+        return items.sort((a: any, b: any) => getPrice(a) - getPrice(b));
       case 'latest':
-        return items.sort((a: any, b: any) => new Date(b.date).getTime() - new Date(a.date).getTime());
+        return items.sort((a: any, b: any) => new Date(b.createdAt || b.date).getTime() - new Date(a.createdAt || a.date).getTime());
       case 'old':
-        return items.sort((a: any, b: any) => new Date(a.date).getTime() - new Date(b.date).getTime());
+        return items.sort((a: any, b: any) => new Date(a.createdAt || a.date).getTime() - new Date(b.createdAt || b.date).getTime());
       default:
         return items;
     }
@@ -125,18 +117,17 @@ function DashboardProducts() {
         body: JSON.stringify({ ids: selectedIds }),
       });
       setSelectedIds([]);
-      window.location.reload();
+      toast.success('Products deleted');
+      refetchProducts();
     } catch (err) {
       console.error(err);
+      toast.error('Failed to delete products');
     }
   };
 
 
   return (
     <div className="flex flex-col gap-5 relative">
-      {/* Header */}
-
-
       {/* Products Overview */}
       <>
           {/* Controls */}
@@ -197,14 +188,21 @@ function DashboardProducts() {
                   <TableHead className="w-12"></TableHead>
                   <TableHead className="w-12">#</TableHead>
                   <TableHead>Product</TableHead>
-                  <TableHead>ID</TableHead>
+                  <TableHead>Brand</TableHead>
+                  <TableHead>Category</TableHead>
+                  <TableHead>Slug</TableHead>
                   <TableHead>Date</TableHead>
-                  <TableHead>Status</TableHead>
+                  <TableHead>Stock</TableHead>
                   <TableHead>Price</TableHead>
                 </TableRow>
               </TableHeader>
               <TableBody>
-                {displayItems.map((item: any, index: number) => (
+                {displayItems.map((item: any, index: number) => {
+                   const price = getPrice(item);
+                   const stock = getTotalStock(item);
+                   const categoryName = item.category?.name || 'N/A';
+                   
+                   return (
                   <TableRow key={item._id}>
                     <TableCell>
                       <input
@@ -218,7 +216,7 @@ function DashboardProducts() {
                     <TableCell>
                       <div className="flex items-center gap-3">
                         <Link
-                          href={`/productDetails/${item._id}/${encodeURIComponent(item.name).replace(/%20/g, '-')}`}
+                          href={`/product/${item.slug || item._id}`}
                           className="hover:text-primary font-medium"
                         >
                           {item.name.length > 40 ? `${item.name.slice(0, 40)}...` : item.name}
@@ -233,23 +231,33 @@ function DashboardProducts() {
                         </Link>
                       </div>
                     </TableCell>
-                    <TableCell className="text-xs text-muted-foreground">
-                      {item._id.slice(0, 8)}...
+                    <TableCell className="text-sm text-muted-foreground">
+                      {item.brand || 'N/A'}
                     </TableCell>
-                    <TableCell>{item.date}</TableCell>
+                    <TableCell className="text-sm text-muted-foreground">
+                      {categoryName}
+                    </TableCell>
+                    <TableCell className="text-xs text-muted-foreground font-mono">
+                      {item.slug ? (item.slug.length > 30 ? `${item.slug.slice(0, 30)}...` : item.slug) : 'No slug'}
+                    </TableCell>
+                    <TableCell className="text-sm">
+                      {item.createdAt ? new Date(item.createdAt).toLocaleDateString() : 'N/A'}
+                    </TableCell>
                     <TableCell>
                       <span
                         className={`flex items-center gap-1 ${
-                          item.stock ? 'text-green-600' : 'text-red-600'
+                          stock > 0 ? 'text-green-600' : 'text-red-600'
                         }`}
                       >
                         <BsDot className="text-2xl" />
-                        {item.stock ? 'In Stock' : 'Out of Stock'}
+                        {stock > 0 ? `${stock} in stock` : 'Out of Stock'}
                       </span>
                     </TableCell>
-                    <TableCell className="font-semibold">${item.price}</TableCell>
+                    <TableCell className="font-semibold">
+                      ${price.toFixed(2)}
+                    </TableCell>
                   </TableRow>
-                ))}
+                )})}
               </TableBody>
             </Table>
           </div>

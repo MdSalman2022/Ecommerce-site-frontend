@@ -96,7 +96,7 @@ export default function OrdersPage() {
         <div className="space-y-6">
           {myOrders.map((order: any) => (
             <div key={order._id} className="bg-white rounded-2xl border border-gray-100 shadow-sm overflow-hidden hover:shadow-md transition-shadow">
-              {/* Order Header */}
+            
               <div className="bg-gray-50 p-6 flex flex-wrap items-center justify-between gap-4 border-b border-gray-100">
                 <div className="flex gap-8">
                   <div>
@@ -118,9 +118,7 @@ export default function OrdersPage() {
                   <p className="text-xs uppercase font-bold text-gray-400 tracking-wider mb-1 text-right">Order #</p>
                   <p className="text-sm font-mono text-gray-600">{order._id.slice(-8).toUpperCase()}</p>
                 </div>
-              </div>
-
-              {/* Order Content */}
+              </div> 
               <div className="p-6">
                 <div className="flex flex-col gap-6">
                    {order.cart?.map((item: any, idx: number) => (
@@ -146,9 +144,7 @@ export default function OrdersPage() {
                      </div>
                    ))}
                 </div>
-              </div>
-
-              {/* Order Footer */}
+              </div> 
               <div className="p-6 bg-gray-50/50 border-t border-gray-100 flex justify-end gap-3">
                  <Link href={`/orders/${order._id}`}>
                     <Button variant="outline" size="sm" className="rounded-full px-6">Order Details</Button>

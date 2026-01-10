@@ -146,8 +146,7 @@ export default function CategoryDetailsPage({ params }: { params: { id: string }
                                 <Card className="hover:shadow-md transition-shadow cursor-pointer h-full">
                                     <CardContent className="p-4 flex flex-col items-center text-center gap-3">
                                         <div className="w-12 h-12 rounded-full bg-blue-50 text-blue-600 flex items-center justify-center">
-                                            {/* Lucide icons need specific rendering, using fallback for now */}
-                                            <span className="font-bold">{sub.name.charAt(0)}</span>
+                                              <span className="font-bold">{sub.name.charAt(0)}</span>
                                         </div>
                                         <div>
                                             <h4 className="font-medium text-gray-900">{sub.name}</h4>

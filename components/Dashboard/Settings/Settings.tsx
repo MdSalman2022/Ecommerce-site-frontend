@@ -122,7 +122,7 @@ function DashboardSettings() {
           ))}
         </TabsList>
 
-        {/* ================== LAYOUT SETTINGS ================== */}
+        
         <TabsContent value="layout" className="space-y-6">
           <Card>
             <CardHeader>
@@ -229,7 +229,7 @@ function DashboardSettings() {
           </div>
         </TabsContent>
 
-        {/* ================== STORE INFO ================== */}
+        
         <TabsContent value="store" className="space-y-6">
           <Card>
             <CardHeader>
@@ -305,7 +305,7 @@ function DashboardSettings() {
           </div>
         </TabsContent>
 
-        {/* ================== SOCIAL ================== */}
+        
         <TabsContent value="social" className="space-y-6">
           <Card>
             <CardHeader>
@@ -373,7 +373,7 @@ function DashboardSettings() {
           </div>
         </TabsContent>
 
-        {/* ================== E-COMMERCE ================== */}
+        
         <TabsContent value="ecommerce" className="space-y-6">
           <Card>
             <CardHeader>
@@ -457,7 +457,7 @@ function DashboardSettings() {
           </div>
         </TabsContent>
 
-        {/* ================== NOTIFICATIONS ================== */}
+        
         <TabsContent value="notifications" className="space-y-6">
           <Card>
             <CardHeader>

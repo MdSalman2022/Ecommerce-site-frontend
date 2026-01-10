@@ -10,7 +10,6 @@ import { useQuery } from '@tanstack/react-query';
 
 import { useShop } from '@/contexts/ShopProvider';
 import { useUserActivity } from '@/contexts/UserActivityProvider';
-import ProductCard from '@/components/product/ProductCard';
 import ProductReview from './ProductReview';
 import { Button } from '@/components/ui/button';
 import { Input } from '@/components/ui/input';
@@ -27,7 +26,7 @@ function scrollToRef(ref: React.RefObject<HTMLDivElement | null>) {
 function ProductDetails() {
   const params = useParams();
   const router = useRouter();
-  const productId = params?.id as string;
+  const productSlug = (params?.slug || params?.id) as string;
 
   const [count, setCount] = useState(1);
   const [stars, setStars] = useState<React.ReactNode[]>([]);
@@ -41,15 +40,15 @@ function ProductDetails() {
   const { cart, setCart } = useUserActivity();
   const reviewRef = useRef<HTMLDivElement>(null);
 
-  // Fetch product details
+  // Fetch product details by slug
   const { data: item, isLoading } = useQuery({
-    queryKey: ['product', productId],
+    queryKey: ['product', productSlug],
     queryFn: async () => {
-      const res = await fetch(`${process.env.NEXT_PUBLIC_SERVER_URL}/product/${productId}`);
+      const res = await fetch(`${process.env.NEXT_PUBLIC_SERVER_URL}/api/products/slug/${productSlug}`);
       if (!res.ok) throw new Error('Product not found');
       return res.json();
     },
-    enabled: !!productId,
+    enabled: !!productSlug,
   });
 
   const handleChange = (e: React.ChangeEvent<HTMLInputElement>) => {
@@ -60,12 +59,12 @@ function ProductDetails() {
   };
 
   // Initialize variant selection
+  const variants = item?.variants || [];
+  
   const computedVariantOptions = React.useMemo(() => {
-     if (item?.variantOptions && item.variantOptions.length > 0) return item.variantOptions;
-     
-     if (item?.variants && item.variants.length > 0) {
+     if (variants.length > 0) {
         const optionsMap = new Map<string, Set<string>>();
-        item.variants.forEach((v: any) => {
+        variants.forEach((v: any) => {
              if (v.attributes) {
                  Object.entries(v.attributes).forEach(([key, val]) => {
                      if (!optionsMap.has(key)) optionsMap.set(key, new Set());
@@ -80,26 +79,31 @@ function ProductDetails() {
         }));
      }
      return [];
-  }, [item]);
+  }, [variants]);
 
-
-
-  // Initialize variant selection
+  // Default selection
   React.useEffect(() => {
-    if (item?.variants?.length > 0 && Object.keys(selectedAttributes).length === 0) {
-      setSelectedAttributes(item.variants[0].attributes);
+    if (variants.length > 0 && Object.keys(selectedAttributes).length === 0 && computedVariantOptions.length > 0) {
+      // Select first variant's attributes by default
+       setSelectedAttributes(variants[0].attributes || {});
     }
-  }, [item, selectedAttributes]);
+  }, [variants, computedVariantOptions, selectedAttributes]);
 
   // Find matching variant
   React.useEffect(() => {
-    if (item?.variants) {
-      const found = item.variants.find((v: any) =>
+    if (variants.length > 0) {
+      // If no attributes (single variant product), just pick the first one
+      if (computedVariantOptions.length === 0) {
+          setSelectedVariant(variants[0]);
+          return;
+      }
+      
+      const found = variants.find((v: any) =>
         Object.entries(selectedAttributes).every(([key, val]) => v.attributes[key] === val)
       );
       setSelectedVariant(found || null);
     }
-  }, [item, selectedAttributes]);
+  }, [variants, selectedAttributes, computedVariantOptions]);
 
   if (isLoading) {
     return (
@@ -123,80 +127,78 @@ function ProductDetails() {
   const {
     _id,
     name,
-    cat,
+    category, 
+    subCategory,
     brand,
-    image,
     images = [],
-    spec = [],
-    price,
-    special,
-    discount,
+    specifications = [],
+    flags = {},
+    rating
   } = item;
+  
+  // Category safe access
+  const categoryName = category?.name || '';
+  const categorySlug = category?.slug || '';
 
-  // Initialize variant selection
+  // Derived values from Active Variant
+  const activeVariant = selectedVariant || variants[0] || {};
+  const regularPrice = activeVariant.regularPrice || 0;
+  const salePrice = activeVariant.salePrice || 0;
+  const stock = activeVariant.stock || 0;
+  
+  // Images logic: Variant images > Product images
+  const variantImages = (activeVariant.images && activeVariant.images.length > 0) 
+                        ? activeVariant.images 
+                        : images;
+  const displayImages = variantImages.length > 0 ? variantImages : ['/placeholder.png'];
+  const mainImage = displayImages[0];
 
+  // Pricing Logic
+  const hasDiscount = salePrice > 0 && salePrice < regularPrice;
+  const displayPrice = hasDiscount ? salePrice : regularPrice;
+  const originalPrice = hasDiscount ? regularPrice : null;
+  const discountPercent = hasDiscount ? Math.round(((regularPrice - salePrice) / regularPrice) * 100) : 0;
 
-  // Derived values
-  const currentPrice = selectedVariant ? {
-     regularPrice: selectedVariant.regularPrice,
-     salePrice: selectedVariant.salePrice
-  } : {
-     regularPrice: item?.regularPrice || item?.price,
-     salePrice: item?.salePrice
-  };
-
-  const currentStock = selectedVariant ? selectedVariant.stock : (item?.stock || 0);
-  const currentImages = selectedVariant && selectedVariant.images && selectedVariant.images.length > 0
-     ? selectedVariant.images
-     : (item?.images || []);
-  const currentMainImage = currentImages[0] || item?.image;
-
-  let specialprice = currentPrice.regularPrice;
-  if (special && discount) {
-    specialprice = currentPrice.regularPrice - (currentPrice.regularPrice * discount) / 100;
-  }
-
-  // Get related products
-  const suggestion = products.filter(
-    (p: any) => p.cat === cat && p._id !== _id
-  ).slice(0, 4);
-
-  const handleCart = (data: any, qty: number) => {
+  const handleCart = (qty: number) => {
     const currentCart = JSON.parse(localStorage.getItem('cart') || '[]');
-    const cartItem = currentCart.find((item: any) => item._id === data._id);
+    const cartItem = currentCart.find((c: any) => c._id === _id && c.variantId === activeVariant._id);
+
+    // Prepare item data
+    const itemToAdd = {
+        _id,
+        name,
+        slug: item.slug,
+        image: mainImage,
+        price: displayPrice,
+        // Variant info
+        variantId: activeVariant._id || 'default', // Verify if variants have _id (Mongoose subdocs usually do)
+        variantName: activeVariant.attributes ? Object.values(activeVariant.attributes).join(' / ') : '',
+        quantity: qty
+    };
 
     let updatedCart;
     if (cartItem) {
-      updatedCart = currentCart.map((item: any) => {
-        if (item._id === data._id) {
-          return {
-            ...item,
-            quantity: qty || item.quantity + 1,
-            totalPrice: item.price * (qty || item.quantity + 1),
-          };
+      updatedCart = currentCart.map((c: any) => {
+        if (c._id === _id && c.variantId === itemToAdd.variantId) {
+            const newQty = c.quantity + qty;
+            return {
+                ...c,
+                quantity: newQty,
+                totalPrice: c.price * newQty
+            };
         }
-        return item;
+        return c;
       });
     } else {
-      const newCartItem = {
-        ...data,
-        ... (selectedVariant && { 
-             price: selectedVariant.salePrice > 0 ? selectedVariant.salePrice : selectedVariant.regularPrice,
-             image: currentMainImage,
-             variantId: selectedVariant._id,
-             variantName: Object.values(selectedVariant.attributes).join(' / ')
-        }),
-        quantity: qty || 1,
-        totalPrice: (selectedVariant ? (selectedVariant.salePrice > 0 ? selectedVariant.salePrice : selectedVariant.regularPrice) : data.price) * (qty || 1),
-      };
-      updatedCart = [...currentCart, newCartItem];
+      updatedCart = [...currentCart, { ...itemToAdd, quantity: qty, totalPrice: displayPrice * qty }];
     }
+    
     setCart(updatedCart);
     localStorage.setItem('cart', JSON.stringify(updatedCart));
   };
 
-  const handleBuyNow = (data: any, qty: number) => {
-    handleCart(data, qty);
+  const handleBuyNow = (qty: number) => {
+    handleCart(qty);
     router.push('/checkout');
   };
 
@@ -211,10 +213,16 @@ function ProductDetails() {
             <li>
               <Link href="/" className="text-muted-foreground hover:text-primary">Home</Link>
             </li>
-            <li className="text-muted-foreground">/</li>
-            <li>
-              <Link href={`/${cat}`} className="text-muted-foreground hover:text-primary capitalize">{cat}</Link>
-            </li>
+            {categoryName && (
+                <>
+                <li className="text-muted-foreground">/</li>
+                <li>
+                <Link href={`/category/${categorySlug}`} className="text-muted-foreground hover:text-primary capitalize">
+                    {categoryName}
+                </Link>
+                </li>
+                </>
+            )}
             <li className="text-muted-foreground">/</li>
             <li className="text-foreground truncate max-w-xs">{name}</li>
           </ol>
@@ -228,14 +236,14 @@ function ProductDetails() {
           <div className="absolute top-4 right-4 z-20">
             <WishlistButton productId={_id} size="md" />
           </div>
-          <ProductGallery mainImage={currentMainImage} images={currentImages} name={name} />
+          <ProductGallery mainImage={mainImage} images={displayImages} name={name} />
         </div>
 
         {/* Product Info */}
         <div className="flex flex-col gap-6">
           <div>
             <div className="flex items-center gap-5 text-lg font-semibold capitalize mb-2">
-              <span className="text-primary">{brand}</span>
+              <span className="text-primary">{brand || 'Generic'}</span>
               <div onClick={executeScroll} className="flex gap-2 cursor-pointer items-center">
                 <span className="flex items-center text-yellow-500">{stars}</span>
                 <span className="text-sm text-gray-500 hover:text-primary transition-colors">
@@ -248,44 +256,42 @@ function ProductDetails() {
               {name}
             </h1>
 
-            {/* Price section - Dynamic based on selection */}
+            {/* Price section */}
             <div className="flex items-center gap-4 mb-6">
-               {(currentPrice.salePrice > 0 || (item.special && item.discount)) ? (
+               {hasDiscount ? (
                   <>
                     <span className="text-2xl line-through text-gray-400">
-                        ${(currentPrice.regularPrice || item.price).toLocaleString()}
+                        ${originalPrice?.toLocaleString()}
                     </span>
                     <span className="text-4xl font-bold text-primary">
-                        ${(currentPrice.salePrice || specialprice).toFixed(2)}
+                        ${displayPrice.toFixed(2)}
                     </span>
                     <span className="flex items-center gap-1 bg-red-100 text-red-600 px-3 py-1 rounded-full text-sm font-bold">
                         <TbDiscount className="w-4 h-4" /> 
-                         {currentPrice.salePrice > 0 
-                            ? Math.round(((currentPrice.regularPrice - currentPrice.salePrice) / currentPrice.regularPrice) * 100)
-                            : item.discount}% OFF
+                         {discountPercent}% OFF
                     </span>
                   </>
                ) : (
                   <span className="text-4xl text-primary font-bold">
-                    ${(currentPrice.regularPrice || item.price).toLocaleString()}
+                    ${displayPrice.toLocaleString()}
                   </span>
                )}
             </div>
           </div>
 
-          {/* Variants Section - New Architecture */}
-          {item.variants && item.variants.length > 0 && computedVariantOptions.length > 0 && (
+          {/* Variants Section */}
+          {computedVariantOptions.length > 0 && (
             <div className="space-y-4 mb-4">
                {computedVariantOptions.map((option: any, idx: number) => (
                  <div key={idx}>
                    <p className="font-semibold text-gray-900 mb-2 capitalize">{option.name}:</p>
                    <div className="flex flex-wrap gap-2">
                      {option.values.map((val: string) => {
-                       // Check availability: does a variant exist with this value AND currently selected values for OTHER options?
-                       const isAvailable = item.variants.some((v: any) => {
+                       // Check availability
+                       const isAvailable = variants.some((v: any) => {
                          const matchThis = v.attributes[option.name] === val;
                          const matchOthers = Object.entries(selectedAttributes).every(([key, selectedVal]) => {
-                           if (key === option.name) return true; // Ignore current option
+                           if (key === option.name) return true; 
                            return v.attributes[key] === selectedVal;
                          });
                          return matchThis && matchOthers && v.stock > 0;
@@ -299,12 +305,7 @@ function ProductDetails() {
                            variant={isSelected ? "default" : "outline"}
                            className={`h-auto py-2 px-4 ${!isAvailable && !isSelected ? 'opacity-50 dashed border-gray-300' : ''}`}
                            onClick={() => {
-                             setSelectedAttributes(prev => {
-                               const next = { ...prev, [option.name]: val };
-                               // Reset other attributes if selection becomes invalid? 
-                               // For now, simpler approach: just set it. 
-                               return next; 
-                             });
+                             setSelectedAttributes(prev => ({ ...prev, [option.name]: val }));
                            }}
                          >
                            {val}
@@ -317,41 +318,13 @@ function ProductDetails() {
             </div>
           )}
           
-          {/* Legacy Variant Support (Fallback) */}
-          {!item.variants && item.variantGroupId && (
-            <div className="mb-4">
-               <p className="font-semibold text-gray-900 mb-2">Available Options:</p>
-               <div className="flex flex-wrap gap-2">
-                  {products
-                    .filter((p: any) => p.variantGroupId === item.variantGroupId)
-                    .map((variant: any) => (
-                      <Link 
-                        key={variant._id} 
-                        href={`/productDetails/${variant._id}/${encodeURIComponent(variant.name).replace(/%20/g, '-')}`}
-                      >
-                         <Button 
-                            variant={variant._id === _id ? "default" : "outline"}
-                            className="h-auto py-2 px-4"
-                         >
-                            {variant.variantAttributes && Object.keys(variant.variantAttributes).length > 0
-                                ? Object.values(variant.variantAttributes).join(' / ')
-                                : variant.name.replace(name.split(' ')[0], '').trim() || 'Variant'
-                            }
-                         </Button>
-                      </Link>
-                  ))}
-               </div>
-            </div>
-          )}
-
           {/* Key Features / Specs */}
           <div className="space-y-3 p-5 bg-gray-50 rounded-xl border border-gray-100">
             <p className="text-lg font-bold text-gray-900">Specifications</p>
             
-            {/* New Specifications (Key-Value) */}
-            {item.specifications && item.specifications.length > 0 ? (
+            {specifications && specifications.length > 0 ? (
                  <div className="grid grid-cols-1 gap-y-2 text-sm">
-                    {item.specifications.map((s: any, idx: number) => (
+                    {specifications.map((s: any, idx: number) => (
                         <div key={idx} className="flex border-b border-gray-200 pb-2 last:border-0 last:pb-0">
                             <span className="font-semibold text-gray-600 w-1/3">{s.key}</span>
                             <span className="text-gray-900 w-2/3">{s.value}</span>
@@ -359,16 +332,7 @@ function ProductDetails() {
                     ))}
                  </div>
             ) : (
-                /* Legacy Specs (Array of Strings) */
-                <ul className="space-y-2 text-gray-600">
-                  <li className="flex gap-2"><span className="font-semibold min-w-[80px]">Model:</span> {name}</li>
-                  {spec.map((item: string, index: number) => (
-                    <li key={index} className="flex gap-2">
-                      <span className="w-1.5 h-1.5 rounded-full bg-primary mt-2 shrink-0"></span>
-                      {item}
-                    </li>
-                  ))}
-                </ul>
+                <p className="text-gray-500 italic">No specifications available</p>
             )}
           </div>
 
@@ -404,15 +368,17 @@ function ProductDetails() {
             {/* Buttons Row */}
             <div className="flex flex-1 gap-4">
               <Button
-                onClick={() => handleCart(item, count)}
-                className="flex-1 h-14 text-lg font-bold bg-primary hover:bg-primary/90 rounded-lg shadow-lg hover:shadow-xl transition-all"
+                onClick={() => handleCart(count)}
+                disabled={stock === 0}
+                className="flex-1 h-14 text-lg font-bold bg-primary hover:bg-primary/90 rounded-lg shadow-lg hover:shadow-xl transition-all disabled:opacity-50"
               >
-                Add to Cart
+                {stock === 0 ? 'Out of Stock' : 'Add to Cart'}
               </Button>
 
               <Button
-                onClick={() => handleBuyNow(item, count)}
-                className="flex-1 h-14 text-lg font-bold bg-gray-900 hover:bg-black text-white rounded-lg shadow-lg hover:shadow-xl transition-all"
+                onClick={() => handleBuyNow(count)}
+                disabled={stock === 0}
+                className="flex-1 h-14 text-lg font-bold bg-gray-900 hover:bg-black text-white rounded-lg shadow-lg hover:shadow-xl transition-all disabled:opacity-50"
               >
                 Buy Now
               </Button>

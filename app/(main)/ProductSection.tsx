@@ -9,17 +9,14 @@ export default async function ProductSection() {
   ]);
 
   return (
-    <>
-      {/* Best Deal Alert */}
+    <> 
       {bestsellers.length > 0 && (
         <ProductCarousel
           title="Best deal Alert! 🛒"
           products={bestsellers}
           viewAllHref="/products?filter=bestseller"
         />
-      )}
-
-      {/* Featured Products */}
+      )} 
       {featured.length > 0 && (
         <ProductCarousel
           title="Best Selling ⌨️"

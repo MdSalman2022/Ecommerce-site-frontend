@@ -262,9 +262,7 @@ export default function AIChatbot() {
                   )}>
                     {m.parts[0].text || (m.products?.length ? "Here's what I found:" : "...")}
                   </div>
-                </div>
-                
-                {/* Product Cards - Grid Layout */}
+                </div> 
                 {m.products && m.products.length > 0 && (
                   <div className="ml-11 space-y-2">
                     <p className="text-[10px] font-bold text-gray-400 uppercase tracking-wider">

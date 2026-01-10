@@ -78,7 +78,7 @@ const ProductReview: React.FC<ProductReviewProps> = ({
   const { data: allReviews = [], refetch } = useQuery({
     queryKey: ['getreviews'],
     queryFn: async () => {
-      const res = await fetch(`${process.env.NEXT_PUBLIC_SERVER_URL}/get-review`);
+      const res = await fetch(`${process.env.NEXT_PUBLIC_SERVER_URL}/api/reviews`);
       return res.json();
     },
   });
@@ -130,7 +130,7 @@ const ProductReview: React.FC<ProductReviewProps> = ({
     };
 
     try {
-      const res = await fetch(`${process.env.NEXT_PUBLIC_SERVER_URL}/post-review`, {
+      const res = await fetch(`${process.env.NEXT_PUBLIC_SERVER_URL}/api/reviews`, {
         method: 'POST',
         headers: { 'content-type': 'application/json' },
         body: JSON.stringify(review),

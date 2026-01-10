@@ -495,8 +495,7 @@ export default function TeamPage() {
                     </div>
                 </div>
             )}
-
-            {/* Permissions Reference */}
+ 
             <div className="bg-white rounded-lg border overflow-hidden">
                 <Accordion type="single" collapsible>
                     <AccordionItem value="permissions" className="border-none">

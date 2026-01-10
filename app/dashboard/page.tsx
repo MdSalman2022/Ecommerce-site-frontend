@@ -70,7 +70,7 @@ export default function DashboardPage() {
 
     return (
         <div className="space-y-6">
-            {/* Stats Grid */}
+             
             <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-4">
                 {stats.map((stat) => (
                     <div key={stat.title} className="bg-white rounded-xl p-5 shadow-sm border border-gray-100">
@@ -90,9 +90,9 @@ export default function DashboardPage() {
                 ))}
             </div>
 
-            {/* Two Column Section */}
+             
             <div className="grid grid-cols-1 lg:grid-cols-3 gap-6">
-                {/* Revenue Chart Placeholder */}
+                 
                 <div className="lg:col-span-2 bg-white rounded-xl p-5 shadow-sm border border-gray-100">
                     <div className="flex items-center justify-between mb-6">
                         <div>
@@ -114,7 +114,7 @@ export default function DashboardPage() {
                     </div>
                 </div>
 
-                {/* Top Products */}
+                 
                 <div className="bg-white rounded-xl p-5 shadow-sm border border-gray-100">
                     <h3 className="text-lg font-semibold text-gray-900 mb-4">Top Categories</h3>
                     <div className="space-y-4">
@@ -139,7 +139,7 @@ export default function DashboardPage() {
                 </div>
             </div>
 
-            {/* Recent Orders Table */}
+             
             <div className="bg-white rounded-xl shadow-sm border border-gray-100 overflow-hidden">
                 <div className="px-5 py-4 border-b border-gray-100 flex items-center justify-between">
                     <h3 className="text-lg font-semibold text-gray-900">Recent Orders</h3>
