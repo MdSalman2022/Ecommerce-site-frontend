@@ -3,7 +3,7 @@
 import { useState } from 'react';
 import Link from 'next/link';
 import Image from 'next/image';
-import { ChevronDown, Phone, Mail, MapPin, Facebook, Instagram, Youtube } from 'lucide-react';
+import { ChevronDown, Phone, Mail, MapPin, Facebook, Instagram, Youtube, Home, LayoutGrid, ShoppingCart, User } from 'lucide-react';
 import { FaTiktok } from 'react-icons/fa';
 import { SiVisa, SiMastercard } from 'react-icons/si';
 
@@ -53,6 +53,7 @@ export default function Footer() {
   ].filter(link => link.show);
 
   return (
+    <>
     <footer className="bg-white border-t border-gray-200 pb-20 lg:pb-0">
       {/* Main Footer */}
       <div className="container mx-auto px-4 py-10">
@@ -208,5 +209,28 @@ export default function Footer() {
         </div>
       </div>
     </footer>
+      
+      {/* Mobile Bottom Navigation - Fixed */}
+      <div className="md:hidden fixed bottom-0 left-0 right-0 z-50 bg-white border-t border-gray-200 safe-area-bottom">
+        <div className="grid grid-cols-4 h-16">
+          <Link href="/" className="flex flex-col items-center justify-center text-gray-500 hover:text-primary transition-colors">
+            <Home className="w-5 h-5 mb-1" />
+            <span className="text-[10px] font-medium">Home</span>
+          </Link>
+          <Link href="/category" className="flex flex-col items-center justify-center text-gray-500 hover:text-primary transition-colors">
+            <LayoutGrid className="w-5 h-5 mb-1" />
+            <span className="text-[10px] font-medium">Categories</span>
+          </Link>
+          <Link href="/cart" className="flex flex-col items-center justify-center text-gray-500 hover:text-primary transition-colors relative">
+            <ShoppingCart className="w-5 h-5 mb-1" />
+            <span className="text-[10px] font-medium">Cart</span>
+          </Link>
+          <Link href="/profile" className="flex flex-col items-center justify-center text-gray-500 hover:text-primary transition-colors">
+            <User className="w-5 h-5 mb-1" />
+            <span className="text-[10px] font-medium">Account</span>
+          </Link>
+        </div>
+      </div>
+    </>
   );
 }

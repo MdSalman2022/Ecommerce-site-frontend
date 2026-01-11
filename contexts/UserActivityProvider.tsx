@@ -6,6 +6,7 @@ import React, {
   useState,
   useEffect,
   ReactNode,
+  useCallback,
 } from "react";
 import {useQuery} from "@tanstack/react-query";
 import {useAuth} from "./AuthProvider";
@@ -37,6 +38,50 @@ interface DeliveryDetails {
   email?: string; // Optional for guest
 }
 
+// ==================== ACTIVITY TRACKING TYPES ====================
+interface ProductView {
+  productId: string;
+  categoryId: string;
+  categoryName: string;
+  subCategoryId?: string;
+  subCategoryName?: string;
+  brand: string;
+  price: number;
+  timestamp: number;
+}
+
+interface CategoryInterest {
+  name: string;
+  viewCount: number;
+  lastViewed: number;
+}
+
+interface BrandInterest {
+  viewCount: number;
+  lastViewed: number;
+}
+
+interface PricePreference {
+  min: number;
+  max: number;
+  average: number;
+}
+
+interface SearchEntry {
+  query: string;
+  timestamp: number;
+}
+
+export interface UserActivityData {
+  recentViews: ProductView[];
+  categoryInterests: Record<string, CategoryInterest>;
+  brandInterests: Record<string, BrandInterest>;
+  pricePreference: PricePreference;
+  recentSearches: SearchEntry[];
+  fingerprint: string;
+  lastUpdated: number;
+}
+
 interface UserActivityContextType {
   // Cart
   cart: CartItem[];
@@ -55,6 +100,18 @@ interface UserActivityContextType {
   setDeliveryDetails: (details: DeliveryDetails) => void;
   orders: any[];
   refetchOrders: () => Promise<any>;
+
+  // Activity Tracking (for AI recommendations)
+  trackProductView: (product: {
+    _id: string;
+    category?: {_id: string; name: string};
+    subCategory?: {_id: string; name: string};
+    brand?: string;
+    price: number;
+  }) => void;
+  trackSearch: (query: string) => void;
+  getActivityData: () => UserActivityData;
+  getActivityFingerprint: () => string;
 }
 
 const UserActivityContext = createContext<UserActivityContextType | undefined>(
@@ -78,8 +135,7 @@ export const UserActivityProvider = ({children}: {children: ReactNode}) => {
   const token =
     typeof window !== "undefined" ? localStorage.getItem("accessToken") : null;
 
-  // ==================== CART STATE ====================
-  // ==================== CART STATE ====================
+  // Cart state and checkout values
   const [cart, setCart] = useState<CartItem[]>([]);
   const [cartInitialized, setCartInitialized] = useState(false);
 
@@ -88,8 +144,7 @@ export const UserActivityProvider = ({children}: {children: ReactNode}) => {
   const [deliveryDetails, setDeliveryDetails] =
     useState<DeliveryDetails | null>(null);
 
-  // ==================== SESSION ID MANAGEMENT ====================
-  // Persistent Session ID for Guest Carts
+  // Guest cart session ID tracking
   const getSessionId = (): string => {
     if (typeof window === "undefined") return "";
     let sessionId = localStorage.getItem("cart_session_id");
@@ -102,7 +157,219 @@ export const UserActivityProvider = ({children}: {children: ReactNode}) => {
     return sessionId;
   };
 
-  // ==================== CART SYNC (DB FIRST) ====================
+  // ==================== ACTIVITY TRACKING (For AI Recommendations) ====================
+  const ACTIVITY_STORAGE_KEY = "user_activity_data";
+  const MAX_RECENT_VIEWS = 20;
+  const MAX_RECENT_SEARCHES = 10;
+
+  // Simple hash function for fingerprint generation
+  const hashString = (str: string): string => {
+    let hash = 0;
+    for (let i = 0; i < str.length; i++) {
+      const char = str.charCodeAt(i);
+      hash = (hash << 5) - hash + char;
+      hash = hash & hash; // Convert to 32bit integer
+    }
+    return Math.abs(hash).toString(36);
+  };
+
+  // Generate activity fingerprint for cache lookup
+  const generateFingerprint = (activity: UserActivityData): string => {
+    const key = JSON.stringify({
+      views: activity.recentViews.slice(0, 5).map((v) => v.productId),
+      categories: Object.keys(activity.categoryInterests).slice(0, 3),
+      brands: Object.keys(activity.brandInterests).slice(0, 3),
+      priceRange:
+        activity.pricePreference.average > 0
+          ? Math.round(activity.pricePreference.average / 100) * 100
+          : 0,
+    });
+    return hashString(key);
+  };
+
+  // Initialize activity data from localStorage
+  const getInitialActivityData = (): UserActivityData => {
+    if (typeof window === "undefined") {
+      return createEmptyActivityData();
+    }
+    try {
+      const stored = localStorage.getItem(ACTIVITY_STORAGE_KEY);
+      if (stored) {
+        const parsed = JSON.parse(stored);
+        return parsed;
+      }
+    } catch (e) {
+      console.error("Failed to parse activity data:", e);
+    }
+    return createEmptyActivityData();
+  };
+
+  const createEmptyActivityData = (): UserActivityData => ({
+    recentViews: [],
+    categoryInterests: {},
+    brandInterests: {},
+    pricePreference: {min: 0, max: 0, average: 0},
+    recentSearches: [],
+    fingerprint: "",
+    lastUpdated: Date.now(),
+  });
+
+  const [activityData, setActivityData] = useState<UserActivityData>(
+    createEmptyActivityData
+  );
+
+  // Load activity data on mount
+  useEffect(() => {
+    const data = getInitialActivityData();
+    setActivityData(data);
+  }, []);
+
+  // Persist activity data to localStorage
+  const persistActivityData = useCallback((data: UserActivityData) => {
+    if (typeof window === "undefined") return;
+    try {
+      const fingerprint = generateFingerprint(data);
+      const updated = {...data, fingerprint, lastUpdated: Date.now()};
+      localStorage.setItem(ACTIVITY_STORAGE_KEY, JSON.stringify(updated));
+      setActivityData(updated);
+    } catch (e) {
+      console.error("Failed to persist activity data:", e);
+    }
+  }, []);
+
+  // Track product view
+  const trackProductView = useCallback(
+    (product: {
+      _id: string;
+      category?: {_id: string; name: string};
+      subCategory?: {_id: string; name: string};
+      brand?: string;
+      price: number;
+    }) => {
+      setActivityData((prev) => {
+        // Don't track if already the most recent view
+        if (prev.recentViews[0]?.productId === product._id) {
+          return prev;
+        }
+
+        const newView: ProductView = {
+          productId: product._id,
+          categoryId: product.category?._id || "",
+          categoryName: product.category?.name || "",
+          subCategoryId: product.subCategory?._id,
+          subCategoryName: product.subCategory?.name,
+          brand: product.brand || "",
+          price: product.price,
+          timestamp: Date.now(),
+        };
+
+        // Update recent views (remove duplicate if exists, add to front)
+        const filteredViews = prev.recentViews.filter(
+          (v) => v.productId !== product._id
+        );
+        const newRecentViews = [newView, ...filteredViews].slice(
+          0,
+          MAX_RECENT_VIEWS
+        );
+
+        // Update category interests
+        const newCategoryInterests = {...prev.categoryInterests};
+        if (product.category?._id) {
+          const catId = product.category._id;
+          newCategoryInterests[catId] = {
+            name: product.category.name,
+            viewCount: (newCategoryInterests[catId]?.viewCount || 0) + 1,
+            lastViewed: Date.now(),
+          };
+        }
+
+        // Update brand interests
+        const newBrandInterests = {...prev.brandInterests};
+        if (product.brand) {
+          newBrandInterests[product.brand] = {
+            viewCount: (newBrandInterests[product.brand]?.viewCount || 0) + 1,
+            lastViewed: Date.now(),
+          };
+        }
+
+        // Update price preference
+        const prices = newRecentViews.map((v) => v.price).filter((p) => p > 0);
+        const newPricePreference: PricePreference =
+          prices.length > 0
+            ? {
+                min: Math.min(...prices),
+                max: Math.max(...prices),
+                average: prices.reduce((a, b) => a + b, 0) / prices.length,
+              }
+            : prev.pricePreference;
+
+        const updated: UserActivityData = {
+          ...prev,
+          recentViews: newRecentViews,
+          categoryInterests: newCategoryInterests,
+          brandInterests: newBrandInterests,
+          pricePreference: newPricePreference,
+          lastUpdated: Date.now(),
+        };
+
+        // Persist async
+        setTimeout(() => persistActivityData(updated), 0);
+        return updated;
+      });
+    },
+    [persistActivityData]
+  );
+
+  // Track search query
+  const trackSearch = useCallback(
+    (query: string) => {
+      if (!query.trim()) return;
+
+      setActivityData((prev) => {
+        // Don't track duplicate consecutive searches
+        if (
+          prev.recentSearches[0]?.query.toLowerCase() === query.toLowerCase()
+        ) {
+          return prev;
+        }
+
+        const newSearch: SearchEntry = {
+          query: query.trim(),
+          timestamp: Date.now(),
+        };
+
+        const filteredSearches = prev.recentSearches.filter(
+          (s) => s.query.toLowerCase() !== query.toLowerCase()
+        );
+        const newRecentSearches = [newSearch, ...filteredSearches].slice(
+          0,
+          MAX_RECENT_SEARCHES
+        );
+
+        const updated: UserActivityData = {
+          ...prev,
+          recentSearches: newRecentSearches,
+          lastUpdated: Date.now(),
+        };
+
+        setTimeout(() => persistActivityData(updated), 0);
+        return updated;
+      });
+    },
+    [persistActivityData]
+  );
+
+  // Get activity data for API calls
+  const getActivityData = useCallback((): UserActivityData => {
+    return activityData;
+  }, [activityData]);
+
+  // Get fingerprint for cache lookup
+  const getActivityFingerprint = useCallback((): string => {
+    return activityData.fingerprint || generateFingerprint(activityData);
+  }, [activityData]);
+
+  // Cart sync using DB-first source
 
   // Initialize cart lazily - only when first accessed
   const initCart = async () => {
@@ -182,8 +449,7 @@ export const UserActivityProvider = ({children}: {children: ReactNode}) => {
     }
   }, [user]); // Re-run on login/logout
 
-  // 2. Update Cart -> Sync DB Immediately
-  // Note: We use a separate function for updates to avoid circular dependency with useEffect
+  // Sync cart updates directly to DB
   const updateCartInDb = async (newCart: CartItem[]) => {
     const sessionId = getSessionId();
     const currentToken = localStorage.getItem("accessToken");
@@ -306,8 +572,7 @@ export const UserActivityProvider = ({children}: {children: ReactNode}) => {
     }
   };
 
-  // ==================== ORDERS STATE ====================
-  // Lazy fetch orders - only when explicitly requested (e.g., when user visits orders page)
+  // Orders state fetched lazily when needed
   const {data: orders = [], refetch: refetchOrders} = useQuery({
     queryKey: ["orderhistory", user?.email],
     queryFn: () => fetch(`${API_URL}/orderhistory`).then((res) => res.json()),
@@ -328,6 +593,11 @@ export const UserActivityProvider = ({children}: {children: ReactNode}) => {
     setDeliveryDetails,
     orders,
     refetchOrders,
+    // Activity tracking for AI recommendations
+    trackProductView,
+    trackSearch,
+    getActivityData,
+    getActivityFingerprint,
   };
 
   return (

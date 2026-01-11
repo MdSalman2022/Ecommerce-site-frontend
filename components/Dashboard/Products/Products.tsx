@@ -1,15 +1,15 @@
-'use client';
+"use client";
 
-import React, { useState, useEffect, useMemo } from 'react';
-import Link from 'next/link';
-import { useRouter, useSearchParams, usePathname } from 'next/navigation';
-import { BsDot } from 'react-icons/bs';
-import { FaAngleDown, FaPlus, FaFilter } from 'react-icons/fa';
-import { FiEdit, FiX } from 'react-icons/fi';
-import { useQuery } from '@tanstack/react-query';
-import { useShop } from '@/contexts/ShopProvider';
-import { Button } from '@/components/ui/button';
-import { Input } from '@/components/ui/input';
+import React, {useState, useEffect, useMemo} from "react";
+import Link from "next/link";
+import {useRouter, useSearchParams, usePathname} from "next/navigation";
+import {BsDot} from "react-icons/bs";
+import {FaAngleDown, FaPlus, FaFilter} from "react-icons/fa";
+import {FiEdit, FiX} from "react-icons/fi";
+import {useQuery} from "@tanstack/react-query";
+import {useCategories} from "@/hooks/useCategories";
+import {Button} from "@/components/ui/button";
+import {Input} from "@/components/ui/input";
 import {
   Table,
   TableBody,
@@ -17,14 +17,14 @@ import {
   TableHead,
   TableHeader,
   TableRow,
-} from '@/components/ui/table';
+} from "@/components/ui/table";
 import {
   DropdownMenu,
   DropdownMenuContent,
   DropdownMenuItem,
   DropdownMenuTrigger,
-} from '@/components/ui/dropdown-menu';
-import { toast } from 'react-hot-toast';
+} from "@/components/ui/dropdown-menu";
+import {toast} from "react-hot-toast";
 
 const API_URL = process.env.NEXT_PUBLIC_SERVER_URL;
 
@@ -32,20 +32,32 @@ function DashboardProducts() {
   const router = useRouter();
   const pathname = usePathname();
   const searchParams = useSearchParams();
-  const { categories } = useShop();
+  const {flatCategories: categories = []} = useCategories();
 
   // State from URL parameters
-  const [page, setPage] = useState(parseInt(searchParams.get('page') || '1'));
-  const [limit, setLimit] = useState(parseInt(searchParams.get('limit') || '20'));
-  const [sortBy, setSortBy] = useState(searchParams.get('sortBy') || '');
-  const [sortOrder, setSortOrder] = useState(searchParams.get('sortOrder') || 'desc');
-  const [selectedCategory, setSelectedCategory] = useState(searchParams.get('category') || '');
-  const [selectedBrand, setSelectedBrand] = useState(searchParams.get('brand') || '');
-  const [stockStatus, setStockStatus] = useState(searchParams.get('stockStatus') || '');
-  const [minPrice, setMinPrice] = useState(searchParams.get('minPrice') || '');
-  const [maxPrice, setMaxPrice] = useState(searchParams.get('maxPrice') || '');
-  const [search, setSearch] = useState(searchParams.get('search') || '');
-  const [searchInput, setSearchInput] = useState(searchParams.get('search') || '');
+  const [page, setPage] = useState(parseInt(searchParams.get("page") || "1"));
+  const [limit, setLimit] = useState(
+    parseInt(searchParams.get("limit") || "20")
+  );
+  const [sortBy, setSortBy] = useState(searchParams.get("sortBy") || "");
+  const [sortOrder, setSortOrder] = useState(
+    searchParams.get("sortOrder") || "desc"
+  );
+  const [selectedCategory, setSelectedCategory] = useState(
+    searchParams.get("category") || ""
+  );
+  const [selectedBrand, setSelectedBrand] = useState(
+    searchParams.get("brand") || ""
+  );
+  const [stockStatus, setStockStatus] = useState(
+    searchParams.get("stockStatus") || ""
+  );
+  const [minPrice, setMinPrice] = useState(searchParams.get("minPrice") || "");
+  const [maxPrice, setMaxPrice] = useState(searchParams.get("maxPrice") || "");
+  const [search, setSearch] = useState(searchParams.get("search") || "");
+  const [searchInput, setSearchInput] = useState(
+    searchParams.get("search") || ""
+  );
   const [selectedIds, setSelectedIds] = useState<string[]>([]);
   const [showFilters, setShowFilters] = useState(false);
 
@@ -61,61 +73,95 @@ function DashboardProducts() {
   // Update URL when filters change
   useEffect(() => {
     const params = new URLSearchParams();
-    if (page > 1) params.set('page', page.toString());
-    if (limit !== 20) params.set('limit', limit.toString());
-    if (sortBy) params.set('sortBy', sortBy);
-    if (sortOrder !== 'desc') params.set('sortOrder', sortOrder);
-    if (selectedCategory) params.set('category', selectedCategory);
-    if (selectedBrand) params.set('brand', selectedBrand);
-    if (stockStatus) params.set('stockStatus', stockStatus);
-    if (minPrice) params.set('minPrice', minPrice);
-    if (maxPrice) params.set('maxPrice', maxPrice);
-    if (search) params.set('search', search);
+    if (page > 1) params.set("page", page.toString());
+    if (limit !== 20) params.set("limit", limit.toString());
+    if (sortBy) params.set("sortBy", sortBy);
+    if (sortOrder !== "desc") params.set("sortOrder", sortOrder);
+    if (selectedCategory) params.set("category", selectedCategory);
+    if (selectedBrand) params.set("brand", selectedBrand);
+    if (stockStatus) params.set("stockStatus", stockStatus);
+    if (minPrice) params.set("minPrice", minPrice);
+    if (maxPrice) params.set("maxPrice", maxPrice);
+    if (search) params.set("search", search);
 
-    const newUrl = params.toString() ? `${pathname}?${params.toString()}` : pathname;
-    router.replace(newUrl, { scroll: false });
-  }, [page, limit, sortBy, sortOrder, selectedCategory, selectedBrand, stockStatus, minPrice, maxPrice, search, pathname, router]);
+    const newUrl = params.toString()
+      ? `${pathname}?${params.toString()}`
+      : pathname;
+    router.replace(newUrl, {scroll: false});
+  }, [
+    page,
+    limit,
+    sortBy,
+    sortOrder,
+    selectedCategory,
+    selectedBrand,
+    stockStatus,
+    minPrice,
+    maxPrice,
+    search,
+    pathname,
+    router,
+  ]);
 
   // Fetch paginated products
-  const { data, isLoading, refetch } = useQuery({
-    queryKey: ['admin-products', page, limit, sortBy, sortOrder, selectedCategory, selectedBrand, stockStatus, minPrice, maxPrice, search],
+  const {data, isLoading, refetch} = useQuery({
+    queryKey: [
+      "admin-products",
+      page,
+      limit,
+      sortBy,
+      sortOrder,
+      selectedCategory,
+      selectedBrand,
+      stockStatus,
+      minPrice,
+      maxPrice,
+      search,
+    ],
     queryFn: async () => {
       const params = new URLSearchParams();
-      params.set('page', page.toString());
-      params.set('limit', limit.toString());
+      params.set("page", page.toString());
+      params.set("limit", limit.toString());
       if (sortBy) {
-        params.set('sortBy', sortBy);
-        params.set('sortOrder', sortOrder);
+        params.set("sortBy", sortBy);
+        params.set("sortOrder", sortOrder);
       }
-      if (selectedCategory) params.set('category', selectedCategory);
-      if (selectedBrand) params.set('brand', selectedBrand);
-      if (stockStatus) params.set('stockStatus', stockStatus);
-      if (minPrice) params.set('minPrice', minPrice);
-      if (maxPrice) params.set('maxPrice', maxPrice);
-      if (search) params.set('search', search);
+      if (selectedCategory) params.set("category", selectedCategory);
+      if (selectedBrand) params.set("brand", selectedBrand);
+      if (stockStatus) params.set("stockStatus", stockStatus);
+      if (minPrice) params.set("minPrice", minPrice);
+      if (maxPrice) params.set("maxPrice", maxPrice);
+      if (search) params.set("search", search);
 
       const res = await fetch(`${API_URL}/api/products?${params.toString()}`);
-      if (!res.ok) throw new Error('Failed to fetch products');
+      if (!res.ok) throw new Error("Failed to fetch products");
       return await res.json();
     },
   });
 
   const products = data?.data || [];
-  const pagination = data?.pagination || { page: 1, limit: 20, total: 0, pages: 0 };
+  const pagination = data?.pagination || {
+    page: 1,
+    limit: 20,
+    total: 0,
+    pages: 0,
+  };
 
   // Get unique brands from all products for filter dropdown
-  const { data: allProductsForFilters } = useQuery({
-    queryKey: ['all-products-brands'],
+  const {data: allProductsForFilters} = useQuery({
+    queryKey: ["all-products-brands"],
     queryFn: async () => {
       const res = await fetch(`${API_URL}/api/products`);
-      if (!res.ok) throw new Error('Failed to fetch products');
+      if (!res.ok) throw new Error("Failed to fetch products");
       return await res.json();
     },
   });
 
   const availableBrands = useMemo(() => {
     if (!allProductsForFilters) return [];
-    const brands = new Set(allProductsForFilters.map((p: any) => p.brand).filter(Boolean));
+    const brands = new Set(
+      allProductsForFilters.map((p: any) => p.brand).filter(Boolean)
+    );
     return Array.from(brands).sort();
   }, [allProductsForFilters]);
 
@@ -144,16 +190,16 @@ function DashboardProducts() {
     if (selectedIds.length === 0) return;
     try {
       await fetch(`${API_URL}/api/products`, {
-        method: 'DELETE',
-        headers: { 'Content-Type': 'application/json' },
-        body: JSON.stringify({ ids: selectedIds }),
+        method: "DELETE",
+        headers: {"Content-Type": "application/json"},
+        body: JSON.stringify({ids: selectedIds}),
       });
       setSelectedIds([]);
-      toast.success('Products deleted');
+      toast.success("Products deleted");
       refetch();
     } catch (err) {
       console.error(err);
-      toast.error('Failed to delete products');
+      toast.error("Failed to delete products");
     }
   };
 
@@ -161,18 +207,24 @@ function DashboardProducts() {
   const clearFilters = () => {
     setPage(1);
     setLimit(20);
-    setSortBy('');
-    setSortOrder('desc');
-    setSelectedCategory('');
-    setSelectedBrand('');
-    setStockStatus('');
-    setMinPrice('');
-    setMaxPrice('');
-    setSearch('');
-    setSearchInput('');
+    setSortBy("");
+    setSortOrder("desc");
+    setSelectedCategory("");
+    setSelectedBrand("");
+    setStockStatus("");
+    setMinPrice("");
+    setMaxPrice("");
+    setSearch("");
+    setSearchInput("");
   };
 
-  const hasActiveFilters = selectedCategory || selectedBrand || stockStatus || minPrice || maxPrice || search;
+  const hasActiveFilters =
+    selectedCategory ||
+    selectedBrand ||
+    stockStatus ||
+    minPrice ||
+    maxPrice ||
+    search;
 
   return (
     <div className="flex flex-col gap-5 relative">
@@ -186,11 +238,21 @@ function DashboardProducts() {
           className="max-w-md"
         />
         <Button
-          variant={showFilters ? 'default' : 'outline'}
+          variant={showFilters ? "default" : "outline"}
           onClick={() => setShowFilters(!showFilters)}
         >
           <FaFilter className="mr-2" />
-          Filters {hasActiveFilters && `(${[selectedCategory, selectedBrand, stockStatus, minPrice || maxPrice, search].filter(Boolean).length})`}
+          Filters{" "}
+          {hasActiveFilters &&
+            `(${
+              [
+                selectedCategory,
+                selectedBrand,
+                stockStatus,
+                minPrice || maxPrice,
+                search,
+              ].filter(Boolean).length
+            })`}
         </Button>
       </div>
 
@@ -240,7 +302,9 @@ function DashboardProducts() {
 
             {/* Stock Status Filter */}
             <div>
-              <label className="text-sm font-medium mb-2 block">Stock Status</label>
+              <label className="text-sm font-medium mb-2 block">
+                Stock Status
+              </label>
               <select
                 value={stockStatus}
                 onChange={(e) => {
@@ -258,7 +322,9 @@ function DashboardProducts() {
 
             {/* Price Range Filter */}
             <div>
-              <label className="text-sm font-medium mb-2 block">Price Range</label>
+              <label className="text-sm font-medium mb-2 block">
+                Price Range
+              </label>
               <div className="flex gap-2">
                 <Input
                   type="number"
@@ -299,9 +365,11 @@ function DashboardProducts() {
       {/* Controls */}
       <div className="flex justify-between items-center gap-3">
         <div className="text-sm text-muted-foreground">
-          Showing {products.length > 0 ? ((page - 1) * limit + 1) : 0} - {Math.min(page * limit, pagination.total)} of {pagination.total} products
+          Showing {products.length > 0 ? (page - 1) * limit + 1 : 0} -{" "}
+          {Math.min(page * limit, pagination.total)} of {pagination.total}{" "}
+          products
         </div>
-        
+
         <div className="flex gap-3">
           <DropdownMenu>
             <DropdownMenuTrigger asChild>
@@ -332,51 +400,61 @@ function DashboardProducts() {
 
           <DropdownMenu>
             <DropdownMenuTrigger asChild>
-              <Button variant="outline">
-                Sort {sortBy && `(${sortBy})`}
-              </Button>
+              <Button variant="outline">Sort {sortBy && `(${sortBy})`}</Button>
             </DropdownMenuTrigger>
             <DropdownMenuContent>
-              <DropdownMenuItem onClick={() => {
-                setSortBy('price');
-                setSortOrder('asc');
-                setPage(1);
-              }}>
+              <DropdownMenuItem
+                onClick={() => {
+                  setSortBy("price");
+                  setSortOrder("asc");
+                  setPage(1);
+                }}
+              >
                 Price: Low to High
               </DropdownMenuItem>
-              <DropdownMenuItem onClick={() => {
-                setSortBy('price');
-                setSortOrder('desc');
-                setPage(1);
-              }}>
+              <DropdownMenuItem
+                onClick={() => {
+                  setSortBy("price");
+                  setSortOrder("desc");
+                  setPage(1);
+                }}
+              >
                 Price: High to Low
               </DropdownMenuItem>
-              <DropdownMenuItem onClick={() => {
-                setSortBy('date');
-                setSortOrder('desc');
-                setPage(1);
-              }}>
+              <DropdownMenuItem
+                onClick={() => {
+                  setSortBy("date");
+                  setSortOrder("desc");
+                  setPage(1);
+                }}
+              >
                 Date: Latest
               </DropdownMenuItem>
-              <DropdownMenuItem onClick={() => {
-                setSortBy('date');
-                setSortOrder('asc');
-                setPage(1);
-              }}>
+              <DropdownMenuItem
+                onClick={() => {
+                  setSortBy("date");
+                  setSortOrder("asc");
+                  setPage(1);
+                }}
+              >
                 Date: Oldest
               </DropdownMenuItem>
-              <DropdownMenuItem onClick={() => {
-                setSortBy('stock');
-                setSortOrder('desc');
-                setPage(1);
-              }}>
+              <DropdownMenuItem
+                onClick={() => {
+                  setSortBy("stock");
+                  setSortOrder("desc");
+                  setPage(1);
+                }}
+              >
                 Stock: High to Low
               </DropdownMenuItem>
-              <DropdownMenuItem onClick={() => {
-                setSortBy('name');
-                setSortOrder('asc');
-                setPage(1);
-              }}>
+              <DropdownMenuItem
+                onClick={() => {
+                  setSortBy("name");
+                  setSortOrder("asc");
+                  setPage(1);
+                }}
+              >
                 Name: A-Z
               </DropdownMenuItem>
             </DropdownMenuContent>
@@ -413,8 +491,8 @@ function DashboardProducts() {
               {products.map((item: any, index: number) => {
                 const price = getPrice(item);
                 const stock = getTotalStock(item);
-                const categoryName = item.category?.name || 'N/A';
-                
+                const categoryName = item.category?.name || "N/A";
+
                 return (
                   <TableRow key={item._id}>
                     <TableCell>
@@ -432,38 +510,47 @@ function DashboardProducts() {
                           href={`/product/${item.slug || item._id}`}
                           className="hover:text-primary font-medium"
                         >
-                          {item.name.length > 40 ? `${item.name.slice(0, 40)}...` : item.name}
+                          {item.name.length > 40
+                            ? `${item.name.slice(0, 40)}...`
+                            : item.name}
                         </Link>
                         <Link href={`/dashboard/products/edit/${item._id}`}>
-                          <Button
-                            variant="ghost"
-                            size="icon"
-                          >
+                          <Button variant="ghost" size="icon">
                             <FiEdit />
                           </Button>
                         </Link>
                       </div>
                     </TableCell>
                     <TableCell className="text-sm text-muted-foreground">
-                      {item.brand || 'N/A'}
+                      {item.brand || "N/A"}
                     </TableCell>
                     <TableCell className="text-sm text-muted-foreground">
                       {categoryName}
                     </TableCell>
                     <TableCell className="text-xs text-muted-foreground font-mono">
-                      {item.slug ? (item.slug.length > 30 ? `${item.slug.slice(0, 30)}...` : item.slug) : 'No slug'}
+                      {item.slug
+                        ? item.slug.length > 30
+                          ? `${item.slug.slice(0, 30)}...`
+                          : item.slug
+                        : "No slug"}
                     </TableCell>
                     <TableCell className="text-sm">
-                      {item.createdAt ? new Date(item.createdAt).toLocaleDateString() : 'N/A'}
+                      {item.createdAt
+                        ? new Date(item.createdAt).toLocaleDateString()
+                        : "N/A"}
                     </TableCell>
                     <TableCell>
                       <span
                         className={`flex items-center gap-1 ${
-                          stock > 10 ? 'text-green-600' : stock > 0 ? 'text-yellow-600' : 'text-red-600'
+                          stock > 10
+                            ? "text-green-600"
+                            : stock > 0
+                            ? "text-yellow-600"
+                            : "text-red-600"
                         }`}
                       >
                         <BsDot className="text-2xl" />
-                        {stock > 0 ? `${stock} in stock` : 'Out of Stock'}
+                        {stock > 0 ? `${stock} in stock` : "Out of Stock"}
                       </span>
                     </TableCell>
                     <TableCell className="font-semibold">
@@ -488,8 +575,8 @@ function DashboardProducts() {
           >
             Previous
           </Button>
-          
-          {Array.from({ length: Math.min(5, pagination.pages) }, (_, i) => {
+
+          {Array.from({length: Math.min(5, pagination.pages)}, (_, i) => {
             let pageNum;
             if (pagination.pages <= 5) {
               pageNum = i + 1;
@@ -500,11 +587,11 @@ function DashboardProducts() {
             } else {
               pageNum = page - 2 + i;
             }
-            
+
             return (
               <Button
                 key={pageNum}
-                variant={page === pageNum ? 'default' : 'outline'}
+                variant={page === pageNum ? "default" : "outline"}
                 size="sm"
                 onClick={() => setPage(pageNum)}
               >
@@ -512,7 +599,7 @@ function DashboardProducts() {
               </Button>
             );
           })}
-          
+
           <Button
             variant="outline"
             size="sm"

@@ -33,7 +33,6 @@ export default function CategoryEditor({
   onChange,
 }: CategoryEditorProps) {
   // Fetch categories to populate dropdown
-  // Fetch categories to populate dropdown
   const {data: categories = []} = useQuery({
     queryKey: ["categories"],
     queryFn: async () => {

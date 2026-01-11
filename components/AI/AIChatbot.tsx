@@ -190,10 +190,10 @@ export default function AIChatbot() {
     return (
       <button
         onClick={() => setIsOpen(true)}
-        className="fixed bottom-6 right-6 w-14 h-14 text-white rounded-full shadow-2xl flex items-center justify-center transition-all hover:scale-110 active:scale-95 z-[9999] group"
+        className="fixed bottom-[120px] md:bottom-6 right-3 md:right-6 w-12 h-12 md:w-14 md:h-14 text-white rounded-full shadow-2xl flex items-center justify-center transition-all hover:scale-110 active:scale-95 z-[9999] group"
         title="Chat with DealBot"
       >
-        <div className="w-14 h-14 rounded-full bg-black overflow-hidden flex items-center justify-center">
+        <div className="w-full h-full rounded-full bg-black overflow-hidden flex items-center justify-center">
           <AIBotLottie style={{width: "100%", height: "100%"}} />
         </div>
       </button>
@@ -203,8 +203,8 @@ export default function AIChatbot() {
   return (
     <div
       className={cn(
-        "fixed bottom-6 right-6 w-[350px] sm:w-[400px] bg-white rounded-2xl shadow-2xl border border-gray-100 flex flex-col transition-all z-[9999]",
-        isMinimized ? "h-auto overflow-hidden" : "h-[550px] overflow-hidden"
+        "fixed bottom-[120px] md:bottom-6 right-3 md:right-6 w-[90vw] md:w-[350px] sm:w-[400px] bg-white rounded-2xl shadow-2xl border border-gray-100 flex flex-col transition-all z-[9999]",
+        isMinimized ? "h-auto overflow-hidden" : "h-[500px] md:h-[550px] overflow-hidden"
       )}
     >
       {/* Header */}

@@ -7,24 +7,21 @@
 
 /* ============================================================================
    THEME CONFIGURATION - Royal Blue
-   ============================================================================
-   To change the entire color scheme, update these CSS variables.
-   All colors are defined in HSL format for easy manipulation.
-   
-   Primary: Royal Blue (#2563EB)
    ============================================================================ */
 
+/* ... existing theme config ... */
+
 @layer base {
-  :root { 
+  :root {
     --background: 0 0% 100%;
     --foreground: 222 47% 11%;
- 
+
     --card: 0 0% 100%;
     --card-foreground: 222 47% 11%;
- 
+
     --popover: 0 0% 100%;
     --popover-foreground: 222 47% 11%;
- 
+
     --primary: 221 83% 53%; /* #2563EB */
     --primary-hover: 221 83% 46%; /* #1D4ED8 - darker for hover */
     --primary-light: 217 91% 60%; /* #3B82F6 - lighter accent */
@@ -135,6 +132,8 @@
       "Helvetica Neue", sans-serif;
     -webkit-font-smoothing: antialiased;
     -moz-osx-font-smoothing: grayscale;
+    overflow-x: hidden;
+    width: 100%;
   }
 }
 
@@ -330,6 +329,20 @@
 }
 
 /* ========================================
+   UTILITIES
+   ======================================== */
+@layer utilities {
+  .shadow-upper {
+    box-shadow: 0 -4px 6px -1px rgba(0, 0, 0, 0.05),
+      0 -2px 4px -1px rgba(0, 0, 0, 0.03);
+  }
+
+  .safe-area-bottom {
+    padding-bottom: env(safe-area-inset-bottom);
+  }
+}
+
+/* ========================================
    ANIMATIONS
    ======================================== */
 @keyframes scroll-left {
@@ -404,4 +417,3 @@
 .animate-pulse-ring {
   animation: pulse-ring 2s ease-in-out infinite;
 }
-

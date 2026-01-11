@@ -1,19 +1,18 @@
-'use client';
+"use client";
 
-import React, { useEffect, useState } from 'react';
-import Image from 'next/image';
-import { BiDislike, BiLike } from 'react-icons/bi';
-import { AiOutlineEdit } from 'react-icons/ai';
-import { FaStar, FaStarHalfAlt } from 'react-icons/fa';
-import { HiOutlineStar } from 'react-icons/hi';
-import { useForm } from 'react-hook-form';
-import { useQuery } from '@tanstack/react-query';
-import { toast } from 'react-hot-toast';
-import { useAuth } from '@/contexts/AuthProvider';
-import { useShop } from '@/contexts/ShopProvider';
-import { Button } from '@/components/ui/button';
-import { BadgeCheck } from 'lucide-react';
-import { useSiteSettings } from '@/hooks/useSiteSettings';
+import React, {useEffect, useState} from "react";
+import Image from "next/image";
+import {BiDislike, BiLike} from "react-icons/bi";
+import {AiOutlineEdit} from "react-icons/ai";
+import {FaStar, FaStarHalfAlt} from "react-icons/fa";
+import {HiOutlineStar} from "react-icons/hi";
+import {useForm} from "react-hook-form";
+import {useQuery} from "@tanstack/react-query";
+import {toast} from "react-hot-toast";
+import {useAuth} from "@/contexts/AuthProvider";
+import {Button} from "@/components/ui/button";
+import {BadgeCheck} from "lucide-react";
+import {useSiteSettings} from "@/hooks/useSiteSettings";
 
 interface ReviewData {
   _id: string;
@@ -39,7 +38,7 @@ interface ProductReviewProps {
 }
 
 function countAndPercentages(reviews: ReviewData[]) {
-  const starCounts: { [key: number]: number } = { 1: 0, 2: 0, 3: 0, 4: 0, 5: 0 };
+  const starCounts: {[key: number]: number} = {1: 0, 2: 0, 3: 0, 4: 0, 5: 0};
 
   reviews.forEach((review) => {
     if (starCounts[review.rating] !== undefined) {
@@ -48,7 +47,7 @@ function countAndPercentages(reviews: ReviewData[]) {
   });
 
   const totalReviews = reviews.length || 1;
-  const starPercentages: { [key: number]: number } = {};
+  const starPercentages: {[key: number]: number} = {};
 
   Object.keys(starCounts).forEach((key) => {
     const numKey = Number(key);
@@ -65,40 +64,44 @@ const ProductReview: React.FC<ProductReviewProps> = ({
   reviewLength,
   setReviewLength,
 }) => {
-  const { user } = useAuth();
-  const { allUsers } = useShop();
-  const { ecommerce } = useSiteSettings();
+  const {user} = useAuth();
+  const {ecommerce} = useSiteSettings();
   const [writeReview, setWriteReview] = useState(false);
   const [rating, setRating] = useState(0);
   const [currentPage, setCurrentPage] = useState(1);
   const pageSize = 3;
 
-  const { register, handleSubmit, reset, formState: { errors } } = useForm();
+  const {
+    register,
+    handleSubmit,
+    reset,
+    formState: {errors},
+  } = useForm();
 
-  const { data: allReviews = [], refetch } = useQuery({
-    queryKey: ['getreviews'],
+  const {data: allReviews = [], refetch} = useQuery({
+    queryKey: ["getreviews"],
     queryFn: async () => {
-      const res = await fetch(`${process.env.NEXT_PUBLIC_SERVER_URL}/api/reviews`);
+      const res = await fetch(
+        `${process.env.NEXT_PUBLIC_SERVER_URL}/api/reviews`
+      );
       return res.json();
     },
   });
 
-  // Filter reviews by product ID and attach reviewer info
-  const reviews: ReviewData[] = allReviews
-    .map((review: any) => {
-      const reviewer = allUsers.find((u: any) => u.email === review.email);
-      return { ...review, reviewer };
-    })
-    .filter((review: any) => review.productId === productId);
+  // Filter reviews by product ID
+  const reviews: ReviewData[] = allReviews.filter(
+    (review: any) => review.productId === productId
+  );
 
   useEffect(() => {
     setReviewLength(reviews.length);
   }, [reviews.length, setReviewLength]);
 
   const starPercentages = countAndPercentages(reviews);
-  const averageRating = reviews.length > 0
-    ? reviews.reduce((sum, review) => sum + review.rating, 0) / reviews.length
-    : 0;
+  const averageRating =
+    reviews.length > 0
+      ? reviews.reduce((sum, review) => sum + review.rating, 0) / reviews.length
+      : 0;
 
   // Pagination
   const totalPages = Math.ceil(reviews.length / pageSize);
@@ -111,12 +114,12 @@ const ProductReview: React.FC<ProductReviewProps> = ({
 
   const handleReview = async (data: any) => {
     if (!user) {
-      toast.error('Please login to post a review');
+      toast.error("Please login to post a review");
       return;
     }
 
     if (rating === 0) {
-      toast.error('Please select a rating');
+      toast.error("Please select a rating");
       return;
     }
 
@@ -130,21 +133,24 @@ const ProductReview: React.FC<ProductReviewProps> = ({
     };
 
     try {
-      const res = await fetch(`${process.env.NEXT_PUBLIC_SERVER_URL}/api/reviews`, {
-        method: 'POST',
-        headers: { 'content-type': 'application/json' },
-        body: JSON.stringify(review),
-      });
+      const res = await fetch(
+        `${process.env.NEXT_PUBLIC_SERVER_URL}/api/reviews`,
+        {
+          method: "POST",
+          headers: {"content-type": "application/json"},
+          body: JSON.stringify(review),
+        }
+      );
 
       if (res.ok) {
-        toast.success('Review Posted');
+        toast.success("Review Posted");
         setWriteReview(false);
         setRating(0);
         reset();
         refetch();
       }
     } catch (error) {
-      toast.error('Failed to post review');
+      toast.error("Failed to post review");
     }
   };
 
@@ -165,7 +171,9 @@ const ProductReview: React.FC<ProductReviewProps> = ({
       starsArr.push(<FaStarHalfAlt key="half" className="text-yellow-400" />);
     }
     for (let i = 0; i < emptyStars; i++) {
-      starsArr.push(<HiOutlineStar key={`empty-${i}`} className="text-gray-400" />);
+      starsArr.push(
+        <HiOutlineStar key={`empty-${i}`} className="text-gray-400" />
+      );
     }
 
     setStars(starsArr);
@@ -175,7 +183,9 @@ const ProductReview: React.FC<ProductReviewProps> = ({
 
   return (
     <div className="mb-10 text-foreground">
-      <h2 className="mb-6 text-center text-3xl font-bold lg:text-left">Reviews</h2>
+      <h2 className="mb-6 text-center text-3xl font-bold lg:text-left">
+        Reviews
+      </h2>
 
       <div className="grid gap-8 lg:grid-cols-4">
         {/* Rating Summary */}
@@ -194,7 +204,7 @@ const ProductReview: React.FC<ProductReviewProps> = ({
                   <div className="flex-1 h-2 bg-secondary rounded-full overflow-hidden">
                     <div
                       className="h-full bg-yellow-400 rounded-full"
-                      style={{ width: `${starPercentages[num] || 0}%` }}
+                      style={{width: `${starPercentages[num] || 0}%`}}
                     />
                   </div>
                 </div>
@@ -206,8 +216,8 @@ const ProductReview: React.FC<ProductReviewProps> = ({
         {/* Reviews List */}
         <div className="lg:col-span-3">
           {/* Write Review Button */}
-          <div className="flex justify-between items-center mb-6">
-            <div className="flex gap-2">
+          <div className="flex flex-col sm:flex-row sm:justify-between sm:items-center gap-3 mb-6">
+            <div className="flex flex-wrap gap-2">
               {[5, 4, 3, 2, 1].map((num) => (
                 <span
                   key={num}
@@ -220,7 +230,7 @@ const ProductReview: React.FC<ProductReviewProps> = ({
             <Button
               variant="outline"
               onClick={() => setWriteReview(!writeReview)}
-              className="flex items-center gap-2"
+              className="flex items-center gap-2 w-full sm:w-auto"
             >
               <AiOutlineEdit /> Write a Review
             </Button>
@@ -240,17 +250,19 @@ const ProductReview: React.FC<ProductReviewProps> = ({
                       >
                         <FaStar
                           size={28}
-                          className={num <= rating ? 'text-yellow-400' : 'text-gray-400'}
+                          className={
+                            num <= rating ? "text-yellow-400" : "text-gray-400"
+                          }
                         />
                       </button>
                     ))}
                   </div>
                   <span className="font-semibold">
-                    {rating === 1 && 'Very bad'}
-                    {rating === 2 && 'Bad'}
-                    {rating === 3 && 'Average'}
-                    {rating === 4 && 'Good'}
-                    {rating === 5 && 'Superb'}
+                    {rating === 1 && "Very bad"}
+                    {rating === 2 && "Bad"}
+                    {rating === 3 && "Average"}
+                    {rating === 4 && "Good"}
+                    {rating === 5 && "Superb"}
                   </span>
                 </div>
               </div>
@@ -260,10 +272,12 @@ const ProductReview: React.FC<ProductReviewProps> = ({
                 <textarea
                   className="w-full h-32 rounded-lg border border-border p-3 bg-background focus:border-primary focus:outline-none"
                   placeholder="Share your experience with this product..."
-                  {...register('comment', { required: 'Review is required' })}
+                  {...register("comment", {required: "Review is required"})}
                 />
                 {errors.comment && (
-                  <p className="text-destructive text-sm mt-1">{errors.comment.message as string}</p>
+                  <p className="text-destructive text-sm mt-1">
+                    {errors.comment.message as string}
+                  </p>
                 )}
 
                 <div className="flex justify-end gap-3 mt-4">
@@ -287,35 +301,46 @@ const ProductReview: React.FC<ProductReviewProps> = ({
           {/* Reviews */}
           <div className="space-y-4">
             {paginatedReviews.map((r, idx) => (
-              <div key={r._id || idx} className="p-5 border border-border rounded-xl bg-card">
-                <div className="flex justify-between items-start mb-3">
+              <div
+                key={r._id || idx}
+                className="p-5 border border-border rounded-xl bg-card"
+              >
+                <div className="flex flex-col sm:flex-row sm:justify-between sm:items-start gap-2 mb-3">
                   <div className="flex items-center gap-3">
                     {r.reviewer?.photoURL ? (
                       <Image
                         src={r.reviewer.photoURL}
-                        alt={r.reviewer.name || 'User'}
+                        alt={r.reviewer.name || "User"}
                         width={40}
                         height={40}
                         className="rounded-full"
                       />
                     ) : (
-                      <div className="w-10 h-10 rounded-full bg-primary/20 flex items-center justify-center">
+                      <div className="w-10 h-10 rounded-full bg-primary/20 flex items-center justify-center shrink-0">
                         <span className="text-primary font-bold">
-                          {(r.reviewer?.name || r.name || 'U')[0].toUpperCase()}
+                          {(r.reviewer?.name || r.name || "U")[0].toUpperCase()}
                         </span>
                       </div>
                     )}
-                    <div className="flex flex-col">
-                      <span className="font-medium">{r.reviewer?.name || r.name}</span>
+                    <div className="flex flex-col min-w-0">
+                      <span className="font-medium truncate">
+                        {r.reviewer?.name || r.name}
+                      </span>
                       {r.isVerified && (
                         <div className="flex items-center gap-1 text-[10px] font-bold text-green-600 uppercase tracking-wider">
-                          <BadgeCheck size={12} fill="currentColor" className="text-white" />
+                          <BadgeCheck
+                            size={12}
+                            fill="currentColor"
+                            className="text-white"
+                          />
                           Verified Purchase
                         </div>
                       )}
                     </div>
                   </div>
-                  <span className="text-sm text-muted-foreground">{r.date}</span>
+                  <span className="text-sm text-muted-foreground whitespace-nowrap">
+                    {r.date}
+                  </span>
                 </div>
 
                 <div className="flex text-yellow-400 mb-2">
@@ -344,7 +369,7 @@ const ProductReview: React.FC<ProductReviewProps> = ({
               {[...Array(totalPages)].map((_, i) => (
                 <Button
                   key={i}
-                  variant={currentPage === i + 1 ? 'default' : 'outline'}
+                  variant={currentPage === i + 1 ? "default" : "outline"}
                   size="sm"
                   onClick={() => setCurrentPage(i + 1)}
                 >

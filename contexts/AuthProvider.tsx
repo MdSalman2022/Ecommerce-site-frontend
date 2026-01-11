@@ -1,6 +1,12 @@
-'use client';
+"use client";
 
-import React, { createContext, useContext, useEffect, useState, ReactNode } from 'react';
+import React, {
+  createContext,
+  useContext,
+  useEffect,
+  useState,
+  ReactNode,
+} from "react";
 
 // User type matching backend schema
 interface User {
@@ -8,9 +14,11 @@ interface User {
   name: string;
   email: string;
   avatar?: string;
-  role: 'user' | 'moderator' | 'admin';
-  authProvider: 'local' | 'google' | 'facebook';
+  role: "user" | "moderator" | "admin";
+  authProvider: "local" | "google" | "facebook";
   isVerified: boolean;
+  phone?: string;
+  address?: string;
   createdAt?: string;
 }
 
@@ -28,12 +36,19 @@ interface AuthContextType {
   isModerator: boolean;
   isStaff: boolean;
   setLoading: (loading: boolean) => void;
-  register: (name: string, email: string, password: string) => Promise<AuthResponse>;
+  register: (
+    name: string,
+    email: string,
+    password: string
+  ) => Promise<AuthResponse>;
   login: (email: string, password: string) => Promise<AuthResponse>;
   loginWithGoogle: () => void;
   loginWithFacebook: () => void;
   logout: () => Promise<void>;
-  updatePassword: (currentPassword: string, newPassword: string) => Promise<AuthResponse>;
+  updatePassword: (
+    currentPassword: string,
+    newPassword: string
+  ) => Promise<AuthResponse>;
   resetPassword: (email: string) => Promise<void>;
   refreshUser: () => Promise<void>;
 }
@@ -45,7 +60,7 @@ export const AuthContext = createContext<AuthContextType | null>(null);
 export const useAuth = () => {
   const context = useContext(AuthContext);
   if (!context) {
-    throw new Error('useAuth must be used within an AuthProvider');
+    throw new Error("useAuth must be used within an AuthProvider");
   }
   return context;
 };
@@ -54,16 +69,14 @@ interface AuthProviderProps {
   children: ReactNode;
 }
 
-const AuthProvider = ({ children }: AuthProviderProps) => {
+const AuthProvider = ({children}: AuthProviderProps) => {
   const [user, setUser] = useState<User | null>(null);
   const [loading, setLoading] = useState(true);
 
-  // Auth Functions (API-based)
-
-  // Check if user is logged in on mount
+  // API auth helpers and bootstrap
   const refreshUser = async () => {
     try {
-      const token = localStorage.getItem('accessToken');
+      const token = localStorage.getItem("accessToken");
       if (!token) {
         setUser(null);
         setLoading(false);
@@ -72,9 +85,9 @@ const AuthProvider = ({ children }: AuthProviderProps) => {
 
       const response = await fetch(`${API_URL}/api/auth/me`, {
         headers: {
-          'Authorization': `Bearer ${token}`,
+          Authorization: `Bearer ${token}`,
         },
-        credentials: 'include',
+        credentials: "include",
       });
 
       if (response.ok) {
@@ -83,34 +96,34 @@ const AuthProvider = ({ children }: AuthProviderProps) => {
       } else {
         // Token invalid, try refresh
         const refreshResponse = await fetch(`${API_URL}/api/auth/refresh`, {
-          method: 'POST',
-          credentials: 'include',
+          method: "POST",
+          credentials: "include",
         });
 
         if (refreshResponse.ok) {
           const refreshData = await refreshResponse.json();
-          localStorage.setItem('accessToken', refreshData.accessToken);
+          localStorage.setItem("accessToken", refreshData.accessToken);
           // Retry getting user
           const retryResponse = await fetch(`${API_URL}/api/auth/me`, {
             headers: {
-              'Authorization': `Bearer ${refreshData.accessToken}`,
+              Authorization: `Bearer ${refreshData.accessToken}`,
             },
-            credentials: 'include',
+            credentials: "include",
           });
           if (retryResponse.ok) {
             const userData = await retryResponse.json();
             setUser(userData.user);
           } else {
-            localStorage.removeItem('accessToken');
+            localStorage.removeItem("accessToken");
             setUser(null);
           }
         } else {
-          localStorage.removeItem('accessToken');
+          localStorage.removeItem("accessToken");
           setUser(null);
         }
       }
     } catch (error) {
-      console.error('Auth check error:', error);
+      console.error("Auth check error:", error);
       setUser(null);
     } finally {
       setLoading(false);
@@ -118,52 +131,62 @@ const AuthProvider = ({ children }: AuthProviderProps) => {
   };
 
   // Register new user
-  const register = async (name: string, email: string, password: string): Promise<AuthResponse> => {
+  const register = async (
+    name: string,
+    email: string,
+    password: string
+  ): Promise<AuthResponse> => {
     setLoading(true);
     try {
       const response = await fetch(`${API_URL}/api/auth/register`, {
-        method: 'POST',
-        headers: { 'Content-Type': 'application/json' },
-        body: JSON.stringify({ name, email, password }),
-        credentials: 'include',
+        method: "POST",
+        headers: {"Content-Type": "application/json"},
+        body: JSON.stringify({name, email, password}),
+        credentials: "include",
       });
 
       const data: AuthResponse = await response.json();
 
       if (data.success && data.accessToken) {
-        localStorage.setItem('accessToken', data.accessToken);
+        localStorage.setItem("accessToken", data.accessToken);
         setUser(data.user || null);
       }
 
       return data;
     } catch (error) {
-      return { success: false, message: 'Registration failed. Please try again.' };
+      return {
+        success: false,
+        message: "Registration failed. Please try again.",
+      };
     } finally {
       setLoading(false);
     }
   };
 
   // Login with email/password
-  const login = async (email: string, password: string): Promise<AuthResponse> => {
+  const login = async (
+    email: string,
+    password: string
+  ): Promise<AuthResponse> => {
     setLoading(true);
     try {
       const response = await fetch(`${API_URL}/api/auth/login`, {
-        method: 'POST',
-        headers: { 'Content-Type': 'application/json' },
-        body: JSON.stringify({ email, password }),
-        credentials: 'include',
+        method: "POST",
+        headers: {"Content-Type": "application/json"},
+        body: JSON.stringify({email, password}),
+        credentials: "include",
       });
 
       const data: AuthResponse = await response.json();
 
       if (data.success && data.accessToken) {
-        localStorage.setItem('accessToken', data.accessToken);
+        localStorage.setItem("accessToken", data.accessToken);
         setUser(data.user || null);
       }
 
       return data;
     } catch (error) {
-      return { success: false, message: 'Login failed. Please try again.' };
+      return {success: false, message: "Login failed. Please try again."};
     } finally {
       setLoading(false);
     }
@@ -183,70 +206,71 @@ const AuthProvider = ({ children }: AuthProviderProps) => {
   const logout = async (): Promise<void> => {
     setLoading(true);
     try {
-      const token = localStorage.getItem('accessToken');
+      const token = localStorage.getItem("accessToken");
       await fetch(`${API_URL}/api/auth/logout`, {
-        method: 'POST',
+        method: "POST",
         headers: {
-          'Authorization': `Bearer ${token}`,
+          Authorization: `Bearer ${token}`,
         },
-        credentials: 'include',
+        credentials: "include",
       });
     } catch (error) {
-      console.error('Logout error:', error);
+      console.error("Logout error:", error);
     } finally {
-      localStorage.removeItem('accessToken');
+      localStorage.removeItem("accessToken");
       setUser(null);
       setLoading(false);
     }
   };
 
   // Update password
-  const updatePassword = async (currentPassword: string, newPassword: string): Promise<AuthResponse> => {
+  const updatePassword = async (
+    currentPassword: string,
+    newPassword: string
+  ): Promise<AuthResponse> => {
     try {
-      const token = localStorage.getItem('accessToken');
+      const token = localStorage.getItem("accessToken");
       const response = await fetch(`${API_URL}/api/auth/password`, {
-        method: 'PUT',
+        method: "PUT",
         headers: {
-          'Content-Type': 'application/json',
-          'Authorization': `Bearer ${token}`,
+          "Content-Type": "application/json",
+          Authorization: `Bearer ${token}`,
         },
-        body: JSON.stringify({ currentPassword, newPassword }),
-        credentials: 'include',
+        body: JSON.stringify({currentPassword, newPassword}),
+        credentials: "include",
       });
 
       return await response.json();
     } catch (error) {
-      return { success: false, message: 'Password update failed.' };
+      return {success: false, message: "Password update failed."};
     }
   };
 
-  // Reset password (placeholder - backend endpoint not yet implemented)
+  // Reset password placeholder until backend ready
   const resetPassword = async (email: string): Promise<void> => {
-    // TODO: Implement password reset endpoint on backend
-    // For now, just show a message that this feature is currently placeholder
-    console.log('Password reset requested for:', email);
+    console.log("Password reset requested for:", email);
     // Simulate API call
-    await new Promise(resolve => setTimeout(resolve, 1000));
+    await new Promise((resolve) => setTimeout(resolve, 1000));
   };
 
   // Check auth on mount and handle OAuth callback
   useEffect(() => {
     const init = async () => {
       // Check for OAuth callback
-      if (typeof window !== 'undefined') {
+      if (typeof window !== "undefined") {
         const urlParams = new URLSearchParams(window.location.search);
-        if (urlParams.get('success') === 'true') {
+        if (urlParams.get("success") === "true") {
           // OAuth was successful, refresh user
-          window.history.replaceState({}, '', window.location.pathname);
+          window.history.replaceState({}, "", window.location.pathname);
         }
       }
       await refreshUser();
     };
     init();
   }, []);
-  
-  const isAdmin = user?.role === 'admin';
-  const isModerator = user?.role === 'moderator';
+
+  const isAdmin = user?.role === "admin";
+  const isModerator = user?.role === "moderator";
   const isStaff = isAdmin || isModerator;
 
   const authInfo: AuthContextType = {
@@ -263,13 +287,11 @@ const AuthProvider = ({ children }: AuthProviderProps) => {
     logout,
     updatePassword,
     resetPassword,
-    refreshUser
+    refreshUser,
   };
-  
+
   return (
-    <AuthContext.Provider value={authInfo}>
-      {children}
-    </AuthContext.Provider>
+    <AuthContext.Provider value={authInfo}>{children}</AuthContext.Provider>
   );
 };
 

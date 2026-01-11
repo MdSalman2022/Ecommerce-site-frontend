@@ -56,7 +56,7 @@ import * as LucideIcons from "lucide-react";
 export default function Header() {
   const router = useRouter();
   const {user, logout} = useAuth();
-  const {cart} = useUserActivity();
+  const {cart, trackSearch} = useUserActivity();
   const {toggleSidebar} = useUI();
   const {announcementBar, layout} = useSiteSettings();
   const {categories, isLoading: isCategoriesLoading} = useCategories();
@@ -73,6 +73,9 @@ export default function Header() {
   const handleSearch = (e: React.FormEvent) => {
     e.preventDefault();
     if (searchQuery.trim()) {
+      // Track search for AI recommendations
+      trackSearch(searchQuery.trim());
+
       if (isAISearch) {
         router.push(`/search/${encodeURIComponent(searchQuery)}`);
       } else {
@@ -249,21 +252,21 @@ export default function Header() {
                 )}
               </Link>
 
-              {/* Wishlist - Secondary action, hidden on smallest screens for cleaner look */}
+              {/* Wishlist - Desktop only */}
               {user && showWishlist && (
                 <Link
                   href="/wishlist"
-                  className="hidden xs:flex sm:flex items-center justify-center min-w-11 min-h-11 text-gray-600 hover:text-red-500 transition-colors"
+                  className="hidden lg:flex items-center justify-center min-w-11 min-h-11 text-gray-600 hover:text-red-500 transition-colors"
                 >
                   <Heart className="w-5 h-5" />
                 </Link>
               )}
 
-              {/* User Menu - Clean button styling */}
+              {/* User Menu - Desktop only */}
               {user ? (
                 <DropdownMenu>
                   <DropdownMenuTrigger asChild>
-                    <button className="flex items-center justify-center min-w-11 min-h-11 outline-none">
+                    <button className="hidden lg:flex items-center justify-center min-w-11 min-h-11 outline-none">
                       {user.avatar ? (
                         <Image
                           src={user.avatar}
@@ -280,6 +283,9 @@ export default function Header() {
                     </button>
                   </DropdownMenuTrigger>
                   <DropdownMenuContent align="end" className="w-48">
+                    <DropdownMenuItem asChild>
+                      <Link href="/profile">Profile</Link>
+                    </DropdownMenuItem>
                     {["admin", "moderator"].includes(user.role) && (
                       <DropdownMenuItem asChild>
                         <Link href="/dashboard">Dashboard</Link>
@@ -297,19 +303,12 @@ export default function Header() {
                   </DropdownMenuContent>
                 </DropdownMenu>
               ) : (
-                <Link href="/login">
+                <Link href="/login" className="hidden lg:block">
                   <Button
                     size="sm"
-                    className="hidden sm:flex rounded-full px-6 bg-primary hover:bg-primary/90 text-white shadow-md shadow-primary/20"
+                    className="rounded-full px-6 bg-primary hover:bg-primary/90 text-white shadow-md shadow-primary/20"
                   >
                     Login
-                  </Button>
-                  <Button
-                    size="icon"
-                    variant="ghost"
-                    className="sm:hidden text-gray-600"
-                  >
-                    <User className="w-5 h-5" />
                   </Button>
                 </Link>
               )}
@@ -504,40 +503,6 @@ export default function Header() {
           </div>
         </>
       )}
-
-      {/* ========== MOBILE BOTTOM BAR ========== */}
-      <div className="fixed bottom-0 left-0 right-0 bg-white border-t py-2 px-4 flex items-center justify-around z-50 lg:hidden">
-        {showCompare && (
-          <Link
-            href="/compare"
-            className="flex flex-col items-center text-gray-500"
-          >
-            <GitCompare className="w-5 h-5" />
-            <span className="text-[10px]">Compare</span>
-          </Link>
-        )}
-        {showWishlist && (
-          <Link
-            href="/wishlist"
-            className="flex flex-col items-center text-gray-500"
-          >
-            <Heart className="w-5 h-5" />
-            <span className="text-[10px]">Wishlist</span>
-          </Link>
-        )}
-        <Link
-          href="/cart"
-          className="flex flex-col items-center text-gray-500 relative"
-        >
-          <ShoppingBag className="w-5 h-5" />
-          {cartCount > 0 && (
-            <span className="absolute -top-1 right-3 bg-primary text-white text-[9px] w-4 h-4 rounded-full flex items-center justify-center">
-              {cartCount}
-            </span>
-          )}
-          <span className="text-[10px]">Cart</span>
-        </Link>
-      </div>
     </>
   );
 }

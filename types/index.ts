@@ -5,22 +5,22 @@ export interface Product {
   slug?: string;
   description?: string;
   tags?: string[];
-  
+
   category?: any;
   subCategory?: any;
-  
+
   brand?: string;
   manufacturer?: string;
-  
+
   images: string[];
-  
+
   flags?: {
     featured: boolean;
     latest: boolean;
     bestseller: boolean;
     special: boolean;
   };
-  
+
   variants?: {
     attributes: Record<string, string>;
     sku?: string;
@@ -31,7 +31,7 @@ export interface Product {
     sells?: number;
     images?: string[];
   }[];
-  
+
   rating?: number;
   createdAt?: string;
   updatedAt?: string;
@@ -52,8 +52,7 @@ export interface Subcategory {
   slug: string;
 }
 
-// Cart types
-// Cart types
+// Cart type definitions
 export interface CartItem extends Product {
   price: number;
   image: string;
