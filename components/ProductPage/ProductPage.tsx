@@ -35,14 +35,31 @@ function ProductPage() {
   const params = useParams();
   const searchParams = useSearchParams();
 
-  // Derive unique brands from products
-  const brands = React.useMemo(() => {
-    const uniqueBrands = new Set<string>();
-    products.forEach((p: any) => {
-      if (p.brand) uniqueBrands.add(p.brand);
-    });
-    return Array.from(uniqueBrands).sort();
-  }, [products]);
+  // Fetch unique brands from the backend based on current category context
+  const [brands, setBrands] = useState<string[]>([]);
+  
+  React.useEffect(() => {
+     const fetchBrands = async () => {
+        try {
+           const categoryParam = params?.category as string;
+           const subcategoryParam = params?.subcategory as string;
+           
+           const queryParams = new URLSearchParams();
+           if (categoryParam) queryParams.append('category', categoryParam);
+           if (subcategoryParam) queryParams.append('subCategory', subcategoryParam);
+           
+           const res = await fetch(`${process.env.NEXT_PUBLIC_SERVER_URL}/api/products/brands?${queryParams.toString()}`);
+           if (res.ok) {
+              const data = await res.json();
+              setBrands(data);
+           }
+        } catch (error) {
+           console.error("Failed to fetch brands", error);
+        }
+     };
+     
+     fetchBrands();
+  }, [params?.category, params?.subcategory]);
   
   // Local Filter State
   const [filters, setFilters] = useState({

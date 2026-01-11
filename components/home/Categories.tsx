@@ -18,9 +18,11 @@ export default function Categories({ config }: { config?: any }) {
 
   return (
     <section className="container mx-auto px-4 py-8">
-      <h2 className="text-xl md:text-2xl font-bold text-gray-800 mb-6">
-        {config?.title || 'Popular Categories'}
-      </h2>
+      {!config?.hideTitle && (
+        <h2 className="text-xl md:text-2xl font-bold text-gray-800 mb-6">
+          {config?.title || 'Popular Categories'}
+        </h2>
+      )}
       
       {isLoading ? (
         <div className={`grid ${gridCols} gap-3 md:gap-4`}>

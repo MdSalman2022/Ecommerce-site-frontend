@@ -1,31 +1,18 @@
 'use client';
 
 import React from 'react';
-import { 
-    SiSamsung, SiAsus, SiRazer, SiIntel, SiAmd, SiNvidia, 
-    SiLogitech, SiDell, SiCorsair, SiXiaomi, SiLenovo, SiHp
-} from 'react-icons/si';
-import { FaApple } from 'react-icons/fa';
 import { Label } from '@/components/ui/label';
 import { Switch } from '@/components/ui/switch';
 import { Slider } from '@/components/ui/slider';
-import { Tabs, TabsContent, TabsList, TabsTrigger } from '@/components/ui/tabs';
-import { Input } from '@/components/ui/input';
-import { Button } from '@/components/ui/button';
-import { Plus, Trash2, Image as ImageIcon } from 'lucide-react';
-
-interface CustomImage {
-    id: string;
-    url: string;
-    alt: string;
-}
+import { useCategories } from '@/hooks/useCategories';
+import Image from 'next/image';
 
 interface MarqueeConfig {
-    displayType: 'icons' | 'images';
+    displayType: 'icons' | 'images'; // We might keep 'icons' as default for category icons
     speed: number;
     pauseOnHover: boolean;
-    selectedBrands: string[];
-    customImages: CustomImage[];
+    selectedBrands: string[]; // We'll use this array to store selected Category IDs/Slugs
+    customImages: any[]; // Deprecated but kept for type compatibility
 }
 
 interface BrandMarqueeEditorProps {
@@ -33,57 +20,30 @@ interface BrandMarqueeEditorProps {
     onChange: (config: MarqueeConfig) => void;
 }
 
-const PREDEFINED_BRANDS = [
-    { id: 'apple', name: 'Apple', icon: FaApple },
-    { id: 'samsung', name: 'Samsung', icon: SiSamsung },
-    { id: 'xiaomi', name: 'Xiaomi', icon: SiXiaomi },
-    { id: 'asus', name: 'ASUS', icon: SiAsus },
-    { id: 'razer', name: 'Razer', icon: SiRazer },
-    { id: 'intel', name: 'Intel', icon: SiIntel },
-    { id: 'amd', name: 'AMD', icon: SiAmd },
-    { id: 'nvidia', name: 'NVIDIA', icon: SiNvidia },
-    { id: 'dell', name: 'Dell', icon: SiDell },
-    { id: 'logitech', name: 'Logitech', icon: SiLogitech },
-    { id: 'corsair', name: 'Corsair', icon: SiCorsair },
-    { id: 'lenovo', name: 'Lenovo', icon: SiLenovo },
-    { id: 'hp', name: 'HP', icon: SiHp }
-];
-
 export default function BrandMarqueeEditor({ config, onChange }: BrandMarqueeEditorProps) {
-    const handleToggleBrand = (brandId: string) => {
-        const isSelected = config.selectedBrands.includes(brandId);
+    const { categories, isLoading } = useCategories();
+
+    // Helper to toggle selection
+    const handleToggleCategory = (catSlug: string) => {
+        const isSelected = config.selectedBrands.includes(catSlug);
         const updated = isSelected 
-            ? config.selectedBrands.filter(id => id !== brandId)
-            : [...config.selectedBrands, brandId];
+            ? config.selectedBrands.filter(id => id !== catSlug)
+            : [...config.selectedBrands, catSlug];
         onChange({ ...config, selectedBrands: updated });
     };
 
-    const handleAddImage = () => {
-        const newImg: CustomImage = {
-            id: `img-${Date.now()}`,
-            url: '',
-            alt: ''
-        };
-        onChange({ ...config, customImages: [...config.customImages, newImg] });
-    };
-
-    const handleImageChange = (id: string, field: keyof CustomImage, value: string) => {
-        const updated = config.customImages.map(img => 
-            img.id === id ? { ...img, [field]: value } : img
-        );
-        onChange({ ...config, customImages: updated });
-    };
-
-    const handleRemoveImage = (id: string) => {
-        onChange({ ...config, customImages: config.customImages.filter(img => img.id !== id) });
-    };
-
+    // Flatten categories for easy selection if desired, or show grouped
+    // User asked: "show me all the categories subcategories... i will select the ones i want"
+    // Let's list all: Parent, then Children.
+    
+    // We can show a grid.
+    
     return (
         <div className="space-y-6">
             <div className="flex items-center justify-between bg-accent/10 p-4 rounded-xl">
                 <div className="space-y-1">
                     <Label className="text-sm font-bold">Marquee Speed</Label>
-                    <p className="text-xs text-muted-foreground">Adjust how fast brands scroll (50-200)</p>
+                    <p className="text-xs text-muted-foreground">Adjust how fast items scroll (50-200)</p>
                 </div>
                 <div className="w-1/2">
                     <Slider 
@@ -107,62 +67,67 @@ export default function BrandMarqueeEditor({ config, onChange }: BrandMarqueeEdi
                 />
             </div>
 
-            <Tabs value={config.displayType} onValueChange={(val: any) => onChange({ ...config, displayType: val })}>
-                <TabsList className="grid w-full grid-cols-2">
-                    <TabsTrigger value="icons">Brand Icons</TabsTrigger>
-                    <TabsTrigger value="images">Custom Images</TabsTrigger>
-                </TabsList>
+            <div className="space-y-4">
+                <div className="flex items-center justify-between">
+                    <h3 className="text-sm font-bold">Select Categories to Show</h3>
+                    <span className="text-xs text-muted-foreground">{config.selectedBrands.length} selected</span>
+                </div>
 
-                <TabsContent value="icons" className="mt-4 space-y-4">
+                {isLoading ? (
+                    <div className="py-8 text-center text-sm text-gray-500">Loading categories...</div>
+                ) : (
                     <div className="grid grid-cols-2 sm:grid-cols-3 lg:grid-cols-4 gap-3">
-                        {PREDEFINED_BRANDS.map((brand) => (
-                            <div 
-                                key={brand.id}
-                                onClick={() => handleToggleBrand(brand.id)}
-                                className={`flex items-center gap-3 p-3 rounded-xl border cursor-pointer transition-all ${config.selectedBrands.includes(brand.id) ? 'border-primary bg-primary/5 ring-1 ring-primary' : 'hover:border-primary/50'}`}
-                            >
-                                <brand.icon className={`w-5 h-5 ${config.selectedBrands.includes(brand.id) ? 'text-primary' : 'text-muted-foreground'}`} />
-                                <span className="text-xs font-semibold">{brand.name}</span>
-                            </div>
-                        ))}
-                    </div>
-                </TabsContent>
-
-                <TabsContent value="images" className="mt-4 space-y-4">
-                    <div className="space-y-3">
-                        {config.customImages.map((img, index) => (
-                            <div key={img.id} className="flex items-center gap-3 p-3 border rounded-xl bg-accent/5">
-                                <span className="text-xs font-bold text-muted-foreground w-6">#{index + 1}</span>
-                                <div className="flex-1 grid grid-cols-1 md:grid-cols-2 gap-3">
-                                    <Input 
-                                        placeholder="Image URL (https://...)" 
-                                        value={img.url}
-                                        onChange={(e) => handleImageChange(img.id, 'url', e.target.value)}
-                                        className="h-8 text-xs"
-                                    />
-                                    <Input 
-                                        placeholder="Alt Text (e.g. Sony)" 
-                                        value={img.alt}
-                                        onChange={(e) => handleImageChange(img.id, 'alt', e.target.value)}
-                                        className="h-8 text-xs"
-                                    />
-                                </div>
-                                <Button 
-                                    variant="ghost" 
-                                    size="icon" 
-                                    className="h-8 w-8 text-red-500 hover:bg-red-50"
-                                    onClick={() => handleRemoveImage(img.id)}
+                        {categories.map((cat) => (
+                            <React.Fragment key={cat._id}>
+                                {/* Parent Category */}
+                                <div 
+                                    onClick={() => handleToggleCategory(cat.slug)}
+                                    className={`flex flex-col items-center gap-2 p-3 rounded-xl border cursor-pointer transition-all ${
+                                        config.selectedBrands.includes(cat.slug) 
+                                            ? 'border-primary bg-primary/5 ring-2 ring-primary' 
+                                            : 'hover:border-primary/50'
+                                    }`}
                                 >
-                                    <Trash2 className="w-4 h-4" />
-                                </Button>
-                            </div>
+                                    {cat.image ? (
+                                        <div className="relative w-12 h-12 rounded-lg overflow-hidden bg-gray-50">
+                                            <Image src={cat.image} alt={cat.name} fill className="object-contain p-1" />
+                                        </div>
+                                    ) : (
+                                        <div className="w-12 h-12 rounded-lg bg-gray-100 flex items-center justify-center text-sm font-bold text-gray-500">
+                                            {cat.name.slice(0, 2).toUpperCase()}
+                                        </div>
+                                    )}
+                                    <span className="text-xs font-semibold text-center line-clamp-2">{cat.name}</span>
+                                </div>
+
+                                {/* Subcategories */}
+                                {cat.children?.map((sub: any) => (
+                                    <div 
+                                        key={sub._id}
+                                        onClick={() => handleToggleCategory(sub.slug)}
+                                        className={`flex flex-col items-center gap-2 p-3 rounded-xl border cursor-pointer transition-all ${
+                                            config.selectedBrands.includes(sub.slug) 
+                                                ? 'border-primary bg-primary/5 ring-2 ring-primary' 
+                                                : 'hover:border-primary/50 bg-gray-50/50'
+                                        }`}
+                                    >
+                                        {sub.image ? (
+                                            <div className="relative w-10 h-10 rounded-lg overflow-hidden bg-white">
+                                                <Image src={sub.image} alt={sub.name} fill className="object-contain p-1" />
+                                            </div>
+                                        ) : (
+                                            <div className="w-10 h-10 rounded-lg bg-gray-100 flex items-center justify-center text-xs font-bold text-gray-400">
+                                                {sub.name.slice(0, 2).toUpperCase()}
+                                            </div>
+                                        )}
+                                        <span className="text-xs text-center line-clamp-2 text-gray-700">{sub.name}</span>
+                                    </div>
+                                ))}
+                            </React.Fragment>
                         ))}
-                        <Button variant="outline" className="w-full border-dashed" onClick={handleAddImage}>
-                            <Plus className="w-4 h-4 mr-2" /> Add Custom Brand Image
-                        </Button>
                     </div>
-                </TabsContent>
-            </Tabs>
+                )}
+            </div>
         </div>
     );
 }

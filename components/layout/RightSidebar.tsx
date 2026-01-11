@@ -1,34 +1,51 @@
-'use client';
+"use client";
 
-import Link from 'next/link';
-import { Facebook, Instagram } from 'lucide-react';
-import { FaTiktok } from 'react-icons/fa';
+import React from "react";
+import Link from "next/link";
+import {Facebook, Instagram} from "lucide-react";
+import {FaTiktok} from "react-icons/fa";
+import {useSiteSettings} from "@/hooks/useSiteSettings";
 
-const socialLinks = [
-  { 
-    icon: Facebook, 
-    href: 'https://facebook.com', 
-    className: 'bg-blue-600 hover:bg-blue-700',
-    label: 'Facebook' 
-  },
-  { 
-    icon: Instagram, 
-    href: 'https://instagram.com', 
-    className: 'bg-gradient-to-br from-purple-600 via-pink-500 to-primary/70 hover:opacity-90',
-    label: 'Instagram' 
-  },
-  { 
-    icon: FaTiktok, 
-    href: 'https://tiktok.com', 
-    className: 'bg-black hover:bg-gray-800',
-    label: 'TikTok' 
-  },
-];
+// Static links removed in favor of dynamic settings
 
 export default function RightSidebar() {
+  const {social} = useSiteSettings();
+
+  // Map dynamic settings to icon components
+  const activeLinks = React.useMemo(() => {
+    const links = [];
+
+    if (social.facebook)
+      links.push({
+        icon: Facebook,
+        href: social.facebook,
+        className: "bg-blue-600 hover:bg-blue-700",
+        label: "Facebook",
+      });
+    if (social.instagram)
+      links.push({
+        icon: Instagram,
+        href: social.instagram,
+        className:
+          "bg-gradient-to-br from-purple-600 via-pink-500 to-primary/70 hover:opacity-90",
+        label: "Instagram",
+      });
+    if (social.tiktok)
+      links.push({
+        icon: FaTiktok,
+        href: social.tiktok,
+        className: "bg-black hover:bg-gray-800",
+        label: "TikTok",
+      });
+
+    return links;
+  }, [social]);
+
+  if (activeLinks.length === 0) return null;
+
   return (
     <aside className="hidden lg:flex fixed right-0 top-1/2 -translate-y-1/2 z-40 flex-col rounded-l-lg overflow-hidden shadow-lg">
-      {socialLinks.map((social, index) => {
+      {activeLinks.map((social, index) => {
         const Icon = social.icon;
         return (
           <Link

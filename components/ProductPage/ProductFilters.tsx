@@ -2,19 +2,19 @@
 
 import React from "react";
 import Link from "next/link";
-import { useParams } from "next/navigation";
+import {useParams} from "next/navigation";
 import {
   Accordion,
   AccordionContent,
   AccordionItem,
   AccordionTrigger,
 } from "@/components/ui/accordion";
-import { Checkbox } from "@/components/ui/checkbox";
-import { Slider } from "@/components/ui/slider";
-import { Label } from "@/components/ui/label";
-import { Button } from "@/components/ui/button";
-import { FaStar } from "react-icons/fa";
-import { Category } from "@/hooks/useCategories";
+import {Checkbox} from "@/components/ui/checkbox";
+import {Slider} from "@/components/ui/slider";
+import {Label} from "@/components/ui/label";
+import {Button} from "@/components/ui/button";
+import {FaStar} from "react-icons/fa";
+import {Category} from "@/hooks/useCategories";
 
 interface FilterState {
   priceRange: [number, number];
@@ -45,13 +45,19 @@ export function ProductFilters({
 }: ProductFiltersProps) {
   const params = useParams();
   const currentCategory = (params?.category as string) || "";
+  const [visibleBrandsCount, setVisibleBrandsCount] = React.useState(5);
+
+  // Reset visible brands when brands list changes (e.g. category change)
+  React.useEffect(() => {
+    setVisibleBrandsCount(5);
+  }, [brands]);
 
   const handleBrandChange = (brand: string) => {
     setFilters((prev) => {
       const newBrands = prev.selectedBrands.includes(brand)
         ? prev.selectedBrands.filter((b) => b !== brand)
         : [...prev.selectedBrands, brand];
-      return { ...prev, selectedBrands: newBrands };
+      return {...prev, selectedBrands: newBrands};
     });
   };
 
@@ -60,12 +66,12 @@ export function ProductFilters({
       const newRatings = prev.selectedRatings.includes(rating)
         ? prev.selectedRatings.filter((r) => r !== rating)
         : [...prev.selectedRatings, rating];
-      return { ...prev, selectedRatings: newRatings };
+      return {...prev, selectedRatings: newRatings};
     });
   };
 
   const handlePriceChange = (value: number[]) => {
-    setFilters((prev) => ({ ...prev, priceRange: [value[0], value[1]] }));
+    setFilters((prev) => ({...prev, priceRange: [value[0], value[1]]}));
   };
 
   const clearFilters = () => {
@@ -102,36 +108,90 @@ export function ProductFilters({
             Category
           </AccordionTrigger>
           <AccordionContent>
-            <ul className="space-y-2.5 pt-1">
+            <ul className="space-y-1.5 pt-1">
               {categories.map((item, index) => {
-                const isActive = item.slug.toLowerCase() === currentCategory.toLowerCase();
+                const isActive =
+                  item.slug.toLowerCase() === currentCategory.toLowerCase();
+                // Check if any child is active (to keep parent expanded/highlighted if needed, or structured)
+                const isChildActive = item.children?.some(
+                  (c) =>
+                    c.slug.toLowerCase() ===
+                    (params?.subcategory as string)?.toLowerCase()
+                );
+                const showChildren = isActive || isChildActive;
+
                 return (
-                  <li
-                    key={index}
-                    className={`text-sm transition-all duration-200 ${
-                      isActive
-                        ? "font-bold text-primary translate-x-1"
-                        : "text-gray-500 hover:text-primary hover:translate-x-1"
-                    }`}
-                  >
+                  <li key={index} className="flex flex-col">
                     <Link
                       href={`/category/${item.slug}`}
                       onClick={closeMobileSheet}
-                      className="capitalize flex items-center gap-2.5"
+                      className={`text-sm capitalize px-3 py-2.5 rounded-lg transition-all duration-200 flex items-center gap-2.5 group ${
+                        isActive
+                          ? "bg-primary/10 font-bold text-primary border border-primary/20"
+                          : "text-gray-700 hover:bg-gray-50 hover:text-primary border border-transparent"
+                      }`}
                     >
-                      {isActive && <div className="w-1.5 h-1.5 rounded-full bg-primary shadow-sm shadow-primary/50" />}
-                      {item.name}
+                      {/* Icon or dot indicator */}
+                      <div
+                        className={`w-1.5 h-1.5 rounded-full transition-all duration-200 ${
+                          isActive
+                            ? "bg-primary shadow-sm shadow-primary/50"
+                            : "bg-gray-300 group-hover:bg-primary/50"
+                        }`}
+                      />
+                      <span className="flex-1">{item.name}</span>
+                      {/* Show badge with count if has children */}
+                      {item.children && item.children.length > 0 && (
+                        <span
+                          className={`text-[10px] font-bold px-1.5 py-0.5 rounded transition-colors ${
+                            isActive
+                              ? "bg-primary/20 text-primary"
+                              : "bg-gray-100 text-gray-500 group-hover:bg-primary/10 group-hover:text-primary"
+                          }`}
+                        >
+                          {item.children.length}
+                        </span>
+                      )}
                     </Link>
+
+                    {/* Subcategories */}
+                    {showChildren &&
+                      item.children &&
+                      item.children.length > 0 && (
+                        <ul className="pl-5 mt-1.5 space-y-1 ml-2 border-l-2 border-primary/20">
+                          {item.children.map((child) => {
+                            const isSubActive =
+                              child.slug.toLowerCase() ===
+                              (params?.subcategory as string)?.toLowerCase();
+                            return (
+                              <li key={child._id}>
+                                <Link
+                                  href={`/category/${item.slug}/${child.slug}`}
+                                  onClick={closeMobileSheet}
+                                  className={`block text-xs capitalize px-3 py-2 rounded-md transition-all duration-150 ${
+                                    isSubActive
+                                      ? "text-primary font-bold bg-primary/5 border-l-2 border-primary pl-2.5"
+                                      : "text-gray-600 hover:text-primary hover:bg-gray-50/50 hover:pl-2.5"
+                                  }`}
+                                >
+                                  {child.name}
+                                </Link>
+                              </li>
+                            );
+                          })}
+                        </ul>
+                      )}
                   </li>
                 );
               })}
-              <li className="pt-3">
+              <li className="pt-3 mt-3 border-t border-gray-100">
                 <Link
                   href="/products"
                   onClick={closeMobileSheet}
-                  className="text-xs font-bold text-primary hover:text-primary/80 uppercase tracking-wider"
+                  className="flex items-center justify-center gap-2 text-xs font-bold text-primary hover:text-primary/80 uppercase tracking-wider px-3 py-2 rounded-lg hover:bg-primary/5 transition-all"
                 >
-                  View All Products
+                  <span>View All Products</span>
+                  <span className="text-lg">→</span>
                 </Link>
               </li>
             </ul>
@@ -146,8 +206,11 @@ export function ProductFilters({
             </AccordionTrigger>
             <AccordionContent>
               <div className="space-y-3 pt-1">
-                {brands.map((brand) => (
-                  <div key={brand} className="flex items-center space-x-2.5 group cursor-pointer">
+                {brands.slice(0, visibleBrandsCount).map((brand) => (
+                  <div
+                    key={brand}
+                    className="flex items-center space-x-2.5 group cursor-pointer"
+                  >
                     <Checkbox
                       id={`brand-${brand}`}
                       checked={filters.selectedBrands.includes(brand)}
@@ -162,6 +225,27 @@ export function ProductFilters({
                     </Label>
                   </div>
                 ))}
+
+                {brands.length > 5 && visibleBrandsCount < brands.length && (
+                  <button
+                    onClick={() =>
+                      setVisibleBrandsCount((prev) =>
+                        Math.min(prev + 5, brands.length)
+                      )
+                    }
+                    className="text-xs font-bold text-blue-600 hover:text-blue-700 mt-2 block"
+                  >
+                    + See More
+                  </button>
+                )}
+                {visibleBrandsCount > 5 && (
+                  <button
+                    onClick={() => setVisibleBrandsCount(5)}
+                    className="text-xs font-medium text-gray-400 hover:text-gray-600 mt-1 block"
+                  >
+                    Show Less
+                  </button>
+                )}
               </div>
             </AccordionContent>
           </AccordionItem>
@@ -186,16 +270,20 @@ export function ProductFilters({
               />
               <div className="flex items-center justify-between gap-3">
                 <div className="flex-1 flex flex-col gap-1">
-                    <span className="text-[10px] text-gray-400 font-bold uppercase">Min</span>
-                    <div className="bg-gray-50 border border-gray-100 rounded-lg px-3 py-2 text-sm font-bold text-gray-700">
-                        ${filters.priceRange[0].toLocaleString()}
-                    </div>
+                  <span className="text-[10px] text-gray-400 font-bold uppercase">
+                    Min
+                  </span>
+                  <div className="bg-gray-50 border border-gray-100 rounded-lg px-3 py-2 text-sm font-bold text-gray-700">
+                    ${filters.priceRange[0].toLocaleString()}
+                  </div>
                 </div>
                 <div className="flex-1 flex flex-col gap-1">
-                    <span className="text-[10px] text-gray-400 font-bold uppercase">Max</span>
-                    <div className="bg-gray-50 border border-gray-100 rounded-lg px-3 py-2 text-sm font-bold text-gray-700">
-                        ${filters.priceRange[1].toLocaleString()}
-                    </div>
+                  <span className="text-[10px] text-gray-400 font-bold uppercase">
+                    Max
+                  </span>
+                  <div className="bg-gray-50 border border-gray-100 rounded-lg px-3 py-2 text-sm font-bold text-gray-700">
+                    ${filters.priceRange[1].toLocaleString()}
+                  </div>
                 </div>
               </div>
             </div>
@@ -210,7 +298,10 @@ export function ProductFilters({
           <AccordionContent>
             <div className="space-y-3 pt-1">
               {[5, 4, 3, 2, 1].map((rating) => (
-                <div key={rating} className="flex items-center space-x-2.5 group cursor-pointer">
+                <div
+                  key={rating}
+                  className="flex items-center space-x-2.5 group cursor-pointer"
+                >
                   <Checkbox
                     id={`rating-${rating}`}
                     checked={filters.selectedRatings.includes(rating)}
@@ -225,12 +316,18 @@ export function ProductFilters({
                       {[...Array(5)].map((_, i) => (
                         <FaStar
                           key={i}
-                          className={i < rating ? "fill-current" : "text-gray-200"}
+                          className={
+                            i < rating ? "fill-current" : "text-gray-200"
+                          }
                           size={12}
                         />
                       ))}
                     </div>
-                    {rating < 5 && <span className="text-xs font-medium text-gray-400">& Up</span>}
+                    {rating < 5 && (
+                      <span className="text-xs font-medium text-gray-400">
+                        & Up
+                      </span>
+                    )}
                   </Label>
                 </div>
               ))}

@@ -1,86 +1,88 @@
-'use client';
+"use client";
 
-import React from 'react';
-import Marquee from 'react-fast-marquee';
-import Image from 'next/image';
-import { 
-  SiSamsung, SiAsus, SiRazer, SiIntel, SiAmd, SiNvidia, 
-  SiLogitech, SiDell, SiCorsair, SiXiaomi, SiLenovo, SiHp
-} from 'react-icons/si';
-import { FaApple } from 'react-icons/fa';
+import React from "react";
+import Marquee from "react-fast-marquee";
+import Image from "next/image";
+import Link from "next/link";
+import {useCategories} from "@/hooks/useCategories";
 
 interface CustomImage {
-    id: string;
-    url: string;
-    alt: string;
+  id: string;
+  url: string;
+  alt: string;
 }
 
 interface MarqueeConfig {
-    displayType: 'icons' | 'images';
-    speed: number;
-    pauseOnHover: boolean;
-    selectedBrands: string[];
-    customImages: CustomImage[];
+  displayType: "icons" | "images";
+  speed: number;
+  pauseOnHover: boolean;
+  selectedBrands: string[]; // These are now Category Slugs
+  customImages: CustomImage[];
 }
 
-const BRAND_ICONS: Record<string, any> = {
-    apple: <FaApple className="mx-6 text-5xl lg:text-6xl text-gray-700 hover:text-black transition-colors" />,
-    samsung: <SiSamsung className="mx-6 text-4xl lg:text-5xl text-blue-600" />,
-    xiaomi: <SiXiaomi className="mx-6 text-5xl lg:text-6xl text-orange-500" />,
-    asus: <SiAsus className="mx-6 text-4xl lg:text-5xl text-blue-600" />,
-    razer: <SiRazer className="mx-6 text-5xl lg:text-6xl text-green-600" />,
-    intel: <SiIntel className="mx-6 text-5xl lg:text-6xl text-blue-500" />,
-    amd: <SiAmd className="mx-6 text-4xl lg:text-5xl text-red-600" />,
-    nvidia: <SiNvidia className="mx-6 text-5xl lg:text-6xl text-green-500" />,
-    dell: <SiDell className="mx-6 text-5xl lg:text-6xl text-blue-700" />,
-    logitech: <SiLogitech className="mx-6 text-5xl lg:text-6xl text-sky-500" />,
-    corsair: <SiCorsair className="mx-6 text-5xl lg:text-6xl text-gray-800" />,
-    lenovo: <SiLenovo className="mx-6 text-5xl lg:text-6xl text-red-600" />,
-    hp: <SiHp className="mx-6 text-5xl lg:text-6xl text-blue-800" />
-};
+export default function BrandMarquee({config}: {config?: MarqueeConfig}) {
+  const {categories} = useCategories();
 
-export default function BrandMarquee({ config }: { config?: MarqueeConfig }) {
-    // Default fallback icons if no config
-    const defaultBrands = ['apple', 'samsung', 'xiaomi', 'asus', 'razer', 'intel', 'amd', 'nvidia', 'dell', 'logitech', 'corsair'];
-    
-    const displayType = config?.displayType || 'icons';
-    const speed = config?.speed || 100;
-    const pauseOnHover = config?.pauseOnHover ?? true;
-    const selectedBrands = config?.selectedBrands || defaultBrands;
-    const customImages = config?.customImages || [];
+  const displayType = config?.displayType || "icons";
+  const speed = config?.speed || 100;
+  const pauseOnHover = config?.pauseOnHover ?? true;
+  const selectedSlugs = config?.selectedBrands || [];
 
-    return (
-        <Marquee
-            className="h-20 lg:h-24 bg-white border-y border-gray-100"
-            speed={speed}
-            pauseOnHover={pauseOnHover}
-            gradient={false}
+  // Flatten categories to find selected ones (including subcategories)
+  const allCategories = React.useMemo(() => {
+    const flat: any[] = [];
+    categories.forEach((cat) => {
+      flat.push(cat);
+      if (cat.children) flat.push(...cat.children);
+    });
+    return flat;
+  }, [categories]);
+
+  // Filter selected categories
+  const selectedCategories = allCategories.filter((cat) =>
+    selectedSlugs.includes(cat.slug)
+  );
+
+  // Fallback if nothing selected (optional: show popular categories)
+  const itemsToShow =
+    selectedCategories.length > 0
+      ? selectedCategories
+      : allCategories.slice(0, 10);
+
+  if (itemsToShow.length === 0) return null;
+
+  return (
+    <Marquee
+      className="h-24 lg:h-32 bg-white border-y border-gray-100 py-4"
+      speed={speed}
+      pauseOnHover={pauseOnHover}
+      gradient={false}
+    >
+      {itemsToShow.map((cat) => (
+        <Link
+          href={`/category/${cat.slug}`}
+          key={cat._id}
+          className="mx-8 flex flex-col items-center justify-center gap-2 group cursor-pointer hover:opacity-80 transition-opacity"
         >
-            {displayType === 'icons' ? (
-                selectedBrands.map(brandId => (
-                    <React.Fragment key={brandId}>
-                        {BRAND_ICONS[brandId]}
-                    </React.Fragment>
-                ))
-            ) : (
-                customImages.map(img => (
-                    <div key={img.id} className="mx-10 flex items-center justify-center">
-                        <img 
-                            src={img.url} 
-                            alt={img.alt} 
-                            style={{ height: '40px', width: 'auto', objectFit: 'contain' }} 
-                        />
-                    </div>
-                ))
-            )}
-            
-            {/* If using defaults or if icons selected is small, add some default logos to fill */}
-            {displayType === 'icons' && selectedBrands.includes('msi') === false && (
-                <Image src="https://i.ibb.co/TcBrDB1/msi.webp" alt="MSI" width={80} height={40} className="mx-6" />
-            )}
-            {displayType === 'icons' && selectedBrands.includes('noctua') === false && (
-                <Image src="https://i.ibb.co/Jp47P3J/noctua-logo.webp" alt="Noctua" width={80} height={40} className="mx-6" />
-            )}
-        </Marquee>
-    );
+          {cat.image ? (
+            <div className="relative w-12 h-12 lg:w-16 lg:h-16 transition-all duration-300">
+              <Image
+                src={cat.image}
+                alt={cat.name}
+                fill
+                className="object-contain"
+              />
+            </div>
+          ) : (
+            <div className="w-12 h-12 lg:w-16 lg:h-16 rounded-full bg-gray-100 flex items-center justify-center text-gray-500 font-bold text-xs lg:text-sm border border-gray-200">
+              {cat.name.slice(0, 2).toUpperCase()}
+            </div>
+          )}
+          <span className="text-xs font-medium text-gray-600 group-hover:text-primary transition-colors whitespace-nowrap">
+            {cat.name}
+          </span>
+        </Link>
+      ))}
+    </Marquee>
+  );
 }
