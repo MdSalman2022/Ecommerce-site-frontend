@@ -100,7 +100,7 @@ export default function Header() {
       {/* ========== TOP ANNOUNCEMENT BAR (Dynamic) ========== */}
       {announcementBar.enabled && (
         <div
-          className="bg-primary text-white py-2"
+          className="announcement-bar bg-primary text-white py-2 print:hidden"
           style={{
             backgroundColor: announcementBar.backgroundColor || undefined,
             color: announcementBar.textColor || undefined,
@@ -115,7 +115,7 @@ export default function Header() {
       )}
 
       {/* ========== MAIN HEADER ========== */}
-      <header className="bg-white border-b border-gray-200 sticky top-0 z-50">
+      <header className="bg-white border-b border-gray-200 sticky top-0 z-50 print:hidden">
         <div className="container mx-auto px-4">
           <div className="flex items-center justify-between h-16 md:h-20 gap-4">
             {/* Mobile Menu Toggle / Back Button */}
@@ -412,7 +412,7 @@ export default function Header() {
 
       {/* ========== MOBILE SEARCH BAR ========== */}
       {showSearchBar && !isCheckoutOrCartPage && (
-        <div className="lg:hidden bg-white px-4 py-3 border-b">
+        <div className="lg:hidden bg-white px-4 py-3 border-b print:hidden">
           <form onSubmit={handleSearch}>
             <div className="flex items-center w-full border border-gray-300 rounded-full bg-white pr-1 focus-within:border-primary transition-all">
               <Input

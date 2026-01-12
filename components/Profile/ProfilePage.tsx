@@ -1,6 +1,6 @@
 "use client";
 
-import React, {useState} from "react";
+import React, {useState, useEffect} from "react";
 import Link from "next/link";
 import Image from "next/image";
 import {useAuth} from "@/contexts/AuthProvider";
@@ -26,12 +26,20 @@ import {Input} from "@/components/ui/input";
 import {Label} from "@/components/ui/label";
 import {Badge} from "@/components/ui/badge";
 import {Separator} from "@/components/ui/separator";
+import {
+  Sheet,
+  SheetContent,
+  SheetDescription,
+  SheetHeader,
+  SheetTitle,
+  SheetFooter,
+} from "@/components/ui/sheet";
 import {toast} from "react-hot-toast";
 
 const API_URL = process.env.NEXT_PUBLIC_SERVER_URL;
 
 export default function ProfilePage() {
-  const {user, logout} = useAuth();
+  const {user, logout, loading} = useAuth();
   const router = useRouter();
   const queryClient = useQueryClient();
   const [isEditingShipping, setIsEditingShipping] = useState(false);
@@ -54,6 +62,8 @@ export default function ProfilePage() {
       return res.json();
     },
     enabled: !!user?.email,
+    staleTime: 5 * 60 * 1000, // 5 minutes
+    gcTime: 10 * 60 * 1000, // 10 minutes
   });
 
   // Fetch shipping address
@@ -67,6 +77,8 @@ export default function ProfilePage() {
       return json.data;
     },
     enabled: !!user?.email,
+    staleTime: 5 * 60 * 1000, // 5 minutes
+    gcTime: 10 * 60 * 1000, // 10 minutes
     onSuccess: (data) => {
       if (data) {
         setShippingFormData({
@@ -101,8 +113,27 @@ export default function ProfilePage() {
     },
   });
 
+  // Redirect to login if not authenticated
+  useEffect(() => {
+    if (!loading && !user) {
+      router.push("/login");
+    }
+  }, [user, loading, router]);
+
+  // Show loading state while checking authentication
+  if (loading) {
+    return (
+      <div className="min-h-screen bg-gray-50/50 flex items-center justify-center">
+        <div className="text-center">
+          <div className="animate-spin rounded-full h-12 w-12 border-b-2 border-primary mx-auto mb-4"></div>
+          <p className="text-gray-500">Loading...</p>
+        </div>
+      </div>
+    );
+  }
+
+  // Return null while redirecting
   if (!user) {
-    router.push("/login");
     return null;
   }
 
@@ -114,6 +145,19 @@ export default function ProfilePage() {
   const handleLogout = () => {
     logout();
     router.push("/");
+  };
+
+  const handleEditShipping = () => {
+    if (shippingData) {
+      setShippingFormData({
+        name: shippingData.name || "",
+        contact: shippingData.contact || "",
+        email: shippingData.email || "",
+        address: shippingData.address || "",
+        city: shippingData.city || "",
+      });
+    }
+    setIsEditingShipping(true);
   };
 
   const getStatusIcon = (status: string) => {
@@ -206,7 +250,7 @@ export default function ProfilePage() {
 
           {/* Recent Orders - Mobile */}
           {recentOrders.length > 0 && (
-            <Card>
+            <Card className="hidden md:block">
               <CardHeader className="flex flex-row items-center justify-between pb-3">
                 <CardTitle className="text-base">Recent Orders</CardTitle>
                 <Link href="/orderhistory">
@@ -261,11 +305,11 @@ export default function ProfilePage() {
           <Card>
             <CardHeader className="flex flex-row items-center justify-between pb-3">
               <CardTitle className="text-base">Shipping Address</CardTitle>
-              {shippingData && !isEditingShipping && (
+              {shippingData && (
                 <Button
                   variant="ghost"
                   size="sm"
-                  onClick={() => setIsEditingShipping(true)}
+                  onClick={handleEditShipping}
                   className="h-8"
                 >
                   <Edit className="w-3 h-3 mr-1" />
@@ -274,87 +318,7 @@ export default function ProfilePage() {
               )}
             </CardHeader>
             <CardContent>
-              {isEditingShipping ? (
-                <form onSubmit={handleUpdateShipping} className="space-y-3">
-                  <div>
-                    <Label className="text-xs">Name</Label>
-                    <Input
-                      value={shippingFormData.name}
-                      onChange={(e) =>
-                        setShippingFormData({
-                          ...shippingFormData,
-                          name: e.target.value,
-                        })
-                      }
-                      className="h-9 text-sm"
-                      required
-                    />
-                  </div>
-                  <div>
-                    <Label className="text-xs">Contact</Label>
-                    <Input
-                      value={shippingFormData.contact}
-                      onChange={(e) =>
-                        setShippingFormData({
-                          ...shippingFormData,
-                          contact: e.target.value,
-                        })
-                      }
-                      className="h-9 text-sm"
-                      required
-                    />
-                  </div>
-                  <div>
-                    <Label className="text-xs">Address</Label>
-                    <Input
-                      value={shippingFormData.address}
-                      onChange={(e) =>
-                        setShippingFormData({
-                          ...shippingFormData,
-                          address: e.target.value,
-                        })
-                      }
-                      className="h-9 text-sm"
-                      required
-                    />
-                  </div>
-                  <div>
-                    <Label className="text-xs">City</Label>
-                    <Input
-                      value={shippingFormData.city}
-                      onChange={(e) =>
-                        setShippingFormData({
-                          ...shippingFormData,
-                          city: e.target.value,
-                        })
-                      }
-                      className="h-9 text-sm"
-                      required
-                    />
-                  </div>
-                  <div className="flex gap-2">
-                    <Button
-                      type="submit"
-                      size="sm"
-                      disabled={updateShippingMutation.isPending}
-                      className="flex-1"
-                    >
-                      <Save className="w-3 h-3 mr-1" />
-                      Save
-                    </Button>
-                    <Button
-                      type="button"
-                      variant="outline"
-                      size="sm"
-                      onClick={() => setIsEditingShipping(false)}
-                      className="flex-1"
-                    >
-                      <X className="w-3 h-3 mr-1" />
-                      Cancel
-                    </Button>
-                  </div>
-                </form>
-              ) : shippingData ? (
+              {shippingData ? (
                 <div className="space-y-2 text-sm">
                   <p className="font-semibold">{shippingData.name}</p>
                   <p className="text-gray-600">{shippingData.contact}</p>
@@ -370,7 +334,7 @@ export default function ProfilePage() {
                   <Button
                     size="sm"
                     variant="outline"
-                    onClick={() => setIsEditingShipping(true)}
+                    onClick={handleEditShipping}
                   >
                     Add Address
                   </Button>
@@ -378,6 +342,108 @@ export default function ProfilePage() {
               )}
             </CardContent>
           </Card>
+
+          {/* Mobile Sheet for Editing Shipping */}
+          <Sheet open={isEditingShipping} onOpenChange={setIsEditingShipping}>
+            <SheetContent
+              side="bottom"
+              className="h-fit overflow-y-auto rounded-t-3xl"
+            >
+              <SheetHeader>
+                <SheetTitle>
+                  {shippingData ? "Edit" : "Add"} Shipping Address
+                </SheetTitle>
+                <SheetDescription>
+                  Update your default shipping information
+                </SheetDescription>
+              </SheetHeader>
+              <form onSubmit={handleUpdateShipping} className="space-y-4 mt-6">
+                <div>
+                  <Label>Name</Label>
+                  <Input
+                    value={shippingFormData.name}
+                    onChange={(e) =>
+                      setShippingFormData({
+                        ...shippingFormData,
+                        name: e.target.value,
+                      })
+                    }
+                    placeholder="Your full name"
+                    required
+                  />
+                </div>
+                <div>
+                  <Label>Contact</Label>
+                  <Input
+                    value={shippingFormData.contact}
+                    onChange={(e) =>
+                      setShippingFormData({
+                        ...shippingFormData,
+                        contact: e.target.value,
+                      })
+                    }
+                    placeholder="Phone number"
+                    required
+                  />
+                </div>
+                <div>
+                  <Label>Address</Label>
+                  <Input
+                    value={shippingFormData.address}
+                    onChange={(e) =>
+                      setShippingFormData({
+                        ...shippingFormData,
+                        address: e.target.value,
+                      })
+                    }
+                    placeholder="Street address"
+                    required
+                  />
+                </div>
+                <div>
+                  <Label>City</Label>
+                  <Input
+                    value={shippingFormData.city}
+                    onChange={(e) =>
+                      setShippingFormData({
+                        ...shippingFormData,
+                        city: e.target.value,
+                      })
+                    }
+                    placeholder="City"
+                    required
+                  />
+                </div>
+                <SheetFooter className="grid grid-cols-2 gap-5 sm:gap-0 pt-4">
+                  <Button
+                    type="button"
+                    variant="outline"
+                    onClick={() => setIsEditingShipping(false)}
+                    className="h-12 text-lg"
+                  >
+                    Cancel
+                  </Button>
+                  <Button
+                    type="submit"
+                    disabled={updateShippingMutation.isPending}
+                    className="h-12 text-lg"
+                  >
+                    {updateShippingMutation.isPending ? (
+                      <>
+                        <div className="animate-spin rounded-full h-4 w-4 border-b-2 border-white mr-2" />
+                        Saving...
+                      </>
+                    ) : (
+                      <>
+                        <Save className="w-4 h-4 mr-2" />
+                        Save Changes
+                      </>
+                    )}
+                  </Button>
+                </SheetFooter>
+              </form>
+            </SheetContent>
+          </Sheet>
         </div>
 
         {/* Desktop: Two Column Layout */}
@@ -503,7 +569,7 @@ export default function ProfilePage() {
                   <Button
                     variant="outline"
                     size="sm"
-                    onClick={() => setIsEditingShipping(true)}
+                    onClick={handleEditShipping}
                   >
                     <Edit className="w-4 h-4 mr-2" />
                     Edit
@@ -608,10 +674,7 @@ export default function ProfilePage() {
                     <p className="text-gray-500 mb-4">
                       No shipping address saved
                     </p>
-                    <Button
-                      variant="outline"
-                      onClick={() => setIsEditingShipping(true)}
-                    >
+                    <Button variant="outline" onClick={handleEditShipping}>
                       Add Address
                     </Button>
                   </div>

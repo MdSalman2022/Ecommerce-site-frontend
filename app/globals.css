@@ -442,6 +442,7 @@
   [class*="Search"],
   [class*="search"],
   [placeholder*="search" i],
+  [placeholder*="Ask DealBot" i],
   [aria-label*="search" i],
   [data-search],
   .topbar,
@@ -453,7 +454,8 @@
   .search-field,
   .search-component,
   .ai-search-bar,
-  .dealbot-search {
+  .dealbot-search,
+  .announcement-bar {
     display: none !important;
   }
 

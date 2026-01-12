@@ -218,10 +218,9 @@ export default function OrderDetailsPage() {
                     </span>
                   </div>
                   <div className="text-gray-500 text-sm leading-relaxed">
-                    <p>123 Tech Avenue, Silicon Suite 500</p>
-                    <p>New York, NY 10001</p>
-                    <p>United States</p>
-                    <p>support@bestdeal.com</p>
+                    <p>Shewrapara, Mirpur 1216</p>
+                    <p>Bangladesh</p>
+                    <p>mehedi.salman102@gmail.com</p>
                   </div>
                 </div>
                 <div className="text-right">

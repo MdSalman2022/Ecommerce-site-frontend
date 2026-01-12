@@ -8,9 +8,9 @@ import React, {
   ReactNode,
   useCallback,
 } from "react";
-import {useQuery} from "@tanstack/react-query";
-import {useAuth} from "./AuthProvider";
-import {toast} from "react-hot-toast";
+import { useQuery } from "@tanstack/react-query";
+import { useAuth } from "./AuthProvider";
+import { toast } from "react-hot-toast";
 
 interface CartItem {
   _id: string; // Product ID
@@ -104,8 +104,8 @@ interface UserActivityContextType {
   // Activity Tracking (for AI recommendations)
   trackProductView: (product: {
     _id: string;
-    category?: {_id: string; name: string};
-    subCategory?: {_id: string; name: string};
+    category?: { _id: string; name: string };
+    subCategory?: { _id: string; name: string };
     brand?: string;
     price: number;
   }) => void;
@@ -130,8 +130,8 @@ export const useUserActivity = () => {
 
 const API_URL = process.env.NEXT_PUBLIC_SERVER_URL;
 
-export const UserActivityProvider = ({children}: {children: ReactNode}) => {
-  const {user} = useAuth();
+export const UserActivityProvider = ({ children }: { children: ReactNode }) => {
+  const { user } = useAuth();
   const token =
     typeof window !== "undefined" ? localStorage.getItem("accessToken") : null;
 
@@ -208,7 +208,7 @@ export const UserActivityProvider = ({children}: {children: ReactNode}) => {
     recentViews: [],
     categoryInterests: {},
     brandInterests: {},
-    pricePreference: {min: 0, max: 0, average: 0},
+    pricePreference: { min: 0, max: 0, average: 0 },
     recentSearches: [],
     fingerprint: "",
     lastUpdated: Date.now(),
@@ -229,7 +229,7 @@ export const UserActivityProvider = ({children}: {children: ReactNode}) => {
     if (typeof window === "undefined") return;
     try {
       const fingerprint = generateFingerprint(data);
-      const updated = {...data, fingerprint, lastUpdated: Date.now()};
+      const updated = { ...data, fingerprint, lastUpdated: Date.now() };
       localStorage.setItem(ACTIVITY_STORAGE_KEY, JSON.stringify(updated));
       setActivityData(updated);
     } catch (e) {
@@ -241,8 +241,8 @@ export const UserActivityProvider = ({children}: {children: ReactNode}) => {
   const trackProductView = useCallback(
     (product: {
       _id: string;
-      category?: {_id: string; name: string};
-      subCategory?: {_id: string; name: string};
+      category?: { _id: string; name: string };
+      subCategory?: { _id: string; name: string };
       brand?: string;
       price: number;
     }) => {
@@ -273,7 +273,7 @@ export const UserActivityProvider = ({children}: {children: ReactNode}) => {
         );
 
         // Update category interests
-        const newCategoryInterests = {...prev.categoryInterests};
+        const newCategoryInterests = { ...prev.categoryInterests };
         if (product.category?._id) {
           const catId = product.category._id;
           newCategoryInterests[catId] = {
@@ -284,7 +284,7 @@ export const UserActivityProvider = ({children}: {children: ReactNode}) => {
         }
 
         // Update brand interests
-        const newBrandInterests = {...prev.brandInterests};
+        const newBrandInterests = { ...prev.brandInterests };
         if (product.brand) {
           newBrandInterests[product.brand] = {
             viewCount: (newBrandInterests[product.brand]?.viewCount || 0) + 1,
@@ -372,13 +372,13 @@ export const UserActivityProvider = ({children}: {children: ReactNode}) => {
   // Cart sync using DB-first source
 
   // Initialize cart lazily - only when first accessed
-  const initCart = async () => {
-    if (cartInitialized) return; // Already initialized
+  const initCart = async (force: boolean = false) => {
+    if (!force && cartInitialized) return; // Already initialized
 
     const sessionId = getSessionId();
     const currentToken = localStorage.getItem("accessToken");
 
-    const headers: any = {"Content-Type": "application/json"};
+    const headers: any = { "Content-Type": "application/json" };
     if (currentToken) headers["Authorization"] = `Bearer ${currentToken}`;
     if (sessionId) headers["x-session-id"] = sessionId;
 
@@ -393,7 +393,7 @@ export const UserActivityProvider = ({children}: {children: ReactNode}) => {
       }
 
       // Fetch Latest Cart
-      const response = await fetch(`${API_URL}/api/cart`, {headers});
+      const response = await fetch(`${API_URL}/api/cart`, { headers });
       const result = await response.json();
 
       if (result.success && result.data?.items) {
@@ -440,13 +440,12 @@ export const UserActivityProvider = ({children}: {children: ReactNode}) => {
     }
   };
 
-  // Only fetch cart when user logs in (not on initial page load)
+  // Fetch cart on mount (guest) and when user logs in/out
   useEffect(() => {
-    if (user) {
-      initCart(); // Fetch cart when user logs in
-    } else {
-      setCartInitialized(false); // Reset on logout
-    }
+    // Only fetch if we're not waiting for auth to resolve initially (optional, but good practice)
+    // Actually, we want to fetch guest cart immediately if user is null.
+    // If user logs in, we force re-fetch to sync.
+    initCart(true);
   }, [user]); // Re-run on login/logout
 
   // Sync cart updates directly to DB
@@ -454,7 +453,7 @@ export const UserActivityProvider = ({children}: {children: ReactNode}) => {
     const sessionId = getSessionId();
     const currentToken = localStorage.getItem("accessToken");
 
-    const headers: any = {"Content-Type": "application/json"};
+    const headers: any = { "Content-Type": "application/json" };
     if (currentToken) headers["Authorization"] = `Bearer ${currentToken}`;
     if (sessionId) headers["x-session-id"] = sessionId;
 
@@ -561,8 +560,8 @@ export const UserActivityProvider = ({children}: {children: ReactNode}) => {
       try {
         await fetch(`${API_URL}/api/wishlist`, {
           method: "POST",
-          headers: {"Content-Type": "application/json"},
-          body: JSON.stringify({email: user.email, productId}),
+          headers: { "Content-Type": "application/json" },
+          body: JSON.stringify({ email: user.email, productId }),
         });
       } catch (err) {
         // Revert on failure
@@ -573,7 +572,7 @@ export const UserActivityProvider = ({children}: {children: ReactNode}) => {
   };
 
   // Orders state fetched lazily when needed
-  const {data: orders = [], refetch: refetchOrders} = useQuery({
+  const { data: orders = [], refetch: refetchOrders } = useQuery({
     queryKey: ["orderhistory", user?.email],
     queryFn: () => fetch(`${API_URL}/orderhistory`).then((res) => res.json()),
     enabled: false, // Disabled by default - must be manually triggered

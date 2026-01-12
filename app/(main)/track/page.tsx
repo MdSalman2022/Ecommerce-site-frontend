@@ -1,6 +1,6 @@
 "use client";
 
-import React, {useState, useEffect} from "react";
+import React, {useState, useEffect, Suspense} from "react";
 import {useSearchParams} from "next/navigation";
 import {
   FaPhone,
@@ -70,7 +70,7 @@ const statusConfig: Record<
   },
 };
 
-export default function TrackOrderPage() {
+function TrackOrderPageContent() {
   const searchParams = useSearchParams();
   const phoneParam = searchParams.get("phone");
   const orderIdParam = searchParams.get("orderId");
@@ -87,7 +87,7 @@ export default function TrackOrderPage() {
     if (phoneParam && !searched) {
       handleSearch(null, phoneParam);
     }
-  }, [phoneParam]);
+  }, [phoneParam, searched]);
 
   // Auto-select order if orderId is provided
   useEffect(() => {
@@ -502,5 +502,19 @@ export default function TrackOrderPage() {
         )}
       </div>
     </div>
+  );
+}
+
+export default function TrackOrderPage() {
+  return (
+    <Suspense
+      fallback={
+        <div className="flex items-center justify-center min-h-screen">
+          <FaSpinner className="animate-spin text-2xl" />
+        </div>
+      }
+    >
+      <TrackOrderPageContent />
+    </Suspense>
   );
 }

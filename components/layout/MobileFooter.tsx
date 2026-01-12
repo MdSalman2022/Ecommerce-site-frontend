@@ -71,7 +71,7 @@ export default function MobileFooter({
   return (
     <nav
       className={cn(
-        "fixed bottom-0 left-0 right-0 bg-white/95 backdrop-blur-md border-t border-gray-200 z-50 lg:hidden",
+        "fixed bottom-0 left-0 right-0 bg-white/95 backdrop-blur-md border-t border-gray-200 z-50 lg:hidden print:hidden",
         "shadow-lg shadow-black/5",
         finalVariant === "extended" && "pb-safe"
       )}

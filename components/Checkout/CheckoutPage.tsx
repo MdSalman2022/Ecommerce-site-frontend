@@ -29,6 +29,8 @@ import {
   Check,
   Package,
   ShoppingBag,
+  History,
+  X,
 } from "lucide-react";
 
 const API_URL = process.env.NEXT_PUBLIC_SERVER_URL;
@@ -41,7 +43,168 @@ interface ShippingFormData {
   email?: string;
 }
 
-export default function UnifiedCheckout() {
+// Extracted ShippingForm Component
+const ShippingForm = ({
+  register,
+  errors,
+  user,
+  previousGuestDetails,
+  setValue,
+  isEditingShipping,
+  setIsEditingShipping,
+  savedShipping,
+  watch,
+}: {
+  register: any;
+  errors: any;
+  user: any;
+  previousGuestDetails: ShippingFormData | null;
+  setValue: any;
+  isEditingShipping: boolean;
+  setIsEditingShipping: (val: boolean) => void;
+  savedShipping: ShippingFormData | null;
+  watch: any;
+}) => (
+  <form className="space-y-4">
+    {/* Show Previous Guest Details Option */}
+    {!user && previousGuestDetails && (
+      <div className="bg-blue-50 border border-blue-200 rounded-lg p-4 mb-4">
+        <div className="flex items-start justify-between gap-4">
+          <div className="flex-1">
+            <div className="flex items-center gap-2 mb-2">
+              <History className="w-4 h-4 text-blue-600" />
+              <p className="font-medium text-blue-900">
+                Use Previous Details
+              </p>
+            </div>
+            <p className="text-sm text-blue-700 mb-3">
+              {previousGuestDetails.name} • {previousGuestDetails.contact} •{" "}
+              {previousGuestDetails.city}
+            </p>
+            <Button
+              type="button"
+              size="sm"
+              variant="outline"
+              className="w-full text-blue-600 border-blue-300 hover:bg-blue-100"
+              onClick={() => {
+                setValue("name", previousGuestDetails.name);
+                setValue("contact", previousGuestDetails.contact);
+                setValue("email", previousGuestDetails.email || "");
+                setValue("address", previousGuestDetails.address);
+                setValue("city", previousGuestDetails.city);
+                toast.success("Previous details loaded!");
+              }}
+            >
+              <Check className="w-4 h-4 mr-2" />
+              Use These Details
+            </Button>
+          </div>
+          <Button
+            type="button"
+            variant="ghost"
+            size="sm"
+            onClick={() => {
+              localStorage.removeItem("guest_checkout_details");
+              // This needs to be handled by parent state update if we want to hide it immediately
+              // But for now, we just clear storage.
+            }}
+          >
+            <X className="w-4 h-4" />
+          </Button>
+        </div>
+      </div>
+    )}
+
+    {savedShipping && !isEditingShipping ? (
+      <div className="text-sm space-y-1">
+        <p className="font-medium">{watch("name")}</p>
+        <p className="text-muted-foreground">{watch("contact")}</p>
+        <p className="text-muted-foreground">
+          {watch("address")}, {watch("city")}
+        </p>
+      </div>
+    ) : (
+      <>
+        <div className="space-y-2">
+          <Label htmlFor="name">Full Name *</Label>
+          <Input
+            id="name"
+            {...register("name", {required: "Name is required"})}
+            placeholder="John Doe"
+          />
+          {errors.name && (
+            <p className="text-sm text-destructive">{errors.name.message}</p>
+          )}
+        </div>
+
+        <div className="space-y-2">
+          <Label htmlFor="contact">Phone Number *</Label>
+          <Input
+            id="contact"
+            {...register("contact", {
+              required: "Phone number is required",
+              pattern: {
+                value: /^01[0-9]{9}$/,
+                message: "Enter valid BD phone (01XXXXXXXXX)",
+              },
+            })}
+            placeholder="01712345678"
+          />
+          {errors.contact && (
+            <p className="text-sm text-destructive">{errors.contact.message}</p>
+          )}
+        </div>
+
+        <div className="space-y-2">
+          <Label htmlFor="email">Email (Optional)</Label>
+          <Input
+            id="email"
+            type="email"
+            {...register("email")}
+            placeholder="john@example.com"
+          />
+        </div>
+
+        <div className="space-y-2">
+          <Label htmlFor="address">Delivery Address *</Label>
+          <Input
+            id="address"
+            {...register("address", {required: "Address is required"})}
+            placeholder="House, Street, Area"
+          />
+          {errors.address && (
+            <p className="text-sm text-destructive">{errors.address.message}</p>
+          )}
+        </div>
+
+        <div className="space-y-2">
+          <Label htmlFor="city">City *</Label>
+          <Input
+            id="city"
+            {...register("city", {required: "City is required"})}
+            placeholder="Dhaka"
+          />
+          {errors.city && (
+            <p className="text-sm text-destructive">{errors.city.message}</p>
+          )}
+        </div>
+
+        {isEditingShipping && (
+          <Button
+            type="button"
+            variant="outline"
+            className="w-full"
+            onClick={() => setIsEditingShipping(false)}
+          >
+            Cancel
+          </Button>
+        )}
+      </>
+    )}
+  </form>
+);
+
+export default function CheckoutPage() {
   const router = useRouter();
   const {user} = useAuth();
   const {cart, setCart} = useUserActivity();
@@ -51,6 +214,8 @@ export default function UnifiedCheckout() {
   const [savedShipping, setSavedShipping] = useState<ShippingFormData | null>(
     null
   );
+  const [previousGuestDetails, setPreviousGuestDetails] =
+    useState<ShippingFormData | null>(null);
   const [isEditingShipping, setIsEditingShipping] = useState(false);
   const [isLoading, setIsLoading] = useState(true);
 
@@ -74,6 +239,21 @@ export default function UnifiedCheckout() {
   useEffect(() => {
     setIsLoading(false);
   }, []);
+
+  // Load previous guest checkout details from localStorage
+  useEffect(() => {
+    if (!user) {
+      try {
+        const savedDetails = localStorage.getItem("guest_checkout_details");
+        if (savedDetails) {
+          const details = JSON.parse(savedDetails);
+          setPreviousGuestDetails(details);
+        }
+      } catch (error) {
+        console.error("Failed to load guest details:", error);
+      }
+    }
+  }, [user]);
 
   // Load saved shipping details
   useEffect(() => {
@@ -166,6 +346,16 @@ export default function UnifiedCheckout() {
         } catch (error) {
           console.error("Failed to save shipping details:", error);
         }
+      } else {
+        // Save guest checkout details to localStorage
+        try {
+          localStorage.setItem(
+            "guest_checkout_details",
+            JSON.stringify(shippingData)
+          );
+        } catch (error) {
+          console.error("Failed to save guest details:", error);
+        }
       }
 
       // Clear cart
@@ -185,147 +375,18 @@ export default function UnifiedCheckout() {
     }
   };
 
-  const ShippingForm = () => (
-    <form className="space-y-4">
-      <div className="space-y-2">
-        <Label htmlFor="name">Full Name *</Label>
-        <Input
-          id="name"
-          {...register("name", {required: "Name is required"})}
-          placeholder="John Doe"
-          disabled={!!savedShipping && !isEditingShipping}
-        />
-        {errors.name && (
-          <p className="text-sm text-destructive">{errors.name.message}</p>
-        )}
-      </div>
-
-      <div className="space-y-2">
-        <Label htmlFor="contact">Phone Number *</Label>
-        <Input
-          id="contact"
-          {...register("contact", {
-            required: "Phone number is required",
-            pattern: {
-              value: /^01[0-9]{9}$/,
-              message: "Enter valid BD phone (01XXXXXXXXX)",
-            },
-          })}
-          placeholder="01712345678"
-          disabled={!!savedShipping && !isEditingShipping}
-        />
-        {errors.contact && (
-          <p className="text-sm text-destructive">{errors.contact.message}</p>
-        )}
-      </div>
-
-      <div className="space-y-2">
-        <Label htmlFor="email">Email (Optional)</Label>
-        <Input
-          id="email"
-          type="email"
-          {...register("email")}
-          placeholder="john@example.com"
-          disabled={!!savedShipping && !isEditingShipping}
-        />
-      </div>
-
-      <div className="space-y-2">
-        <Label htmlFor="address">Delivery Address *</Label>
-        <Input
-          id="address"
-          {...register("address", {required: "Address is required"})}
-          placeholder="House, Street, Area"
-          disabled={!!savedShipping && !isEditingShipping}
-        />
-        {errors.address && (
-          <p className="text-sm text-destructive">{errors.address.message}</p>
-        )}
-      </div>
-
-      <div className="space-y-2">
-        <Label htmlFor="city">City *</Label>
-        <Input
-          id="city"
-          {...register("city", {required: "City is required"})}
-          placeholder="Dhaka"
-          disabled={!!savedShipping && !isEditingShipping}
-        />
-        {errors.city && (
-          <p className="text-sm text-destructive">{errors.city.message}</p>
-        )}
-      </div>
-
-      {isEditingShipping && (
-        <Button
-          type="button"
-          variant="outline"
-          className="w-full"
-          onClick={() => setIsEditingShipping(false)}
-        >
-          Cancel
-        </Button>
-      )}
-    </form>
-  );
-
   if (isLoading) {
     return (
       <div className="min-h-screen bg-background">
-        <div className="hidden lg:block container mx-auto py-8 px-4 max-w-7xl">
+        <div className="container mx-auto py-8 px-4 max-w-7xl">
           <div className="animate-pulse">
             <div className="h-8 bg-gray-200 rounded w-1/4 mb-8" />
             <div className="grid lg:grid-cols-3 gap-8">
-              {/* Left skeleton */}
               <div className="lg:col-span-2 space-y-6">
-                {[1, 2].map((i) => (
-                  <Card key={i}>
-                    <CardHeader>
-                      <div className="h-6 bg-gray-200 rounded w-1/3" />
-                    </CardHeader>
-                    <CardContent className="space-y-3">
-                      {[1, 2, 3].map((j) => (
-                        <div key={j} className="h-4 bg-gray-200 rounded" />
-                      ))}
-                    </CardContent>
-                  </Card>
-                ))}
+                 <div className="h-64 bg-gray-200 rounded" />
               </div>
-              {/* Right skeleton */}
-              <div>
-                <Card>
-                  <CardHeader>
-                    <div className="h-6 bg-gray-200 rounded w-1/2" />
-                  </CardHeader>
-                  <CardContent className="space-y-3">
-                    {[1, 2, 3, 4].map((i) => (
-                      <div key={i} className="h-4 bg-gray-200 rounded" />
-                    ))}
-                  </CardContent>
-                </Card>
-              </div>
+              <div className="h-64 bg-gray-200 rounded" />
             </div>
-          </div>
-        </div>
-
-        {/* Mobile skeleton */}
-        <div className="lg:hidden pb-40">
-          <div className="sticky top-0 z-10 bg-background border-b px-4 py-4">
-            <div className="h-6 bg-gray-200 rounded w-1/3 animate-pulse" />
-          </div>
-          <div className="p-4 space-y-4 animate-pulse">
-            {[1, 2, 3].map((i) => (
-              <Card key={i}>
-                <CardHeader className="p-4">
-                  <div className="h-5 bg-gray-200 rounded w-1/3" />
-                </CardHeader>
-                <CardContent className="p-4 pt-0 space-y-2">
-                  {[1, 2].map((j) => (
-                    <div key={j} className="h-4 bg-gray-200 rounded" />
-                  ))}
-                </CardContent>
-              </Card>
-            ))}
           </div>
         </div>
       </div>
@@ -345,18 +406,17 @@ export default function UnifiedCheckout() {
   }
 
   return (
-    <div className="md:min-h-screen bg-background">
-      {/* Desktop Layout */}
-      <div className="hidden lg:block container mx-auto py-8 px-4 max-w-7xl">
-        <h1 className="text-3xl font-bold mb-8">Checkout</h1>
+    <div className="min-h-screen bg-background pb-20 lg:pb-8">
+      <div className="container mx-auto py-8 px-4 max-w-7xl">
+        <h1 className="text-2xl lg:text-3xl font-bold mb-6 lg:mb-8">Checkout</h1>
 
-        <div className="grid lg:grid-cols-3 gap-8">
-          {/* Left: Shipping & Payment */}
+        <div className="grid grid-cols-1 lg:grid-cols-3 gap-6 lg:gap-8">
+          {/* Left Column: Shipping & Payment */}
           <div className="lg:col-span-2 space-y-6">
             {/* Shipping Details */}
             <Card>
               <CardHeader className="flex flex-row items-center justify-between">
-                <CardTitle className="flex items-center gap-2">
+                <CardTitle className="flex items-center gap-2 text-base lg:text-lg">
                   <MapPin className="w-5 h-5" />
                   Shipping Details
                 </CardTitle>
@@ -373,14 +433,24 @@ export default function UnifiedCheckout() {
                 )}
               </CardHeader>
               <CardContent>
-                <ShippingForm />
+                <ShippingForm 
+                  register={register}
+                  errors={errors}
+                  user={user}
+                  previousGuestDetails={previousGuestDetails}
+                  setValue={setValue}
+                  isEditingShipping={isEditingShipping}
+                  setIsEditingShipping={setIsEditingShipping}
+                  savedShipping={savedShipping}
+                  watch={watch}
+                />
               </CardContent>
             </Card>
 
             {/* Payment Method */}
             <Card>
               <CardHeader>
-                <CardTitle className="flex items-center gap-2">
+                <CardTitle className="flex items-center gap-2 text-base lg:text-lg">
                   <CreditCard className="w-5 h-5" />
                   Payment Method
                 </CardTitle>
@@ -425,10 +495,47 @@ export default function UnifiedCheckout() {
                 </RadioGroup>
               </CardContent>
             </Card>
+            
+            {/* Mobile Order Items Summary (Optional, but useful to have inline) */}
+             <div className="lg:hidden">
+               <Card>
+                <CardHeader>
+                   <CardTitle className="flex items-center gap-2 text-base">
+                    <Package className="w-4 h-4" />
+                    Order Items ({cart.length})
+                   </CardTitle>
+                </CardHeader>
+                <CardContent className="space-y-3">
+                  {cart.map((item, index: number) => (
+                    <div key={index} className="flex gap-3">
+                      <div className="relative w-16 h-16 rounded-md overflow-hidden bg-accent flex-shrink-0">
+                        <Image
+                          src={item.image || "/placeholder.png"}
+                          alt={item.name}
+                          fill
+                          className="object-contain"
+                        />
+                      </div>
+                      <div className="flex-1 min-w-0">
+                        <p className="text-sm font-medium line-clamp-2">
+                          {item.name}
+                        </p>
+                        <p className="text-xs text-muted-foreground">
+                          Qty: {item.quantity}
+                        </p>
+                         <p className="text-sm font-bold">
+                          ৳{(item.price * item.quantity).toLocaleString()}
+                        </p>
+                      </div>
+                    </div>
+                  ))}
+                </CardContent>
+               </Card>
+             </div>
           </div>
 
-          {/* Right: Order Summary */}
-          <div className="lg:col-span-1">
+          {/* Right Column: Order Summary (Desktop) */}
+          <div className="hidden lg:block lg:col-span-1">
             <Card className="sticky top-4">
               <CardHeader>
                 <CardTitle className="flex items-center gap-2">
@@ -503,130 +610,8 @@ export default function UnifiedCheckout() {
         </div>
       </div>
 
-      {/* Mobile Layout */}
-      <div className="lg:hidden md:pb-40">
-        <div className="sticky top-0 z-10 bg-background border-b px-4 py-4">
-          <h1 className="text-xl font-bold">Checkout</h1>
-        </div>
-
-        <div className="p-4 space-y-4 mb-6">
-          {/* Shipping Details Card */}
-          <Card>
-            <CardHeader className="flex flex-row items-center justify-between p-4">
-              <CardTitle className="text-base flex items-center gap-2">
-                <MapPin className="w-4 h-4" />
-                Shipping
-              </CardTitle>
-              {savedShipping && !isEditingShipping ? (
-                <Sheet
-                  onOpenChange={(open) => {
-                    if (open) setIsEditingShipping(true);
-                  }}
-                >
-                  <SheetTrigger asChild>
-                    <Button variant="outline" size="sm">
-                      <Edit className="w-4 h-4" />
-                    </Button>
-                  </SheetTrigger>
-                  <SheetContent side="bottom" className="h-[90vh]">
-                    <SheetHeader>
-                      <SheetTitle>Edit Shipping Details</SheetTitle>
-                    </SheetHeader>
-                    <div className="mt-6">
-                      <ShippingForm />
-                      <Button
-                        onClick={() => setIsEditingShipping(false)}
-                        className="w-full mt-4"
-                      >
-                        Save Changes
-                      </Button>
-                    </div>
-                  </SheetContent>
-                </Sheet>
-              ) : null}
-            </CardHeader>
-            <CardContent className="p-4 pt-0">
-              {savedShipping && !isEditingShipping ? (
-                <div className="text-sm space-y-1">
-                  <p className="font-medium">{watch("name")}</p>
-                  <p className="text-muted-foreground">{watch("contact")}</p>
-                  <p className="text-muted-foreground">
-                    {watch("address")}, {watch("city")}
-                  </p>
-                </div>
-              ) : (
-                <ShippingForm />
-              )}
-            </CardContent>
-          </Card>
-
-          {/* Order Summary */}
-          <Card>
-            <CardHeader className="p-4">
-              <CardTitle className="text-base flex items-center gap-2">
-                <Package className="w-4 h-4" />
-                Order Items ({cart.length})
-              </CardTitle>
-            </CardHeader>
-            <CardContent className="p-4 pt-0 space-y-3">
-              {cart.map((item, index: number) => (
-                <div key={index} className="flex gap-3">
-                  <div className="relative w-16 h-16 rounded-md overflow-hidden bg-accent flex-shrink-0">
-                    <Image
-                      src={item.image || "/placeholder.png"}
-                      alt={item.name}
-                      fill
-                      className="object-contain"
-                    />
-                  </div>
-                  <div className="flex-1 min-w-0">
-                    <p className="text-sm font-medium line-clamp-2">
-                      {item.name}
-                    </p>
-                    <p className="text-xs text-muted-foreground">
-                      Qty: {item.quantity}
-                    </p>
-                    <p className="text-sm font-bold">
-                      ৳{(item.price * item.quantity).toLocaleString()}
-                    </p>
-                  </div>
-                </div>
-              ))}
-            </CardContent>
-          </Card>
-
-          {/* Payment Method */}
-          <Card>
-            <CardHeader className="p-4">
-              <CardTitle className="text-base flex items-center gap-2">
-                <CreditCard className="w-4 h-4" />
-                Payment
-              </CardTitle>
-            </CardHeader>
-            <CardContent className="p-4 pt-0">
-              <RadioGroup
-                value={paymentMethod}
-                onValueChange={(value: string) =>
-                  setPaymentMethod(value as "cod" | "card")
-                }
-              >
-                <div className="flex items-center space-x-3 p-3 border rounded-lg">
-                  <RadioGroupItem value="cod" id="cod-mobile" />
-                  <Label
-                    htmlFor="cod-mobile"
-                    className="flex items-center gap-2 cursor-pointer flex-1"
-                  >
-                    <Wallet className="w-4 h-4" />
-                    <span className="text-sm">Cash on Delivery</span>
-                  </Label>
-                </div>
-              </RadioGroup>
-            </CardContent>
-          </Card>
-        </div>
-
-        {/* Fixed Bottom Bar - Replaces Mobile Footer */}
-        <div className="fixed bottom-0 left-0 right-0 bg-background border-t shadow-lg z-50">
+       {/* Mobile Fixed Bottom Bar */}
+        <div className="lg:hidden fixed bottom-0 left-0 right-0 bg-background border-t shadow-lg z-50">
           <div className="p-4 space-y-3">
             <div className="flex justify-between items-center">
               <div>
@@ -657,7 +642,6 @@ export default function UnifiedCheckout() {
             </Button>
           </div>
         </div>
-      </div>
     </div>
   );
 }

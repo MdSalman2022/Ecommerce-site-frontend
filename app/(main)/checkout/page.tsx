@@ -1,5 +1,5 @@
-import UnifiedCheckout from "@/components/Checkout/UnifiedCheckout";
+import CheckoutPage from "@/components/Checkout/CheckoutPage";
 
 export default function CheckoutRoute() {
-  return <UnifiedCheckout />;
+  return <CheckoutPage />;
 }
