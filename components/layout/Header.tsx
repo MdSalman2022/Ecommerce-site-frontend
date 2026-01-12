@@ -3,7 +3,7 @@
 import React, {useState} from "react";
 import Link from "next/link";
 import Image from "next/image";
-import {useRouter} from "next/navigation";
+import {useRouter, usePathname} from "next/navigation";
 import {
   Search,
   Menu,
@@ -34,6 +34,7 @@ import {
   Tablet,
   Tv,
   Sparkles,
+  ChevronLeft,
 } from "lucide-react";
 import {useAuth} from "@/contexts/AuthProvider";
 import {useUI} from "@/contexts/UIProvider";
@@ -55,6 +56,7 @@ import * as LucideIcons from "lucide-react";
 
 export default function Header() {
   const router = useRouter();
+  const pathname = usePathname();
   const {user, logout} = useAuth();
   const {cart, trackSearch} = useUserActivity();
   const {toggleSidebar} = useUI();
@@ -65,6 +67,12 @@ export default function Header() {
   const [expandedCategory, setExpandedCategory] = useState<number | null>(null);
   const [hoveredCategory, setHoveredCategory] = useState<number | null>(null);
   const [isAISearch, setIsAISearch] = useState(true);
+
+  // Check if on checkout or cart page
+  const isCheckoutOrCartPage =
+    pathname === "/checkout" ||
+    pathname.startsWith("/checkout/") ||
+    pathname === "/cart";
 
   const showSearchBar = layout?.header?.showSearchBar ?? true;
   const showWishlist = layout?.header?.showWishlist ?? true;
@@ -110,14 +118,24 @@ export default function Header() {
       <header className="bg-white border-b border-gray-200 sticky top-0 z-50">
         <div className="container mx-auto px-4">
           <div className="flex items-center justify-between h-16 md:h-20 gap-4">
-            {/* Mobile Menu Toggle */}
-            <button
-              onClick={() => setIsMobileMenuOpen(true)}
-              className="lg:hidden p-2 text-gray-700 hover:text-primary"
-              aria-label="Open menu"
-            >
-              <Menu className="w-6 h-6" />
-            </button>
+            {/* Mobile Menu Toggle / Back Button */}
+            {isCheckoutOrCartPage ? (
+              <button
+                onClick={() => router.back()}
+                className="lg:hidden p-2 text-gray-700 hover:text-primary transition-colors"
+                aria-label="Go back"
+              >
+                <ChevronLeft className="w-6 h-6" />
+              </button>
+            ) : (
+              <button
+                onClick={() => setIsMobileMenuOpen(true)}
+                className="lg:hidden p-2 text-gray-700 hover:text-primary"
+                aria-label="Open menu"
+              >
+                <Menu className="w-6 h-6" />
+              </button>
+            )}
 
             {/* Logo */}
             <Link href="/" className="flex items-center gap-2 shrink-0">
@@ -393,7 +411,7 @@ export default function Header() {
       </header>
 
       {/* ========== MOBILE SEARCH BAR ========== */}
-      {showSearchBar && (
+      {showSearchBar && !isCheckoutOrCartPage && (
         <div className="lg:hidden bg-white px-4 py-3 border-b">
           <form onSubmit={handleSearch}>
             <div className="flex items-center w-full border border-gray-300 rounded-full bg-white pr-1 focus-within:border-primary transition-all">
@@ -408,13 +426,13 @@ export default function Header() {
                 type="button"
                 onClick={() => setIsAISearch(!isAISearch)}
                 className={cn(
-                  "flex items-center justify-center p-1 rounded-full transition-all duration-300 mr-2 border",
+                  "flex items-center justify-center p-0 rounded-full transition-all duration-300 mr-2 border",
                   isAISearch
-                    ? "bg-gradient-to-r from-blue-500 via-purple-500 to-pink-500 border-transparent shadow-md"
+                    ? "bg-gradient-to-r from-black border-transparent shadow-md"
                     : "bg-gray-100 border-gray-200"
                 )}
               >
-                <div className="w-6 h-6 flex items-center justify-center bg-black rounded-full overflow-hidden">
+                <div className="w-7 h-7 flex items-center justify-center bg-black rounded-full overflow-hidden">
                   <AIBotLottie style={{width: "100%", height: "100%"}} />
                 </div>
               </button>

@@ -417,3 +417,58 @@
 .animate-pulse-ring {
   animation: pulse-ring 2s ease-in-out infinite;
 }
+
+/* Print Styles - Hide navigation and footer when printing */
+@media print {
+  /* Hide navigation, footer, and UI elements */
+  nav,
+  footer,
+  header,
+  .print\:hidden,
+  [class*="BottomNav"],
+  [class*="Navbar"],
+  [class*="Header"],
+  [class*="Footer"],
+  /* Hide search bars (Ask DealBot AI, etc.) */
+  [role="search"],
+  input[type="search"],
+  .search,
+  .search-bar,
+  .search-container,
+  .ai-search,
+  .ask-ai,
+  .AskDealBot,
+  .AskDealBotAI,
+  [class*="Search"],
+  [class*="search"],
+  [placeholder*="search" i],
+  [aria-label*="search" i],
+  [data-search],
+  .topbar,
+  .top-bar,
+  .header-bar,
+  .search-wrapper,
+  .search-box,
+  .search-input,
+  .search-field,
+  .search-component,
+  .ai-search-bar,
+  .dealbot-search {
+    display: none !important;
+  }
+
+  /* Ensure print content is visible */
+  .print\:block {
+    display: block !important;
+  }
+
+  /* Reset page margins for print */
+  @page {
+    margin: 0.5cm;
+  }
+
+  /* Ensure proper page breaks */
+  .print\:block {
+    page-break-inside: avoid;
+  }
+}

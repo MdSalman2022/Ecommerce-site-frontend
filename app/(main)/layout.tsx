@@ -1,8 +1,14 @@
-import {Header, Footer, LeftSidebar, RightSidebar} from "@/components/layout";
-import MobileBottomNav from "@/components/layout/MobileBottomNav";
+import {
+  Header,
+  Footer,
+  LeftSidebar,
+  RightSidebar,
+  MobileFooter,
+} from "@/components/layout";
 import {UIProvider} from "@/contexts/UIProvider";
 import {AIChatbot} from "@/components/AI";
 import NotificationPrompt from "@/components/NotificationPrompt";
+import AIChatbotWrapper from "@/components/AI/AIChatbotWrapper";
 
 export default function MainLayout({children}: {children: React.ReactNode}) {
   return (
@@ -18,8 +24,9 @@ export default function MainLayout({children}: {children: React.ReactNode}) {
           </div>
           <Footer />
         </div>
-        <MobileBottomNav />
-        <AIChatbot />
+        {/* Mobile Footer with auto-detection based on page */}
+        <MobileFooter autoDetect={true} />
+        <AIChatbotWrapper />
         <NotificationPrompt />
       </div>
     </UIProvider>

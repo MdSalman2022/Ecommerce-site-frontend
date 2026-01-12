@@ -114,7 +114,7 @@ function CheckoutPage() {
   };
 
   return (
-    <div className="min-h-screen bg-background">
+    <div className="md:min-h-screen bg-background">
       <div className="container mx-auto py-10 px-4">
         <div className="flex flex-col items-center max-w-xl mx-auto">
           <h2 className="text-center text-4xl font-bold text-foreground mb-8">
