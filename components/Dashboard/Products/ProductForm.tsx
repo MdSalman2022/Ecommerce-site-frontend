@@ -424,7 +424,7 @@ export default function ProductForm({ initialData }: { initialData?: any }) {
   };
 
   return (
-    <form onSubmit={handleSubmit(onSubmit)} className="space-y-8 w-full pb-10">
+    <form onSubmit={handleSubmit(onSubmit)} className="space-y-4 md:space-y-8 w-full pb-10">
       
       {/* Header Actions */}
       <div className="flex flex-col sm:flex-row items-start sm:items-center justify-between gap-4">
@@ -434,27 +434,35 @@ export default function ProductForm({ initialData }: { initialData?: any }) {
           </Button>
         </div>
         <div className="flex items-center gap-3 w-full sm:w-auto">
-            <Button variant="outline" type="button" onClick={() => router.back()} className="flex-1 sm:flex-none">
-                Discard
-            </Button>
             <Button type="submit" disabled={isLoading} className="bg-primary flex-1 sm:flex-none">
                 {isLoading ? <Loader2 className="animate-spin mr-2" /> : <Save className="mr-2 w-4 h-4" />}
-                {initialData ? 'Update Product' : 'Save Product'}
+                {initialData ? 'Update' : 'Save'}
             </Button>
         </div>
       </div>
 
-      <div className="grid grid-cols-1 lg:grid-cols-3 2xl:grid-cols-4 gap-8">
+      {/* Mobile Sticky Bar */}
+      <div className="fixed bottom-0 left-0 right-0 bg-white border-t border-gray-200 p-4 flex gap-3 z-50 md:hidden shadow-[0_-4px_6px_-1px_rgba(0,0,0,0.1)]">
+        <Button variant="outline" type="button" onClick={() => router.back()} className="flex-1 h-11">
+            Discard
+        </Button>
+        <Button type="submit" disabled={isLoading} className="bg-primary flex-1 h-11">
+            {isLoading ? <Loader2 className="animate-spin mr-2 h-4 w-4" /> : <Save className="mr-2 w-4 h-4" />}
+            {initialData ? 'Update' : 'Save'}
+        </Button>
+      </div>
+
+      <div className="grid grid-cols-1 lg:grid-cols-3 2xl:grid-cols-4 gap-4 md:gap-8">
         
         {/* Left Column - Main Info */}
-        <div className="lg:col-span-2 2xl:col-span-3 space-y-6">
+        <div className="lg:col-span-2 2xl:col-span-3 space-y-4 md:space-y-6">
             
             {/* General Info */}
             <Card>
-                <CardHeader>
-                    <CardTitle>General Information</CardTitle>
+                <CardHeader className="p-4 md:p-6 pb-2 md:pb-6">
+                    <CardTitle className="text-base md:text-xl">General Information</CardTitle>
                 </CardHeader>
-                <CardContent className="space-y-4">
+                <CardContent className="space-y-3 md:space-y-4 p-4 md:p-6 pt-0 md:pt-0">
                     <div>
                         <Label>Product Name</Label>
                         <Input {...register('name', { required: 'Name is required' })} placeholder="e.g. Wireless Noise Cancelling Headphones" />
@@ -488,7 +496,7 @@ export default function ProductForm({ initialData }: { initialData?: any }) {
                         />
                     </div>
 
-                    <div className="grid grid-cols-2 gap-4">
+                    <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
                         <div>
                             <Label>Brand</Label>
                             <Input {...register('brand')} placeholder="e.g. Sony" />
@@ -503,11 +511,11 @@ export default function ProductForm({ initialData }: { initialData?: any }) {
 
             {/* Media */}
             <Card>
-                <CardHeader>
+                <CardHeader className="pb-3 md:pb-6">
                     <CardTitle>Media</CardTitle>
                 </CardHeader>
-                <CardContent>
-                    <div className="grid grid-cols-3 md:grid-cols-4 gap-4 mb-4">
+                <CardContent className="px-4 md:px-6">
+                    <div className="grid grid-cols-2 sm:grid-cols-3 md:grid-cols-4 gap-3 md:gap-4 mb-4">
                         {imageList.map((url, idx) => (
                             <div key={idx} className="relative group aspect-square border rounded-lg overflow-hidden">
                                 <img src={url} alt="Product" className="w-full h-full object-cover" />
@@ -533,13 +541,13 @@ export default function ProductForm({ initialData }: { initialData?: any }) {
 
             {/* Pricing */}
             <Card className={hasVariants ? 'opacity-60' : ''}>
-                <CardHeader>
+                <CardHeader className="pb-3 md:pb-6">
                     <CardTitle>Pricing</CardTitle>
                     {hasVariants && (
                         <p className="text-xs text-amber-600">Set prices in the Variants section above</p>
                     )}
                 </CardHeader>
-                <CardContent className="grid grid-cols-1 md:grid-cols-3 gap-6">
+                <CardContent className="grid grid-cols-1 sm:grid-cols-3 gap-3 md:gap-6 px-4 md:px-6">
                     <div>
                         <Label>Regular Price ($)</Label>
                         <Input 
@@ -579,10 +587,10 @@ export default function ProductForm({ initialData }: { initialData?: any }) {
 
             {/* Inventory */}
             <Card>
-                <CardHeader>
+                <CardHeader className="pb-3 md:pb-6">
                     <CardTitle>Inventory</CardTitle>
                 </CardHeader>
-                <CardContent className="grid grid-cols-1 md:grid-cols-2 gap-6">
+                <CardContent className="grid grid-cols-1 sm:grid-cols-2 gap-3 md:gap-6 px-4 md:px-6">
                     <div>
                         <Label>SKU (Stock Keeping Unit)</Label>
                         <Input {...register('sku')} placeholder="Leave empty to auto-generate" />
@@ -596,13 +604,13 @@ export default function ProductForm({ initialData }: { initialData?: any }) {
             
             {/* Specifications */}
             <Card>
-                <CardHeader className="flex flex-row items-center justify-between">
+                <CardHeader className="flex flex-row items-center justify-between space-y-0 pb-3 md:pb-6">
                     <CardTitle>Specifications</CardTitle>
                     <Button type="button" variant="outline" size="sm" onClick={() => appendSpec({ key: '', value: '' })}>
                         <Plus className="w-4 h-4 mr-1" /> Add Spec
                     </Button>
                 </CardHeader>
-                <CardContent className="space-y-3">
+                <CardContent className="space-y-3 px-4 md:px-6">
                     {specFields.map((field, index) => (
                         <div key={field.id} className="flex gap-3">
                              <Input {...register(`specifications.${index}.key` as const)} placeholder="Name (e.g. Dimensions)" />
@@ -617,10 +625,10 @@ export default function ProductForm({ initialData }: { initialData?: any }) {
 
              {/* Variants */}
              <Card>
-                <CardHeader className="flex flex-row items-center justify-between">
+                <CardHeader className="flex flex-row items-center justify-between space-y-0 pb-3 md:pb-6">
                     <CardTitle>Variants</CardTitle>
                     <div className="flex items-center gap-2">
-                        <Label htmlFor="hasVariants" className="text-sm cursor-pointer">This product has variants</Label>
+                        <Label htmlFor="hasVariants" className="text-sm cursor-pointer">Has variants</Label>
                         <Switch 
                             id="hasVariants" 
                             checked={watch('hasVariants')} 
@@ -716,7 +724,9 @@ export default function ProductForm({ initialData }: { initialData?: any }) {
                                     <h4 className="font-medium text-sm text-gray-700">Variant Configuration</h4>
                                     <p className="text-xs text-gray-500">{variantConfigs.length} combinations</p>
                                 </div>
-                                <div className="border rounded-lg overflow-hidden">
+                                
+                                {/* Desktop Table */}
+                                <div className="hidden lg:block border rounded-lg overflow-hidden">
                                     <table className="w-full text-sm">
                                         <thead className="bg-gray-100">
                                             <tr>
@@ -853,6 +863,129 @@ export default function ProductForm({ initialData }: { initialData?: any }) {
                                         </tbody>
                                     </table>
                                 </div>
+
+                                {/* Mobile/Tablet Card View */}
+                                <div className="lg:hidden space-y-4">
+                                    {variantConfigs.map((config, idx) => (
+                                        <div key={config.id} className="border rounded-xl p-4 bg-gray-50/30 space-y-4">
+                                            <div className="flex justify-between items-start">
+                                                <div className="font-semibold text-sm text-gray-900 pr-8">{config.name}</div>
+                                                <Button 
+                                                    type="button" 
+                                                    variant="ghost" 
+                                                    size="icon"
+                                                    onClick={() => {
+                                                        setVariantConfigs(prev => prev.filter((_, i) => i !== idx));
+                                                    }}
+                                                    className="h-8 w-8 text-red-500 -mt-1 -mr-1"
+                                                >
+                                                    <Trash2 className="w-4 h-4" />
+                                                </Button>
+                                            </div>
+                                            
+                                            <div className="grid grid-cols-2 gap-3">
+                                                <div className="space-y-1">
+                                                    <Label className="text-[10px] uppercase text-gray-500">Reg. Price</Label>
+                                                    <Input 
+                                                        type="number"
+                                                        step="0.01"
+                                                        value={config.regularPrice}
+                                                        onChange={(e) => {
+                                                            setVariantConfigs(prev => prev.map((c, i) => 
+                                                                i === idx ? { ...c, regularPrice: parseFloat(e.target.value) || 0 } : c
+                                                            ));
+                                                        }}
+                                                        className="h-9"
+                                                    />
+                                                </div>
+                                                <div className="space-y-1">
+                                                    <Label className="text-[10px] uppercase text-gray-500">Sale Price</Label>
+                                                    <Input 
+                                                        type="number"
+                                                        step="0.01"
+                                                        value={config.salePrice}
+                                                        onChange={(e) => {
+                                                            setVariantConfigs(prev => prev.map((c, i) => 
+                                                                i === idx ? { ...c, salePrice: parseFloat(e.target.value) || 0 } : c
+                                                            ));
+                                                        }}
+                                                        className="h-9"
+                                                    />
+                                                </div>
+                                                <div className="space-y-1">
+                                                    <Label className="text-[10px] uppercase text-gray-500">Cost Price</Label>
+                                                    <Input 
+                                                        type="number"
+                                                        step="0.01"
+                                                        value={config.costPrice}
+                                                        onChange={(e) => {
+                                                            setVariantConfigs(prev => prev.map((c, i) => 
+                                                                i === idx ? { ...c, costPrice: parseFloat(e.target.value) || 0 } : c
+                                                            ));
+                                                        }}
+                                                        className="h-9"
+                                                    />
+                                                </div>
+                                                <div className="space-y-1">
+                                                    <Label className="text-[10px] uppercase text-gray-500">Stock</Label>
+                                                    <Input 
+                                                        type="number"
+                                                        value={config.stock}
+                                                        onChange={(e) => {
+                                                            setVariantConfigs(prev => prev.map((c, i) => 
+                                                                i === idx ? { ...c, stock: parseInt(e.target.value) || 0 } : c
+                                                            ));
+                                                        }}
+                                                        className="h-9"
+                                                    />
+                                                </div>
+                                            </div>
+
+                                            <div className="space-y-2">
+                                                <Label className="text-[10px] uppercase text-gray-500">Variant Images</Label>
+                                                <div className="flex gap-2 items-center">
+                                                    {config.images && config.images.length > 0 && (
+                                                        <div className="flex gap-1 flex-wrap max-w-full overflow-x-auto pb-1">
+                                                            {config.images.map((img, i) => (
+                                                                <div key={i} className="relative w-8 h-8 rounded border overflow-hidden shrink-0">
+                                                                    <img src={img} alt="Variant" className="w-full h-full object-cover" />
+                                                                </div>
+                                                            ))}
+                                                        </div>
+                                                    )}
+                                                    <Select
+                                                        value=""
+                                                        onValueChange={(val) => {
+                                                            setVariantConfigs(prev => prev.map((c, i) => {
+                                                                if (i !== idx) return c;
+                                                                const currentImages = c.images || [];
+                                                                const newImages = currentImages.includes(val)
+                                                                    ? currentImages.filter(img => img !== val)
+                                                                    : [...currentImages, val];
+                                                                return { ...c, images: newImages };
+                                                            }));
+                                                        }}
+                                                    >
+                                                        <SelectTrigger className="h-8 min-w-[100px] text-[10px]">
+                                                            <SelectValue placeholder="Add Images" />
+                                                        </SelectTrigger>
+                                                        <SelectContent>
+                                                            {imageList.map((img, i) => (
+                                                                <SelectItem key={i} value={img}>
+                                                                    <div className="flex items-center gap-2">
+                                                                        <img src={img} className="w-6 h-6 object-cover rounded" />
+                                                                        <span className="truncate max-w-[100px]">Image {i + 1}</span>
+                                                                        {config.images?.includes(img) && <span className="text-green-500 ml-auto">✓</span>}
+                                                                    </div>
+                                                                </SelectItem>
+                                                            ))}
+                                                        </SelectContent>
+                                                    </Select>
+                                                </div>
+                                            </div>
+                                        </div>
+                                    ))}
+                                </div>
                             </div>
                         )}
                      </CardContent>
@@ -862,12 +995,12 @@ export default function ProductForm({ initialData }: { initialData?: any }) {
         </div>
 
         {/* Right Column - Organization */}
-        <div className="space-y-6">
+        <div className="space-y-4 md:space-y-6">
             <Card>
-                <CardHeader>
-                    <CardTitle>Organization</CardTitle>
+                <CardHeader className="p-4 md:p-6 pb-2 md:pb-6">
+                    <CardTitle className="text-sm md:text-lg font-semibold">Organization</CardTitle>
                 </CardHeader>
-                <CardContent className="space-y-4">
+                <CardContent className="space-y-4 p-4 md:p-6 pt-0 md:pt-0">
                      {/* Category Selector */}
                      <div>
                         <div className="flex items-center justify-between mb-2">

@@ -1,6 +1,6 @@
 'use client';
 
-import React, { useState } from 'react';
+import React, { useState, useEffect } from 'react';
 import { HiOutlineMail, HiSortAscending } from 'react-icons/hi';
 import { useUserActivity } from '@/contexts/UserActivityProvider';
 import { Button } from '@/components/ui/button';
@@ -20,11 +20,16 @@ import {
 } from '@/components/ui/dropdown-menu';
 
 function DashboardTransactions() {
-  const { orders } = useUserActivity();
+  const { orders, refetchOrders } = useUserActivity();
 
   const [currentPage, setCurrentPage] = useState(1);
   const [postsPerPage, setPostsPerPage] = useState(10);
   const [sortType, setSortType] = useState('');
+
+  // Fetch orders on mount
+  useEffect(() => {
+    refetchOrders();
+  }, [refetchOrders]);
 
   const ordersArray = Array.isArray(orders) ? orders : [];
 

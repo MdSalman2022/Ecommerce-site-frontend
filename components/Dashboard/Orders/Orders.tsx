@@ -74,20 +74,12 @@ function DashboardOrders() {
     }
   }, [activeTab]);
 
-  const ordersArray = Array.isArray(orders) ? orders : [];
+  // Fetch orders on mount
+  useEffect(() => {
+    handleRefreshOrders();
+  }, []);
 
-  // Sync local orders with fetched orders (initial load)
-  React.useEffect(() => {
-    if (
-      !searchQuery &&
-      !statusFilter &&
-      statusFilter === "all" &&
-      !dateFrom &&
-      !dateTo
-    ) {
-      setLocalOrders(ordersArray);
-    }
-  }, [orders]);
+  const ordersArray = Array.isArray(orders) ? orders : [];
 
   // Debounced backend search
   const [isSearching, setIsSearching] = useState(false);

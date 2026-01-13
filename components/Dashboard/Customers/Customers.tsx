@@ -1,6 +1,6 @@
 'use client';
 
-import React, { useState, useMemo } from 'react';
+import React, { useState, useMemo, useEffect } from 'react';
 import { HiSortAscending } from 'react-icons/hi';
 import { useUserActivity } from '@/contexts/UserActivityProvider'; // Assuming this contains ALL orders for Admin
 import { Button } from '@/components/ui/button';
@@ -27,11 +27,16 @@ import {
 import OrderDetailsModal from '../Orders/OrderDetailsModal';
 
 function DashboardCustomers() {
-  const { orders } = useUserActivity();
+  const { orders, refetchOrders } = useUserActivity();
   const [currentPage, setCurrentPage] = useState(1);
   const [postsPerPage, setPostsPerPage] = useState(20);
   const [sortType, setSortType] = useState('spent-desc');
   const [selectedCustomerOrders, setSelectedCustomerOrders] = useState<any[] | null>(null);
+
+  // Fetch orders on mount
+  useEffect(() => {
+    refetchOrders();
+  }, [refetchOrders]);
 
   // Group orders by Phone Number (Contact)
   const customers = useMemo(() => {

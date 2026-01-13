@@ -229,20 +229,22 @@ function DashboardProducts() {
   return (
     <div className="flex flex-col gap-5 relative">
       {/* Search and Filter Toggle */}
-      <div className="flex gap-3 items-center justify-between">
+      <div className="flex gap-2 md:gap-3 items-center justify-between">
         <Input
           type="text"
-          placeholder="Search products by name, brand, or tags..."
+          placeholder="Search products..."
           value={searchInput}
           onChange={(e) => setSearchInput(e.target.value)}
-          className="max-w-md"
+          className="flex-1 md:max-w-md"
         />
         <Button
           variant={showFilters ? "default" : "outline"}
           onClick={() => setShowFilters(!showFilters)}
+          className="whitespace-nowrap"
+          size="sm"
         >
-          <FaFilter className="mr-2" />
-          Filters{" "}
+          <FaFilter className="md:mr-2" />
+          <span className="hidden md:inline">Filters</span>{" "}
           {hasActiveFilters &&
             `(${
               [
@@ -363,18 +365,20 @@ function DashboardProducts() {
       )}
 
       {/* Controls */}
-      <div className="flex justify-between items-center gap-3">
-        <div className="text-sm text-muted-foreground">
+      <div className="flex justify-between items-center gap-2 md:gap-3">
+        <div className="text-xs md:text-sm text-muted-foreground">
           Showing {products.length > 0 ? (page - 1) * limit + 1 : 0} -{" "}
           {Math.min(page * limit, pagination.total)} of {pagination.total}{" "}
-          products
+          <span className="hidden sm:inline">products</span>
         </div>
 
-        <div className="flex gap-3">
+        <div className="flex gap-2 md:gap-3">
           <DropdownMenu>
             <DropdownMenuTrigger asChild>
-              <Button variant="outline" disabled={selectedIds.length === 0}>
-                Options <FaAngleDown className="ml-2" />
+              <Button variant="outline" disabled={selectedIds.length === 0} size="sm">
+                <span className="hidden md:inline">Options</span>
+                <span className="md:hidden">Ops</span>
+                <FaAngleDown className="ml-1 md:ml-2" />
               </Button>
             </DropdownMenuTrigger>
             <DropdownMenuContent>
@@ -390,7 +394,7 @@ function DashboardProducts() {
               setLimit(Number(e.target.value));
               setPage(1);
             }}
-            className="border border-border rounded-md px-3 py-2 bg-background"
+            className="border border-border rounded-md px-2 md:px-3 py-1.5 md:py-2 bg-background text-sm"
           >
             <option value={20}>20 per page</option>
             <option value={40}>40 per page</option>
@@ -400,7 +404,10 @@ function DashboardProducts() {
 
           <DropdownMenu>
             <DropdownMenuTrigger asChild>
-              <Button variant="outline">Sort {sortBy && `(${sortBy})`}</Button>
+              <Button variant="outline" size="sm">
+                <span className="hidden md:inline">Sort {sortBy && `(${sortBy})`}</span>
+                <span className="md:hidden">{sortBy ? sortBy.slice(0, 1).toUpperCase() : "S"}</span>
+              </Button>
             </DropdownMenuTrigger>
             <DropdownMenuContent>
               <DropdownMenuItem
@@ -463,7 +470,7 @@ function DashboardProducts() {
       </div>
 
       {/* Products Table */}
-      <div className="bg-card rounded-xl border border-border overflow-hidden">
+      <div className="bg-card rounded-xl border border-border overflow-x-auto">
         {isLoading ? (
           <div className="p-8 text-center text-muted-foreground">
             Loading products...

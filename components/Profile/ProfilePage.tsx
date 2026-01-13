@@ -19,6 +19,7 @@ import {
   Clock,
   X,
   Save,
+  LayoutDashboard,
 } from "lucide-react";
 import {Button} from "@/components/ui/button";
 import {Card, CardContent, CardHeader, CardTitle} from "@/components/ui/card";
@@ -39,7 +40,7 @@ import {toast} from "react-hot-toast";
 const API_URL = process.env.NEXT_PUBLIC_SERVER_URL;
 
 export default function ProfilePage() {
-  const {user, logout, loading} = useAuth();
+  const {user, logout, loading, isStaff} = useAuth();
   const router = useRouter();
   const queryClient = useQueryClient();
   const [isEditingShipping, setIsEditingShipping] = useState(false);
@@ -228,6 +229,18 @@ export default function ProfilePage() {
                     <ChevronRight className="w-4 h-4 ml-auto" />
                   </Button>
                 </Link>
+                {isStaff && (
+                  <Link href="/dashboard" className="block">
+                    <Button
+                      variant="ghost"
+                      className="w-full justify-start text-primary hover:text-primary hover:bg-primary/5 font-semibold"
+                    >
+                      <LayoutDashboard className="w-4 h-4 mr-3" />
+                      Dashboard
+                      <ChevronRight className="w-4 h-4 ml-auto" />
+                    </Button>
+                  </Link>
+                )}
                 <Link href="/wishlist" className="block">
                   <Button variant="ghost" className="w-full justify-start">
                     <Heart className="w-4 h-4 mr-3" />
@@ -473,6 +486,18 @@ export default function ProfilePage() {
                       <ChevronRight className="w-4 h-4 ml-auto" />
                     </Button>
                   </Link>
+                  {isStaff && (
+                    <Link href="/dashboard">
+                      <Button
+                        variant="ghost"
+                        className="w-full justify-start text-primary hover:text-primary hover:bg-primary/5 font-semibold"
+                      >
+                        <LayoutDashboard className="w-4 h-4 mr-3" />
+                        Dashboard
+                        <ChevronRight className="w-4 h-4 ml-auto" />
+                      </Button>
+                    </Link>
+                  )}
                   <Link href="/wishlist">
                     <Button variant="ghost" className="w-full justify-start">
                       <Heart className="w-4 h-4 mr-3" />

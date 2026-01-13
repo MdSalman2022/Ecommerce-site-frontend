@@ -7,9 +7,7 @@ import { Button } from '@/components/ui/button';
 import { Input } from '@/components/ui/input';
 import { Label } from '@/components/ui/label';
 import { Switch } from '@/components/ui/switch';
-import { 
-    Dialog, DialogContent, DialogHeader, DialogTitle, DialogTrigger, DialogFooter 
-} from '@/components/ui/dialog';
+import { ResponsiveModal } from '@/components/ui/responsive-modal';
 import { 
     Table, TableBody, TableCell, TableHead, TableHeader, TableRow 
 } from '@/components/ui/table';
@@ -159,20 +157,25 @@ export default function CategoriesPage() {
             <div className="flex flex-col md:flex-row justify-between items-start md:items-center gap-4 mb-8">
                 <div></div>
                 
-                <Dialog open={isDialogOpen} onOpenChange={(open) => {
-                    setIsDialogOpen(open);
-                    if (!open) resetForm();
-                }}>
-                    <DialogTrigger asChild>
+                <ResponsiveModal
+                    open={isDialogOpen}
+                    onOpenChange={(open) => {
+                        setIsDialogOpen(open);
+                        if (!open) resetForm();
+                    }}
+                    title={editingCategory ? 'Edit Category' : 'Create New Category'}
+                    trigger={
                         <Button className="flex gap-2">
                             <Plus className="w-4 h-4" /> Add Category
                         </Button>
-                    </DialogTrigger>
-                    <DialogContent className="max-w-xl max-h-[90vh] overflow-y-auto">
-                        <DialogHeader>
-                            <DialogTitle>{editingCategory ? 'Edit Category' : 'Create New Category'}</DialogTitle>
-                        </DialogHeader>
-                        <form onSubmit={handleSubmit} className="space-y-6 py-4">
+                    }
+                    footer={
+                        <Button type="submit" form="category-form" size="lg" className="w-full md:w-auto">
+                            {editingCategory ? 'Update Category' : 'Create Category'}
+                        </Button>
+                    }
+                >
+                        <form id="category-form" onSubmit={handleSubmit} className="space-y-6 py-4">
                             <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
                                 <div className="space-y-2 col-span-2">
                                     <Label>Category Name</Label>
@@ -272,15 +275,8 @@ export default function CategoriesPage() {
                                     />
                                 </div>
                             </div>
-
-                            <DialogFooter>
-                                <Button type="submit" size="lg" className="w-full md:w-auto">
-                                    {editingCategory ? 'Update Category' : 'Create Category'}
-                                </Button>
-                            </DialogFooter>
                         </form>
-                    </DialogContent>
-                </Dialog>
+                </ResponsiveModal>
             </div>
 
             {/* Content Area */}

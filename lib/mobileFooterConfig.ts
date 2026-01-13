@@ -178,7 +178,7 @@ export const PAGE_FOOTER_CONFIGS: Record<
     showLabels: false,
   },
   "/cart": {
-    variant: "minimal",
+    variant: "default",
     showLabels: false,
   },
   "/checkout": {
@@ -186,20 +186,20 @@ export const PAGE_FOOTER_CONFIGS: Record<
     showLabels: false,
   },
   "/product": {
-    variant: "shopping",
+    variant: "default",
     showLabels: false,
   },
   "/search": {
-    variant: "shopping",
+    variant: "default",
     showLabels: false,
   },
   "/profile": {
-    variant: "extended",
-    showLabels: true,
+    variant: "default",
+    showLabels: false,
   },
   "/orderhistory": {
-    variant: "extended",
-    showLabels: true,
+    variant: "default",
+    showLabels: false,
   },
 };
 

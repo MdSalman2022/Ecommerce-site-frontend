@@ -89,61 +89,31 @@ const SearchPage = () => {
   return (
     <div className="container mx-auto my-10 space-y-8 px-4 min-h-screen">
       {/* Search Header */}
-      <div className="flex flex-col md:flex-row md:items-end justify-between gap-4 border-b border-gray-100 pb-6">
-        <div className="space-y-4">
-          <div className="flex items-center gap-3">
-            <h1 className="text-2xl lg:text-4xl font-bold text-foreground">
+      <div className="flex flex-col md:flex-row md:items-baseline justify-between gap-4 border-b border-gray-100 pb-4">
+        <div className="flex flex-col gap-2">
+          <div className="flex items-center gap-2 flex-wrap">
+            <h1 className="text-xl lg:text-4xl font-bold text-foreground">
               {decodedQuery ? `Results for "${decodedQuery}"` : 'All Products'}
             </h1>
             {isAiPowered && (
-              <TooltipProvider>
-                <Tooltip>
-                  <TooltipTrigger asChild>
-                    <div className="flex items-center gap-1 bg-gradient-to-r from-blue-500 via-purple-500 to-pink-500 text-white px-3 py-1 rounded-full text-[10px] font-bold cursor-help shadow-lg shadow-purple-200 animate-in fade-in zoom-in duration-500">
-                      <Sparkles className="w-3 h-3 fill-white" />
-                      AI POWERED
-                    </div>
-                  </TooltipTrigger>
-                  <TooltipContent>
-                    <p className="w-48 text-xs font-semibold">Gemini AI interpreted your natural language search to find the best matches with real-time semantic understanding.</p>
-                  </TooltipContent>
-                </Tooltip>
-              </TooltipProvider>
+              <div className="flex items-center gap-1 text-purple-600 bg-purple-50 px-2 py-0.5 rounded-full text-[10px] font-bold">
+                <Sparkles className="w-3 h-3 fill-current" />
+                AI
+              </div>
             )}
           </div>
           
-          <div className="flex items-center gap-6">
-            <p className="text-muted-foreground flex items-center gap-2">
+          <div className="flex items-center gap-3">
+            <p className="text-sm text-muted-foreground flex items-center gap-2">
               {isLoading ? (
-                <span className="h-4 w-32 bg-gray-100 animate-pulse rounded" />
+                <span className="h-4 w-24 bg-gray-100 animate-pulse rounded" />
               ) : (
                 <>
-                  <Search className="w-4 h-4 opacity-50" />
+                  <Search className="w-3.5 h-3.5 opacity-50" />
                   <span className="font-semibold text-foreground">{displayProducts.length}</span> products discovered
-                  {searchCriteria && (
-                    <span className="text-[10px] bg-purple-50 text-purple-600 px-2 py-0.5 rounded-full border border-purple-100 flex items-center gap-1 font-bold">
-                      <Info className="w-2.5 h-2.5" />
-                      Semantically Filtered
-                    </span>
-                  )}
                 </>
               )}
             </p>
-
-            <div className="h-6 w-px bg-gray-200 hidden sm:block" />
-
-            <div className="flex items-center gap-3 bg-gray-50/80 p-1.5 px-3 rounded-full border border-gray-100 shadow-sm transition-all hover:bg-white hover:shadow-md">
-              <Label htmlFor="ai-search-toggle" className="text-xs font-bold cursor-pointer text-gray-500 select-none">
-                {searchMode === 'ai' ? 'Enhanced AI' : 'Standard Search'}
-              </Label>
-              <Switch 
-                id="ai-search-toggle" 
-                checked={searchMode === 'ai'}
-                onCheckedChange={(checked) => setSearchMode(checked ? 'ai' : 'keyword')}
-                className="data-[state=checked]:bg-gradient-to-r data-[state=checked]:from-blue-500 data-[state=checked]:to-purple-500"
-              />
-              <Sparkles className={cn("w-3.5 h-3.5 transition-colors", searchMode === 'ai' ? "text-purple-500 fill-purple-500" : "text-gray-300")} />
-            </div>
           </div>
         </div>
       </div>

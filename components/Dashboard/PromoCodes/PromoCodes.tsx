@@ -5,13 +5,7 @@ import { Tag, Plus, Trash2, ToggleLeft, ToggleRight, Calendar, Percent, DollarSi
 import { Button } from '@/components/ui/button';
 import { Input } from '@/components/ui/input';
 import { Label } from '@/components/ui/label';
-import {
-  Dialog,
-  DialogContent,
-  DialogHeader,
-  DialogTitle,
-  DialogTrigger,
-} from '@/components/ui/dialog';
+import { ResponsiveModal } from '@/components/ui/responsive-modal';
 import { toast } from 'react-hot-toast';
 
 interface PromoCode {
@@ -176,18 +170,23 @@ export default function PromoCodes() {
           <span className="text-sm text-gray-500">({promoCodes.length})</span>
         </div>
         
-        <Dialog open={isDialogOpen} onOpenChange={setIsDialogOpen}>
-          <DialogTrigger asChild>
+        <ResponsiveModal
+          open={isDialogOpen}
+          onOpenChange={setIsDialogOpen}
+          title="Create Promo Code"
+          trigger={
             <Button className="bg-primary hover:bg-primary/90">
               <Plus className="w-4 h-4 mr-2" />
               Create Code
             </Button>
-          </DialogTrigger>
-          <DialogContent className="max-w-lg">
-            <DialogHeader>
-              <DialogTitle>Create Promo Code</DialogTitle>
-            </DialogHeader>
-            <form onSubmit={handleCreate} className="space-y-4">
+          }
+          footer={
+            <Button type="submit" form="promo-form" className="w-full bg-primary hover:bg-primary/90">
+              Create Promo Code
+            </Button>
+          }
+        >
+            <form id="promo-form" onSubmit={handleCreate} className="space-y-4">
               <div className="grid grid-cols-2 gap-4">
                 <div>
                   <Label htmlFor="code">Code *</Label>
@@ -289,13 +288,8 @@ export default function PromoCodes() {
                   required
                 />
               </div>
-
-              <Button type="submit" className="w-full bg-primary hover:bg-primary/90">
-                Create Promo Code
-              </Button>
             </form>
-          </DialogContent>
-        </Dialog>
+        </ResponsiveModal>
       </div>
 
       {/* Stats */}

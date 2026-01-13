@@ -395,12 +395,12 @@ export default function AIChatbot() {
                 <Send className="w-4 h-4" />
               </Button>
             </div>
-            <p className="text-[9px] text-gray-400 mt-2 text-center flex items-center justify-center gap-1 opacity-75">
+            <div className="text-[9px] text-gray-400 mt-2 text-center flex items-center justify-center gap-1 opacity-75">
               <div className="w-3 h-3 flex items-center justify-center bg-black rounded-full overflow-hidden mr-1">
                 <AIBotLottie style={{width: "100%", height: "100%"}} />
               </div>
               Powered by Advanced AI • Real-time Data
-            </p>
+            </div>
           </form>
         </>
       )}

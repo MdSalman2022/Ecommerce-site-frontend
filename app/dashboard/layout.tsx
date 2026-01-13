@@ -13,8 +13,15 @@ import { MdOutlineLocalShipping, MdOutlineLogout, MdCategory } from 'react-icons
 import { BsCreditCard2Back, BsPeople, BsGrid1X2, BsBell, BsDisplay } from 'react-icons/bs';
 import { HiUserGroup } from 'react-icons/hi';
 import { IoStatsChart } from 'react-icons/io5';
-import { Menu, Search, Bell, User } from 'lucide-react';
+import { Menu, Search, Bell, User, LogOut, Settings as SettingsIcon } from 'lucide-react';
 import { Button } from '@/components/ui/button';
+import {
+    DropdownMenu,
+    DropdownMenuContent,
+    DropdownMenuItem,
+    DropdownMenuSeparator,
+    DropdownMenuTrigger,
+} from '@/components/ui/dropdown-menu';
 import { Input } from '@/components/ui/input';
 import {
     Sheet,
@@ -136,8 +143,8 @@ export default function DashboardLayout({
                     <div className="md:hidden">
                         <Sheet open={sheetOpen} onOpenChange={setSheetOpen}>
                             <SheetTrigger asChild>
-                                <Button variant="ghost" size="icon" className="h-9 w-9">
-                                    <Menu className="h-5 w-5" />
+                                <Button variant="ghost" size="icon" className="h-12 w-12 text-gray-900 border border-gray-100 shadow-sm">
+                                    <Menu className="h-8 w-8" strokeWidth={2.5} />
                                 </Button>
                             </SheetTrigger>
                             <SheetContent side="left" className="w-64 p-0">
@@ -175,9 +182,33 @@ export default function DashboardLayout({
                             <Bell className="h-5 w-5 text-gray-500" />
                         </Button>
                         <div className="flex items-center gap-2 pl-2 border-l border-gray-200">
-                            <div className="h-8 w-8 rounded-full bg-primary flex items-center justify-center">
-                                <User className="h-4 w-4 text-white" />
-                            </div>
+                            <DropdownMenu>
+                                <DropdownMenuTrigger asChild>
+                                    <Button variant="ghost" size="icon" className="h-8 w-8 rounded-full bg-primary hover:bg-primary/90">
+                                        <User className="h-4 w-4 text-white" />
+                                    </Button>
+                                </DropdownMenuTrigger>
+                                <DropdownMenuContent align="end" className="w-56">
+                                    <div className="flex items-center justify-start gap-2 p-2">
+                                        <div className="flex flex-col space-y-1">
+                                            <p className="text-sm font-medium leading-none">{user?.name || 'Admin'}</p>
+                                            <p className="text-xs leading-none text-muted-foreground">{user?.email || ''}</p>
+                                        </div>
+                                    </div>
+                                    <DropdownMenuSeparator />
+                                    <DropdownMenuItem asChild>
+                                        <Link href="/dashboard/settings" className="cursor-pointer">
+                                            <SettingsIcon className="mr-2 h-4 w-4" />
+                                            <span>Settings</span>
+                                        </Link>
+                                    </DropdownMenuItem>
+                                    <DropdownMenuSeparator />
+                                    <DropdownMenuItem onClick={handleLogOut} className="text-red-600 focus:text-red-600 cursor-pointer">
+                                        <LogOut className="mr-2 h-4 w-4" />
+                                        <span>Logout</span>
+                                    </DropdownMenuItem>
+                                </DropdownMenuContent>
+                            </DropdownMenu>
                             <span className="text-sm font-medium text-gray-700 hidden lg:block">
                                 {user?.name || 'Admin'}
                             </span>

@@ -402,27 +402,29 @@ export default function PageBuilderDashboard() {
             Customize your store's landing page sections and content
           </p>
         </div>
-        <div className="flex items-center gap-3">
+        <div className="flex flex-wrap items-center gap-2 md:gap-3 w-full sm:w-auto">
           <Button
             variant="outline"
             size="sm"
             onClick={() => resetMutation.mutate()}
             disabled={resetMutation.isPending}
+            className="flex-1 sm:flex-none"
           >
-            Reset Defaults
+            <span className="hidden sm:inline">Reset Defaults</span>
+            <span className="sm:hidden">Reset</span>
           </Button>
           <Button
             size="sm"
             onClick={() => publishMutation.mutate()}
             disabled={publishMutation.isPending}
-            className="bg-primary hover:bg-primary/90"
+            className="bg-primary hover:bg-primary/90 flex-1 sm:flex-none"
           >
             {publishMutation.isPending ? (
               <Loader2 className="mr-2 h-4 w-4 animate-spin" />
             ) : (
               <Save className="mr-2 h-4 w-4" />
             )}
-            Publish Changes
+            Publish
           </Button>
         </div>
       </div>
@@ -463,12 +465,12 @@ export default function PageBuilderDashboard() {
           {sections.map((section, index) => (
             <div
               key={section.id || index}
-              className={`group bg-white border rounded-xl p-4 shadow-sm hover:border-primary/50 transition-all ${
+              className={`group bg-white border rounded-xl p-3 md:p-4 shadow-sm hover:border-primary/50 transition-all ${
                 !section.isVisible ? "opacity-60 bg-gray-50" : ""
               }`}
             >
-              <div className="flex items-center justify-between gap-4">
-                <div className="flex items-center gap-4">
+              <div className="flex items-start sm:items-center justify-between gap-2 md:gap-4">
+                <div className="flex items-start sm:items-center gap-2 md:gap-4 flex-1 min-w-0">
                   <div className="p-2 bg-accent rounded-lg">
                     {getSectionIcon(section.type)}
                   </div>
@@ -485,22 +487,22 @@ export default function PageBuilderDashboard() {
                   </div>
                 </div>
 
-                <div className="flex items-center gap-2">
+                <div className="flex items-center gap-1 flex-shrink-0">
                   {/* Action Buttons */}
                   <Button
                     variant="ghost"
                     size="icon"
-                    className="h-8 w-8 text-primary"
+                    className="h-7 w-7 md:h-8 md:w-8 text-primary"
                     title="Edit Section"
                     onClick={() => handleEditSection(section)}
                   >
-                    <Settings className="w-4 h-4 text-primary" />
+                    <Settings className="w-3.5 h-3.5 md:w-4 md:h-4 text-primary" />
                   </Button>
 
                   <Button
                     variant="ghost"
                     size="icon"
-                    className={`h-8 w-8 ${
+                    className={`h-7 w-7 md:h-8 md:w-8 ${
                       section.isVisible ? "text-blue-500" : "text-gray-400"
                     }`}
                     onClick={(e) => {
@@ -510,41 +512,41 @@ export default function PageBuilderDashboard() {
                     title={section.isVisible ? "Hide Section" : "Show Section"}
                   >
                     {section.isVisible ? (
-                      <Eye className="w-4 h-4" />
+                      <Eye className="w-3.5 h-3.5 md:w-4 md:h-4" />
                     ) : (
-                      <EyeOff className="w-4 h-4" />
+                      <EyeOff className="w-3.5 h-3.5 md:w-4 md:h-4" />
                     )}
                   </Button>
 
-                  <div className="flex flex-col gap-0.5 ml-2 border-l pl-2 border-border">
+                  <div className="hidden sm:flex flex-col gap-0.5 border-l pl-1 md:pl-2 border-border">
                     <Button
                       variant="ghost"
                       size="icon"
-                      className="h-7 w-7 hover:bg-accent disabled:opacity-30"
+                      className="h-6 w-6 md:h-7 md:w-7 hover:bg-accent disabled:opacity-30"
                       disabled={index === 0}
                       onClick={() => handleMove(index, "up")}
                     >
-                      <ArrowUp className="w-3.5 h-3.5" />
+                      <ArrowUp className="w-3 h-3 md:w-3.5 md:h-3.5" />
                     </Button>
                     <Button
                       variant="ghost"
                       size="icon"
-                      className="h-7 w-7 hover:bg-accent disabled:opacity-30"
+                      className="h-6 w-6 md:h-7 md:w-7 hover:bg-accent disabled:opacity-30"
                       disabled={index === sections.length - 1}
                       onClick={() => handleMove(index, "down")}
                     >
-                      <ArrowDown className="w-3.5 h-3.5" />
+                      <ArrowDown className="w-3 h-3 md:w-3.5 md:h-3.5" />
                     </Button>
                   </div>
 
                   <Button
                     variant="ghost"
                     size="icon"
-                    className="h-8 w-8 text-red-500 hover:bg-red-50 ml-2"
+                    className="h-7 w-7 md:h-8 md:w-8 text-red-500 hover:bg-red-50"
                     title="Remove Section"
                     onClick={() => handleRemoveSection(section.id)}
                   >
-                    <Trash2 className="w-4 h-4" />
+                    <Trash2 className="w-3.5 h-3.5 md:w-4 md:h-4" />
                   </Button>
                 </div>
               </div>
