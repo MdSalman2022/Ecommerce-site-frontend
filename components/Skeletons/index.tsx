@@ -130,6 +130,20 @@ export function ReviewSkeleton() {
   );
 }
 
+// Sidebar Skeleton
+export function SidebarSkeleton({ isExpanded = true }: { isExpanded?: boolean }) {
+  return (
+    <div className="flex flex-col py-2 space-y-4">
+      {Array.from({ length: 12 }).map((_, i) => (
+        <div key={i} className={cn("flex items-center px-4 py-2 animate-pulse", isExpanded ? "justify-start" : "justify-center")}>
+          <div className="w-5 h-5 bg-gray-200 rounded shrink-0" />
+          {isExpanded && <div className="ml-4 h-4 bg-gray-200 rounded w-24" />}
+        </div>
+      ))}
+    </div>
+  );
+}
+
 export default {
   ProductCardSkeleton,
   ProductGridSkeleton,
@@ -139,4 +153,5 @@ export default {
   TableSkeleton,
   HeroBannerSkeleton,
   ReviewSkeleton,
+  SidebarSkeleton,
 };

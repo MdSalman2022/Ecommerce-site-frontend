@@ -15,6 +15,7 @@ import {cn} from "@/lib/utils";
 import {useUI} from "@/contexts/UIProvider";
 import {useCategories} from "@/hooks/useCategories";
 import {useAuth} from "@/contexts/AuthProvider";
+import {SidebarSkeleton} from "@/components/Skeletons";
 
 export default function LeftSidebar() {
   const {isSidebarOpen, closeSidebar} = useUI();
@@ -99,9 +100,7 @@ export default function LeftSidebar() {
 
         <div className="flex-1 overflow-y-auto overflow-x-hidden py-2 scrollbar-thin scrollbar-thumb-gray-200">
           {isLoading ? (
-            <div className="flex flex-col items-center justify-center h-40 space-y-4">
-              <div className="w-8 h-8 border-4 border-primary border-t-transparent rounded-full animate-spin"></div>
-            </div>
+            <SidebarSkeleton isExpanded={isExpanded} />
           ) : (
             categories.map((category) => {
               // Dynamic icon lookup matching Header.tsx
@@ -165,47 +164,8 @@ export default function LeftSidebar() {
         {user && (
           <div className="border-t border-gray-200 bg-white">
             <div className="py-2">
-              {["admin", "moderator"].includes(user.role) && (
-                <Link
-                  href="/dashboard"
-                  className={cn(
-                    "flex items-center px-4 py-3 text-gray-600 hover:text-primary hover:bg-primary/5 transition-colors",
-                    isExpanded ? "justify-start" : "justify-center"
-                  )}
-                >
-                  <LayoutDashboard
-                    className="w-5 h-5 shrink-0"
-                    strokeWidth={1.25}
-                  />
-                  <span
-                    className={cn(
-                      "ml-4 font-medium whitespace-nowrap overflow-hidden transition-all duration-300",
-                      isExpanded ? "opacity-100 w-auto" : "opacity-0 w-0 hidden"
-                    )}
-                  >
-                    Dashboard
-                  </span>
-                </Link>
-              )}
-
-              <Link
-                href="/orderhistory"
-                className={cn(
-                  "flex items-center px-4 py-3 text-gray-600 hover:text-primary hover:bg-primary/5 transition-colors",
-                  isExpanded ? "justify-start" : "justify-center"
-                )}
-              >
-                <ShoppingBag className="w-5 h-5 shrink-0" strokeWidth={1.25} />
-                <span
-                  className={cn(
-                    "ml-4 font-medium whitespace-nowrap overflow-hidden transition-all duration-300",
-                    isExpanded ? "opacity-100 w-auto" : "opacity-0 w-0 hidden"
-                  )}
-                >
-                  Order History
-                </span>
-              </Link>
-
+             
+              
               <button
                 onClick={() => logout()}
                 className={cn(
