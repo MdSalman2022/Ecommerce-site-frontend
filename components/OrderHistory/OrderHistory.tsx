@@ -38,7 +38,7 @@ function OrderHistory() {
                 <div className="flex justify-between items-center p-5 bg-accent/30">
                   <div>
                     <p className="font-bold text-foreground">
-                      Order #{order._id}
+                      Order #{order.orderId || order._id}
                     </p>
                     <p className="text-sm text-muted-foreground">
                       Ordered: {order.date}

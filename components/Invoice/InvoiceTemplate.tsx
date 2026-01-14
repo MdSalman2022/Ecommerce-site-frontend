@@ -57,8 +57,16 @@ export default function InvoiceTemplate({ order }: InvoiceProps) {
              </div>
              <div className="flex justify-end gap-4">
                  <span className="text-gray-600">Payment:</span>
-                 <span className="font-medium text-green-600">Paid</span>
+                 <span className="font-medium text-green-600">
+                    {order.transactionId && order.transactionId !== "Cash on Delivery" ? "Paid (Online)" : "Cash on Delivery"}
+                 </span>
              </div>
+             {order.transactionId && order.transactionId !== "Cash on Delivery" && (
+                <div className="flex justify-end gap-4">
+                    <span className="text-gray-600">Transaction ID:</span>
+                    <span className="font-medium text-[10px] uppercase font-mono">{order.transactionId}</span>
+                </div>
+             )}
           </div>
         </div>
       </div>

@@ -9,6 +9,7 @@ import { SearchProvider } from '@/contexts/SearchProvider';
 import { UserActivityProvider } from '@/contexts/UserActivityProvider';
 import { UIProvider } from '@/contexts/UIProvider';
 import MaintenanceGuard from '@/components/Shared/MaintenanceGuard';
+import StripeProvider from './StripeProvider';
 
 interface ProvidersProps {
   children: ReactNode;
@@ -22,10 +23,12 @@ export default function Providers({ children }: ProvidersProps) {
           <ShopProvider>
             <SearchProvider>
               <UserActivityProvider>
-                <MaintenanceGuard>
-                  {children}
-                </MaintenanceGuard>
-                <Toaster position="top-center" reverseOrder={false} />
+                <StripeProvider>
+                  <MaintenanceGuard>
+                    {children}
+                  </MaintenanceGuard>
+                  <Toaster position="top-center" reverseOrder={false} />
+                </StripeProvider>
               </UserActivityProvider>
             </SearchProvider>
           </ShopProvider>

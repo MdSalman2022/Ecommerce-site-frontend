@@ -32,6 +32,9 @@ import {
   History,
   X,
 } from "lucide-react";
+import { Elements } from "@stripe/react-stripe-js";
+import { loadStripe } from "@stripe/stripe-js";
+import StripePaymentForm from "./StripePaymentForm";
 
 const API_URL = process.env.NEXT_PUBLIC_SERVER_URL;
 
@@ -218,6 +221,9 @@ export default function CheckoutPage() {
     useState<ShippingFormData | null>(null);
   const [isEditingShipping, setIsEditingShipping] = useState(false);
   const [isLoading, setIsLoading] = useState(true);
+  const [clientSecret, setClientSecret] = useState<string | null>(null);
+  const [paymentIntentId, setPaymentIntentId] = useState<string | null>(null);
+  const [creatingIntent, setCreatingIntent] = useState(false);
 
   // Calculate subtotal from cart items
   const subTotal = cart.reduce((total, item) => {
@@ -284,6 +290,151 @@ export default function CheckoutPage() {
     loadSavedShipping();
   }, [user, setValue]);
 
+  // Create payment intent when card payment is selected
+  const handlePaymentMethodChange = async (method: "cod" | "card") => {
+    setPaymentMethod(method);
+    
+    if (method === "card" && !clientSecret) {
+      setCreatingIntent(true);
+      try {
+        const response = await fetch(`${API_URL}/api/payments/create-intent`, {
+          method: "POST",
+          headers: { "Content-Type": "application/json" },
+          body: JSON.stringify({
+            items: cart.map((item) => ({
+              productId: item.productId || item._id,
+              variantId: item.variantId,
+              name: item.name,
+              quantity: item.quantity,
+            })),
+          }),
+        });
+
+        if (!response.ok) {
+          throw new Error("Failed to create payment intent");
+        }
+
+        const data = await response.json();
+        setClientSecret(data.clientSecret);
+      } catch (error) {
+        console.error("Payment intent error:", error);
+        toast.error("Failed to initialize payment. Please try again.");
+        setPaymentMethod("cod");
+      } finally {
+        setCreatingIntent(false);
+      }
+    }
+  };
+
+  // Handle successful payment
+  const handlePaymentSuccess = async (paymentIntentId: string) => {
+    setPaymentIntentId(paymentIntentId);
+    toast.success("Payment confirmed! Creating your order...");
+    
+    // Submit the form to create the order
+    const shippingData = watch();
+    await createOrderAfterPayment(shippingData as ShippingFormData, paymentIntentId);
+  };
+
+  // Handle payment error
+  const handlePaymentError = (error: string) => {
+    console.error("Payment error:", error);
+    toast.error(error);
+  };
+
+  // Create order after successful payment
+  const createOrderAfterPayment = async (
+    shippingData: ShippingFormData,
+    paymentIntentId: string
+  ) => {
+    if (cart.length === 0) {
+      toast.error("Your cart is empty");
+      return;
+    }
+
+    setIsProcessing(true);
+
+    try {
+      const orderData = {
+        name: shippingData.name,
+        address: shippingData.address,
+        contact: shippingData.contact,
+        city: shippingData.city,
+        email: shippingData.email || user?.email,
+        isGuest: !user,
+        transactionId: paymentIntentId,
+        amount: totalAmount,
+        items: cart.map((item) => ({
+          productId: item.productId || item._id,
+          variantId: item.variantId,
+          name: item.name,
+          price: item.price,
+          quantity: item.quantity,
+          totalPrice: item.price * item.quantity,
+          image: item.image,
+          variantName: item.variantName,
+        })),
+        date: new Date().toDateString(),
+        orderStatus: "pending",
+        shipment: "picked",
+        shippingCost: shippingCost,
+      };
+
+      const response = await fetch(`${API_URL}/orderhistory`, {
+        method: "POST",
+        headers: { "Content-Type": "application/json" },
+        body: JSON.stringify(orderData),
+      });
+
+      const result = await response.json();
+
+      if (!response.ok) {
+        throw new Error(result.message || "Order placement failed");
+      }
+
+      // Save shipping details for future orders (if logged in)
+      if (user?.email) {
+        try {
+          await fetch(`${API_URL}/api/users/shipping`, {
+            method: "POST",
+            headers: { "Content-Type": "application/json" },
+            body: JSON.stringify({
+              email: user.email,
+              ...shippingData,
+            }),
+          });
+        } catch (error) {
+          console.error("Failed to save shipping details:", error);
+        }
+      } else {
+        // Save guest checkout details to localStorage
+        try {
+          localStorage.setItem(
+            "guest_checkout_details",
+            JSON.stringify(shippingData)
+          );
+        } catch (error) {
+          console.error("Failed to save guest details:", error);
+        }
+      }
+
+      // Clear cart
+      setCart([]);
+      localStorage.removeItem("cart");
+      localStorage.removeItem("cart_session_id");
+
+      toast.success("Order placed successfully!");
+      router.push(`/orders/${result.orderId || result._id}`);
+    } catch (error) {
+      console.error("Order error:", error);
+      const errorMessage =
+        error instanceof Error ? error.message : "Failed to place order";
+      toast.error(errorMessage);
+    } finally {
+      setIsProcessing(false);
+    }
+  };
+
   // Handle order placement
   const onSubmit = async (shippingData: ShippingFormData) => {
     if (cart.length === 0) {
@@ -291,6 +442,14 @@ export default function CheckoutPage() {
       return;
     }
 
+    // For card payment, the form submission is handled by StripePaymentForm
+    // This function only handles COD now
+    if (paymentMethod === "card") {
+      toast.error("Please complete the payment using the form below");
+      return;
+    }
+
+    // COD payment flow
     setIsProcessing(true);
 
     try {
@@ -458,9 +617,7 @@ export default function CheckoutPage() {
               <CardContent>
                 <RadioGroup
                   value={paymentMethod}
-                  onValueChange={(value: string) =>
-                    setPaymentMethod(value as "cod" | "card")
-                  }
+                  onValueChange={handlePaymentMethodChange}
                 >
                   <div className="flex items-center space-x-3 p-4 border rounded-lg cursor-pointer hover:bg-accent">
                     <RadioGroupItem value="cod" id="cod" />
@@ -477,8 +634,8 @@ export default function CheckoutPage() {
                       </div>
                     </Label>
                   </div>
-                  <div className="flex items-center space-x-3 p-4 border rounded-lg cursor-pointer hover:bg-accent opacity-50">
-                    <RadioGroupItem value="card" id="card" disabled />
+                  <div className="flex items-center space-x-3 p-4 border rounded-lg cursor-pointer hover:bg-accent">
+                    <RadioGroupItem value="card" id="card" />
                     <Label
                       htmlFor="card"
                       className="flex items-center gap-3 cursor-pointer flex-1"
@@ -487,12 +644,39 @@ export default function CheckoutPage() {
                       <div>
                         <p className="font-medium">Card Payment</p>
                         <p className="text-sm text-muted-foreground">
-                          Coming soon
+                          Pay securely with card
                         </p>
                       </div>
                     </Label>
                   </div>
                 </RadioGroup>
+
+                {creatingIntent && (
+                  <div className="mt-4 text-center text-sm text-muted-foreground">
+                    Initializing payment...
+                  </div>
+                )}
+
+                {/* Stripe Payment Element - Embedded Form */}
+                {paymentMethod === "card" && clientSecret && (
+                  <div className="mt-6">
+                    <Elements
+                      stripe={loadStripe(process.env.NEXT_PUBLIC_STRIPE_PUBLISHABLE_KEY || "")}
+                      options={{
+                        clientSecret,
+                        appearance: {
+                          theme: 'stripe',
+                        },
+                      }}
+                    >
+                      <StripePaymentForm
+                        amount={totalAmount}
+                        onSuccess={handlePaymentSuccess}
+                        onError={handlePaymentError}
+                      />
+                    </Elements>
+                  </div>
+                )}
               </CardContent>
             </Card>
             
@@ -645,3 +829,4 @@ export default function CheckoutPage() {
     </div>
   );
 }
+

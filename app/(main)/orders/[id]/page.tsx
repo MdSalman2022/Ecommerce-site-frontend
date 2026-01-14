@@ -169,7 +169,7 @@ export default function OrderDetailsPage() {
                     Order #
                   </p>
                   <p className="text-xl font-mono">
-                    {order._id.slice(-8).toUpperCase()}
+                    {order.orderId || order._id.slice(-8).toUpperCase()}
                   </p>
                 </div>
               </div>
@@ -234,7 +234,7 @@ export default function OrderDetailsPage() {
                     </p>
                     <p>
                       <span className="font-bold text-gray-900">Invoice:</span>{" "}
-                      INV-{order._id.slice(-6).toUpperCase()}
+                      {order.orderId || `INV-${order._id.slice(-6).toUpperCase()}`}
                     </p>
                   </div>
                 </div>
@@ -249,8 +249,10 @@ export default function OrderDetailsPage() {
                     <p className="text-lg">{order.name}</p>
                     <p className="font-medium text-gray-600">{order.email}</p>
                     <p className="font-normal text-gray-500 mt-2 text-sm italic">
-                      Payment: Visa ending in{" "}
-                      {order.cardnumber?.slice(-4) || "••••"}
+                      Payment:{" "}
+                      {order.transactionId && order.transactionId !== "Cash on Delivery"
+                        ? `Stripe (${order.transactionId})`
+                        : "Cash on Delivery"}
                     </p>
                   </div>
                 </div>

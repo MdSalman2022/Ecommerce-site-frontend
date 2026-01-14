@@ -159,6 +159,14 @@ const ComponentToPrint = forwardRef(({order}, ref) => {
                     : "Online Payment"}
                 </td>
               </tr>
+              {order?.transactionId && order?.transactionId !== "Cash on Delivery" && (
+                <tr>
+                  <td style={{color: "#888", paddingBottom: "4px"}}>Transaction ID:</td>
+                  <td style={{fontFamily: "monospace", fontSize: "10px", fontWeight: "600"}}>
+                    {order.transactionId}
+                  </td>
+                </tr>
+              )}
               <tr>
                 <td style={{color: "#888"}}>Items:</td>
                 <td>

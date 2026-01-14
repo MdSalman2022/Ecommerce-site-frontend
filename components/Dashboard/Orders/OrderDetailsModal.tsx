@@ -90,7 +90,12 @@ export default function OrderDetailsModal({ order, isOpen, onClose, allOrders = 
                                 </div>
                                 <p className="text-sm"><strong>Date:</strong> {new Date(order.date).toLocaleDateString()}</p>
                                 <p className="text-sm"><strong>Total:</strong> ৳{order.amount?.toLocaleString()}</p>
-                                <p className="text-sm"><strong>Payment:</strong> {order.transactionId || 'Cash on Delivery'}</p>
+                                <p className="text-sm">
+                                    <strong>Payment:</strong>{' '}
+                                    {order.transactionId && order.transactionId !== 'Cash on Delivery' 
+                                        ? `Stripe (${order.transactionId})` 
+                                        : 'Cash on Delivery'}
+                                </p>
                             </div>
                         </div>
                         
