@@ -32,12 +32,14 @@ import {
   History,
   X,
   Loader2,
+  Tag,
 } from "lucide-react";
 import { Elements } from "@stripe/react-stripe-js";
 import { loadStripe } from "@stripe/stripe-js";
 import StripePaymentForm, {
   StripePaymentFormRef,
 } from "@/components/Checkout/StripePaymentForm";
+import { PromoCodeInput } from "@/components/Checkout";
 
 const API_URL = process.env.NEXT_PUBLIC_SERVER_URL;
 
@@ -249,6 +251,10 @@ export default function CheckoutPage() {
   const [shippingRates, setShippingRates] = useState({ dhaka_in: 60, dhaka_out: 120 });
   const [shippingZone, setShippingZone] = useState<"dhaka_in" | "dhaka_out">("dhaka_in");
 
+  // Promo Code State
+  const [appliedPromoCode, setAppliedPromoCode] = useState<string | null>(null);
+  const [appliedDiscount, setAppliedDiscount] = useState<number>(0);
+
   // Fetch shipping rates
   useEffect(() => {
     const fetchRates = async () => {
@@ -280,7 +286,7 @@ export default function CheckoutPage() {
   } = useForm<ShippingFormData>();
 
   const shippingCost = shippingRates[shippingZone];
-  const totalAmount = subTotal + shippingCost;
+  const totalAmount = subTotal + shippingCost - appliedDiscount;
 
   // Mark loading as complete after component mounts
   useEffect(() => {
@@ -408,6 +414,8 @@ export default function CheckoutPage() {
         isGuest: !user,
         transactionId: paymentIntentId,
         amount: totalAmount,
+        promoCode: appliedPromoCode,
+        discountAmount: appliedDiscount,
         items: cart.map((item) => ({
           productId: item.productId || item._id,
           variantId: item.variantId,
@@ -422,6 +430,9 @@ export default function CheckoutPage() {
         orderStatus: "pending",
         shipment: "picked",
         shippingCost: shippingCost,
+        shippingZone: shippingZone,
+        itemsTotal: subTotal,
+        deliveryCharge: shippingCost,
       };
 
       const response = await fetch(`${API_URL}/orderhistory`, {
@@ -507,6 +518,8 @@ export default function CheckoutPage() {
         transactionId:
           paymentMethod === "cod" ? "Cash on Delivery" : "Card Payment",
         amount: totalAmount,
+        promoCode: appliedPromoCode,
+        discountAmount: appliedDiscount,
         items: cart.map((item) => ({
           productId: item.productId || item._id,
           variantId: item.variantId,
@@ -691,6 +704,39 @@ export default function CheckoutPage() {
                   </div>
                 </RadioGroup>
               </CardContent>
+            </Card> 
+            {/* Promo Code */}
+            <Card className="lg:hidden">
+              <CardHeader>
+                <CardTitle className="flex items-center gap-2 text-base lg:text-lg">
+                  <Tag className="w-5 h-5" />
+                  Promo Code
+                </CardTitle>
+              </CardHeader>
+              <CardContent>
+                <PromoCodeInput
+                  orderTotal={subTotal}
+                  itemCount={cart.length}
+                  categoryIds={cart.flatMap((item) => [item.cat, item.subCat]).filter(Boolean)}
+                  productIds={cart.map((item) => item.productId || item._id || '').filter(Boolean)}
+                  cartItems={cart.map((item) => ({
+                    productId: item.productId || item._id || '',
+                    categoryIds: [item.cat, item.subCat].filter(Boolean),
+                    price: item.price || 0,
+                    quantity: item.quantity || 1,
+                  }))}
+                  onApply={(discount, code) => {
+                    setAppliedDiscount(discount);
+                    setAppliedPromoCode(code);
+                  }}
+                  onRemove={() => {
+                    setAppliedDiscount(0);
+                    setAppliedPromoCode(null);
+                  }}
+                  appliedCode={appliedPromoCode || undefined}
+                  appliedDiscount={appliedDiscount || undefined}
+                />
+              </CardContent>
             </Card>
 
             {/* Payment Method */}
@@ -843,6 +889,33 @@ export default function CheckoutPage() {
                   ))}
                 </div>
 
+
+                <Separator />
+
+                {/* Promo Code Input with Suggestions */}
+                <PromoCodeInput
+                  orderTotal={subTotal}
+                  itemCount={cart.length}
+                  categoryIds={cart.flatMap((item) => [item.cat, item.subCat]).filter(Boolean)}
+                  productIds={cart.map((item) => item.productId || item._id || '').filter(Boolean)}
+                  cartItems={cart.map((item) => ({
+                    productId: item.productId || item._id || '',
+                    categoryIds: [item.cat, item.subCat].filter(Boolean),
+                    price: item.price || 0,
+                    quantity: item.quantity || 1,
+                  }))}
+                  onApply={(discount, code) => {
+                    setAppliedDiscount(discount);
+                    setAppliedPromoCode(code);
+                  }}
+                  onRemove={() => {
+                    setAppliedDiscount(0);
+                    setAppliedPromoCode(null);
+                  }}
+                  appliedCode={appliedPromoCode || undefined}
+                  appliedDiscount={appliedDiscount}
+                />
+
                 <Separator />
 
                 {/* Pricing */}
@@ -858,6 +931,15 @@ export default function CheckoutPage() {
                     </span>
                     <span>৳{shippingCost.toLocaleString()}</span>
                   </div>
+                  {appliedDiscount > 0 && (
+                    <div className="flex justify-between text-sm text-green-600">
+                      <span className="flex items-center gap-1">
+                        <Tag className="w-4 h-4" />
+                        Discount
+                      </span>
+                      <span>-৳{appliedDiscount.toLocaleString()}</span>
+                    </div>
+                  )}
                   <Separator />
                   <div className="flex justify-between text-lg font-bold">
                     <span>Total</span>
@@ -921,6 +1003,9 @@ export default function CheckoutPage() {
               <div className="text-right text-xs text-muted-foreground">
                 <p>Subtotal: ৳{subTotal.toLocaleString()}</p>
                 <p>Shipping: ৳{shippingCost.toLocaleString()}</p>
+                {appliedDiscount > 0 && (
+                  <p className="text-green-600">Discount: -৳{appliedDiscount.toLocaleString()}</p>
+                )}
               </div>
             </div>
             <Button

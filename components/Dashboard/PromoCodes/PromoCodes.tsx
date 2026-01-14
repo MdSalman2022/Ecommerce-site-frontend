@@ -1,12 +1,20 @@
 'use client';
 
 import React, { useState, useEffect } from 'react';
-import { Tag, Plus, Trash2, ToggleLeft, ToggleRight, Calendar, Percent, DollarSign, Users, Copy, Check } from 'lucide-react';
+import { Tag, Plus, Trash2, ToggleLeft, ToggleRight, Calendar, Percent, DollarSign, Users, Copy, Check, ChevronDown, Search, Filter, Loader2 } from 'lucide-react';
 import { Button } from '@/components/ui/button';
 import { Input } from '@/components/ui/input';
 import { Label } from '@/components/ui/label';
 import { ResponsiveModal } from '@/components/ui/responsive-modal';
 import { toast } from 'react-hot-toast';
+import { useQuery } from '@tanstack/react-query';
+import { cn } from '@/lib/utils';
+import {
+  Tooltip,
+  TooltipContent,
+  TooltipProvider,
+  TooltipTrigger,
+} from "@/components/ui/tooltip";
 
 interface PromoCode {
   _id: string;
@@ -23,11 +31,31 @@ interface PromoCode {
   isActive: boolean;
 }
 
+interface PromoUsage {
+  _id: string;
+  orderId: {
+    _id: string;
+    orderId: string;
+    amount: number;
+    createdAt: string;
+  };
+  discountAmount: number;
+  email: string;
+  ipAddress: string;
+  createdAt: string;
+}
+
 export default function PromoCodes() {
   const [promoCodes, setPromoCodes] = useState<PromoCode[]>([]);
   const [isLoading, setIsLoading] = useState(true);
   const [isDialogOpen, setIsDialogOpen] = useState(false);
   const [copiedCode, setCopiedCode] = useState<string | null>(null);
+  
+  // Usage History State
+  const [isHistoryOpen, setIsHistoryOpen] = useState(false);
+  const [selectedPromo, setSelectedPromo] = useState<PromoCode | null>(null);
+  const [usageHistory, setUsageHistory] = useState<PromoUsage[]>([]);
+  const [isHistoryLoading, setIsHistoryLoading] = useState(false);
 
   // Form state
   const [formData, setFormData] = useState({
@@ -38,8 +66,59 @@ export default function PromoCodes() {
     minOrderAmount: 0,
     maxDiscount: '',
     usageLimit: '',
+    minItemQuantity: '',
+    perUserLimit: '',
     validUntil: '',
+    applicableCategories: [] as string[],
+    applicableProducts: [] as string[],
+    targetingType: 'all', // 'all', 'categories', 'products', 'both'
   });
+
+  const [productSearch, setProductSearch] = useState('');
+  const [isSearchingProducts, setIsSearchingProducts] = useState(false);
+  const [searchResults, setSearchResults] = useState<any[]>([]);
+
+  // Fetch categories for selection
+  const { data: categoriesData } = useQuery({
+    queryKey: ['categories'],
+    queryFn: async () => {
+      const res = await fetch(`${process.env.NEXT_PUBLIC_SERVER_URL}/api/categories`);
+      const data = await res.json();
+      return data.data || [];
+    },
+  });
+
+  // Initial fetch for products (top 50)
+  const { data: productsData, isLoading: isProductsLoading } = useQuery({
+    queryKey: ['products-for-promo'],
+    queryFn: async () => {
+      const res = await fetch(`${process.env.NEXT_PUBLIC_SERVER_URL}/api/products?limit=50`);
+      const data = await res.json();
+      const products = data.products || data.data || [];
+      setSearchResults(products);
+      return products;
+    },
+  });
+
+  const handleProductSearch = async () => {
+    if (!productSearch.trim()) {
+      setSearchResults(productsData || []);
+      return;
+    }
+
+    setIsSearchingProducts(true);
+    try {
+      const res = await fetch(`${process.env.NEXT_PUBLIC_SERVER_URL}/api/products?search=${encodeURIComponent(productSearch)}&limit=50`);
+      const data = await res.json();
+      const products = data.products || data.data || [];
+      setSearchResults(products);
+    } catch (error) {
+      console.error('Search failed:', error);
+      toast.error('Search failed');
+    } finally {
+      setIsSearchingProducts(false);
+    }
+  };
 
   useEffect(() => {
     fetchPromoCodes();
@@ -71,6 +150,10 @@ export default function PromoCodes() {
           ...formData,
           maxDiscount: formData.maxDiscount ? Number(formData.maxDiscount) : null,
           usageLimit: formData.usageLimit ? Number(formData.usageLimit) : null,
+          minItemQuantity: formData.minItemQuantity ? Number(formData.minItemQuantity) : null,
+          perUserLimit: formData.perUserLimit ? Number(formData.perUserLimit) : null,
+          applicableCategories: formData.targetingType === 'categories' ? formData.applicableCategories : [],
+          applicableProducts: formData.targetingType === 'products' ? formData.applicableProducts : [],
         }),
       });
 
@@ -87,8 +170,14 @@ export default function PromoCodes() {
           minOrderAmount: 0,
           maxDiscount: '',
           usageLimit: '',
+          minItemQuantity: '',
+          perUserLimit: '',
           validUntil: '',
+          applicableCategories: [],
+          applicableProducts: [],
+          targetingType: 'all',
         });
+        setProductSearch('');
         fetchPromoCodes();
       } else {
         toast.error(data.error || 'Failed to create promo code');
@@ -139,6 +228,24 @@ export default function PromoCodes() {
     setTimeout(() => setCopiedCode(null), 2000);
   };
 
+  const handleViewUsage = async (promo: PromoCode) => {
+    setSelectedPromo(promo);
+    setIsHistoryOpen(true);
+    setIsHistoryLoading(true);
+    try {
+      const res = await fetch(`${process.env.NEXT_PUBLIC_SERVER_URL}/api/promo/${promo._id}/usage`);
+      const data = await res.json();
+      if (data.success) {
+        setUsageHistory(data.usage);
+      }
+    } catch (error) {
+      console.error('Error fetching usage:', error);
+      toast.error('Failed to load usage history');
+    } finally {
+      setIsHistoryLoading(false);
+    }
+  };
+
   const formatDate = (date: string) => {
     return new Date(date).toLocaleDateString('en-US', {
       month: 'short',
@@ -172,7 +279,27 @@ export default function PromoCodes() {
         
         <ResponsiveModal
           open={isDialogOpen}
-          onOpenChange={setIsDialogOpen}
+          onOpenChange={(open) => {
+            setIsDialogOpen(open);
+            if (!open) {
+              setFormData({
+                code: '',
+                description: '',
+                discountType: 'percentage',
+                discountValue: 10,
+                minOrderAmount: 0,
+                maxDiscount: '',
+                usageLimit: '',
+                minItemQuantity: '',
+                perUserLimit: '',
+                validUntil: '',
+                applicableCategories: [],
+                applicableProducts: [],
+                targetingType: 'all',
+              });
+              setProductSearch('');
+            }
+          }}
           title="Create Promo Code"
           trigger={
             <Button className="bg-primary hover:bg-primary/90">
@@ -276,6 +403,231 @@ export default function PromoCodes() {
                   />
                 </div>
               </div>
+
+              <div className="grid grid-cols-2 gap-4">
+                <div>
+                  <Label htmlFor="minItemQuantity">Min Items Required</Label>
+                  <Input
+                    id="minItemQuantity"
+                    type="number"
+                    value={formData.minItemQuantity}
+                    onChange={(e) => setFormData({ ...formData, minItemQuantity: e.target.value })}
+                    placeholder="No minimum"
+                    min={0}
+                    className="mt-1"
+                  />
+                  <p className="text-xs text-gray-500 mt-1">e.g., "Buy 3+ items"</p>
+                </div>
+                <div>
+                  <Label htmlFor="perUserLimit">Max Uses Per User</Label>
+                  <Input
+                    id="perUserLimit"
+                    type="number"
+                    value={formData.perUserLimit}
+                    onChange={(e) => setFormData({ ...formData, perUserLimit: e.target.value })}
+                    placeholder="Unlimited"
+                    min={1}
+                    className="mt-1"
+                  />
+                  <p className="text-xs text-gray-500 mt-1">Prevent code abuse</p>
+                </div>
+              </div>
+
+              {/* Targeting Selector */}
+              <div className="space-y-3 pt-2">
+                <Label className="text-sm font-semibold flex items-center gap-2">
+                  <Filter className="w-4 h-4 text-primary" />
+                  Targeting Mode
+                </Label>
+                <div className="grid grid-cols-2 sm:grid-cols-4 gap-2">
+                  {[
+                    { id: 'all', label: 'All Products' },
+                    { id: 'categories', label: 'Categories' },
+                    { id: 'products', label: 'Specific Products' },
+                  ].map((mode) => (
+                    <button
+                      key={mode.id}
+                      type="button"
+                      onClick={() => setFormData({ ...formData, targetingType: mode.id as any })}
+                      className={cn(
+                        "px-3 py-2 text-[11px] font-bold rounded-xl border transition-all duration-200",
+                        formData.targetingType === mode.id
+                          ? "bg-primary text-white border-primary shadow-sm"
+                          : "bg-white border-gray-200 text-gray-600 hover:border-gray-300 hover:bg-gray-50"
+                      )}
+                    >
+                      {mode.label}
+                    </button>
+                  ))}
+                </div>
+              </div>
+
+              {/* Conditional Category List */}
+              {formData.targetingType === 'categories' && (
+                <div className="space-y-2 animate-in fade-in slide-in-from-top-2 duration-300">
+                  <div className="flex items-center justify-between">
+                    <Label className="text-xs font-semibold">Select Categories</Label>
+                    <span className="text-[10px] text-gray-400 bg-gray-100 px-2 py-0.5 rounded-full">
+                      {formData.applicableCategories.length} selected
+                    </span>
+                  </div>
+                  <div className="border border-gray-200 rounded-xl p-3 max-h-48 overflow-y-auto space-y-2 bg-gray-50/50">
+                    <TooltipProvider>
+                      {categoriesData && categoriesData.length > 0 ? (
+                        categoriesData.map((category: any) => (
+                          <div key={category._id} className="space-y-1">
+                            {!category.parent && (
+                              <label className="flex items-center gap-2 cursor-pointer hover:bg-white/80 p-1.5 rounded-lg transition-colors group w-full">
+                                <input
+                                  type="checkbox"
+                                  checked={formData.applicableCategories.includes(category._id)}
+                                  onChange={(e) => {
+                                    const newCategories = e.target.checked
+                                      ? [...formData.applicableCategories, category._id]
+                                      : formData.applicableCategories.filter(id => id !== category._id);
+                                    setFormData({ ...formData, applicableCategories: newCategories });
+                                  }}
+                                  className="w-4 h-4 rounded border-gray-300 text-primary focus:ring-primary/20 shrink-0"
+                                />
+                                <div className="flex-1 w-0">
+                                  <Tooltip>
+                                    <TooltipTrigger asChild>
+                                      <p className="text-sm font-medium text-gray-700 group-hover:text-primary transition-colors truncate">
+                                        {category.name}
+                                      </p>
+                                    </TooltipTrigger>
+                                    <TooltipContent side="top" className="max-w-[280px] break-words py-2 px-3">
+                                      {category.name}
+                                    </TooltipContent>
+                                  </Tooltip>
+                                </div>
+                              </label>
+                            )}
+                            {!category.parent && categoriesData
+                              .filter((sub: any) => sub.parent === category._id)
+                              .map((subcat: any) => (
+                                <label key={subcat._id} className="flex items-center gap-2 cursor-pointer hover:bg-white/80 p-1.5 rounded-lg ml-6 transition-colors group w-auto">
+                                  <input
+                                    type="checkbox"
+                                    checked={formData.applicableCategories.includes(subcat._id)}
+                                    onChange={(e) => {
+                                      const newCategories = e.target.checked
+                                        ? [...formData.applicableCategories, subcat._id]
+                                        : formData.applicableCategories.filter(id => id !== subcat._id);
+                                      setFormData({ ...formData, applicableCategories: newCategories });
+                                    }}
+                                    className="w-4 h-4 rounded border-gray-300 text-primary focus:ring-primary/20 shrink-0"
+                                  />
+                                  <div className="flex-1 w-0">
+                                    <Tooltip>
+                                      <TooltipTrigger asChild>
+                                        <p className="text-sm text-gray-600 group-hover:text-primary transition-colors truncate">
+                                          {subcat.name}
+                                        </p>
+                                      </TooltipTrigger>
+                                      <TooltipContent side="top" className="max-w-[280px] break-words py-2 px-3">
+                                        {subcat.name}
+                                      </TooltipContent>
+                                    </Tooltip>
+                                  </div>
+                                </label>
+                              ))}
+                          </div>
+                        ))
+                      ) : (
+                        <p className="text-sm text-gray-400 text-center py-4 italic">No categories available</p>
+                      )}
+                    </TooltipProvider>
+                  </div>
+                </div>
+              )}
+
+              {/* Conditional Product List */}
+              {formData.targetingType === 'products' && (
+                <div className="space-y-2 animate-in fade-in slide-in-from-top-2 duration-300">
+                  <div className="flex items-center justify-between">
+                    <Label className="text-xs font-semibold">Select Products</Label>
+                    <span className="text-[10px] text-gray-400 bg-gray-100 px-2 py-0.5 rounded-full">
+                      {formData.applicableProducts.length} selected
+                    </span>
+                  </div>
+                  
+                  <div className="flex gap-2">
+                    <div className="relative flex-1">
+                      <Search className="absolute left-3 top-1/2 -translate-y-1/2 w-3.5 h-3.5 text-gray-400" />
+                      <Input
+                        placeholder="Search items by name..."
+                        value={productSearch}
+                        onChange={(e) => setProductSearch(e.target.value)}
+                        onKeyDown={(e) => e.key === 'Enter' && (e.preventDefault(), handleProductSearch())}
+                        className="pl-9 h-9 text-xs border-gray-200 focus:border-primary transition-colors rounded-xl bg-gray-50/50"
+                      />
+                    </div>
+                    <Button 
+                      type="button" 
+                      variant="outline" 
+                      size="sm" 
+                      onClick={handleProductSearch}
+                      disabled={isSearchingProducts}
+                      className="h-9 px-3 rounded-xl border-gray-200 bg-white hover:bg-gray-50 text-xs font-medium text-gray-600 shrink-0"
+                    >
+                      {isSearchingProducts ? (
+                        <Loader2 className="w-3.5 h-3.5 animate-spin" />
+                      ) : (
+                        "Search"
+                      )}
+                    </Button>
+                  </div>
+
+                  <div className="border border-gray-200 rounded-xl p-2 max-h-48 overflow-y-auto space-y-1 bg-gray-50/50">
+                    <TooltipProvider>
+                      {searchResults.length > 0 ? (
+                        searchResults.map((product: any) => (
+                          <label key={product._id} className="flex items-center gap-2 cursor-pointer hover:bg-white/80 p-2 rounded-lg transition-colors group w-full">
+                            <input
+                              type="checkbox"
+                              checked={formData.applicableProducts.includes(product._id)}
+                              onChange={(e) => {
+                                const newProducts = e.target.checked
+                                  ? [...formData.applicableProducts, product._id]
+                                  : formData.applicableProducts.filter(id => id !== product._id);
+                                setFormData({ ...formData, applicableProducts: newProducts });
+                              }}
+                              className="w-4 h-4 rounded border-gray-300 text-primary focus:ring-primary/20 shrink-0"
+                            />
+                            <div className="flex-1 w-0">
+                              <Tooltip>
+                                <TooltipTrigger asChild>
+                                  <p className="text-sm text-gray-700 truncate group-hover:text-primary transition-colors">
+                                    {product.name}
+                                  </p>
+                                </TooltipTrigger>
+                                <TooltipContent side="top" className="max-w-[280px] break-words py-2 px-3">
+                                  {product.name}
+                                </TooltipContent>
+                              </Tooltip>
+                              <p className="text-[10px] text-gray-400">
+                                ৳{product.variants?.[0]?.salePrice || product.variants?.[0]?.regularPrice || product.price || 0}
+                              </p>
+                            </div>
+                          </label>
+                        ))
+                      ) : (
+                        <div className="flex flex-col items-center justify-center py-6 text-gray-400">
+                          {isSearchingProducts || isProductsLoading ? (
+                            <>
+                              <Loader2 className="w-5 h-5 animate-spin mb-2" />
+                              <p className="text-xs italic">Searching products...</p>
+                            </>
+                          ) : (
+                            <p className="text-sm text-center py-6 italic transition-all duration-300">No matching products found</p>
+                          )}
+                        </div>
+                      )}
+                    </TooltipProvider>
+                  </div>
+                </div>
+              )}
 
               <div>
                 <Label htmlFor="validUntil">Expires On *</Label>
@@ -432,6 +784,13 @@ export default function PromoCodes() {
                         >
                           <Trash2 className="w-5 h-5" />
                         </button>
+                        <button
+                          onClick={() => handleViewUsage(promo)}
+                          className="p-2 hover:bg-blue-50 rounded-lg text-blue-500"
+                          title="View Usage History"
+                        >
+                          <Users className="w-5 h-5" />
+                        </button>
                       </div>
                     </td>
                   </tr>
@@ -441,6 +800,66 @@ export default function PromoCodes() {
           </div>
         </div>
       )}
+
+      {/* Usage History Modal */}
+      <ResponsiveModal
+        open={isHistoryOpen}
+        onOpenChange={setIsHistoryOpen}
+        title={`Usage History: ${selectedPromo?.code}`}
+        className="max-w-4xl"
+      >
+        <div className="space-y-4">
+          {isHistoryLoading ? (
+            <div className="flex flex-col items-center py-12 space-y-4">
+               <div className="w-8 h-8 border-4 border-primary border-t-transparent rounded-full animate-spin" />
+               <p className="text-gray-500">Loading history...</p>
+            </div>
+          ) : usageHistory.length === 0 ? (
+            <div className="text-center py-12">
+              <Users className="w-12 h-12 text-gray-300 mx-auto mb-4" />
+              <p className="text-gray-500">This code hasn't been used yet.</p>
+            </div>
+          ) : (
+            <div className="border border-gray-200 rounded-xl overflow-hidden">
+              <div className="overflow-x-auto">
+                <table className="w-full text-sm">
+                  <thead className="bg-gray-50">
+                    <tr>
+                      <th className="px-4 py-3 text-left font-semibold">Date</th>
+                      <th className="px-4 py-3 text-left font-semibold">Order</th>
+                      <th className="px-4 py-3 text-left font-semibold">Customer</th>
+                      <th className="px-4 py-3 text-left font-semibold">Discount</th>
+                      <th className="px-4 py-3 text-left font-semibold">IP Address</th>
+                    </tr>
+                  </thead>
+                  <tbody className="divide-y divide-gray-100">
+                    {usageHistory.map((use) => (
+                      <tr key={use._id} className="hover:bg-gray-50">
+                        <td className="px-4 py-4 whitespace-nowrap">
+                          {formatDate(use.createdAt)}
+                        </td>
+                        <td className="px-4 py-4">
+                          <p className="font-semibold text-gray-900">{use.orderId?.orderId || 'N/A'}</p>
+                          <p className="text-xs text-gray-500">৳{use.orderId?.amount || 0}</p>
+                        </td>
+                        <td className="px-4 py-4">
+                          {use.email || 'Guest'}
+                        </td>
+                        <td className="px-4 py-4 text-green-600 font-semibold">
+                          -৳{use.discountAmount}
+                        </td>
+                        <td className="px-4 py-4 text-xs text-gray-500 whitespace-nowrap">
+                          {use.ipAddress}
+                        </td>
+                      </tr>
+                    ))}
+                  </tbody>
+                </table>
+              </div>
+            </div>
+          )}
+        </div>
+      </ResponsiveModal>
     </div>
   );
 }

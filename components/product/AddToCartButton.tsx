@@ -72,6 +72,8 @@ export default function AddToCartButton({
           image,
           quantity: 1,
           totalPrice: price,
+          cat: product.category?._id || product.category || "",
+          subCat: product.subCategory?._id || product.subCategory || "",
         },
       ];
     }

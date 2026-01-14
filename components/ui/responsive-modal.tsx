@@ -2,6 +2,7 @@
 
 import React from 'react';
 import { useMediaQuery } from '@/hooks/useMediaQuery';
+import { cn } from '@/lib/utils';
 import {
   Dialog,
   DialogContent,
@@ -21,6 +22,7 @@ interface ResponsiveModalProps {
   children: React.ReactNode;
   footer?: React.ReactNode;
   trigger?: React.ReactNode;
+  className?: string;
 }
 
 export function ResponsiveModal({
@@ -31,6 +33,7 @@ export function ResponsiveModal({
   children,
   footer,
   trigger,
+  className,
 }: ResponsiveModalProps) {
   const isMobile = useMediaQuery('(max-width: 768px)');
 
@@ -65,7 +68,7 @@ export function ResponsiveModal({
   return (
     <Dialog open={open} onOpenChange={onOpenChange}>
       {trigger && <DialogTrigger asChild>{trigger}</DialogTrigger>}
-      <DialogContent className="max-w-xl max-h-[90vh] overflow-y-auto">
+      <DialogContent className={cn("max-w-xl max-h-[90vh] overflow-y-auto", className)}>
         {(title || description) && (
           <DialogHeader>
             {title && <DialogTitle>{title}</DialogTitle>}

@@ -430,6 +430,8 @@ export const UserActivityProvider = ({ children }: { children: ReactNode }) => {
                 )?.attributes
               ).join(" / ")
             : "",
+          cat: item.product.category?._id || item.product.category || "",
+          subCat: item.product.subCategory?._id || item.product.subCategory || "",
         }));
         setCart(mappedItems);
       }
