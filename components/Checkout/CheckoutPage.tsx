@@ -1,6 +1,6 @@
 "use client";
 
-import React, {useState, useEffect} from "react";
+import React, { useState, useEffect, useRef } from "react";
 import {useRouter} from "next/navigation";
 import Image from "next/image";
 import {useForm} from "react-hook-form";
@@ -31,10 +31,13 @@ import {
   ShoppingBag,
   History,
   X,
+  Loader2,
 } from "lucide-react";
 import { Elements } from "@stripe/react-stripe-js";
 import { loadStripe } from "@stripe/stripe-js";
-import StripePaymentForm from "./StripePaymentForm";
+import StripePaymentForm, {
+  StripePaymentFormRef,
+} from "@/components/Checkout/StripePaymentForm";
 
 const API_URL = process.env.NEXT_PUBLIC_SERVER_URL;
 
@@ -224,6 +227,7 @@ export default function CheckoutPage() {
   const [clientSecret, setClientSecret] = useState<string | null>(null);
   const [paymentIntentId, setPaymentIntentId] = useState<string | null>(null);
   const [creatingIntent, setCreatingIntent] = useState(false);
+  const stripeFormRef = useRef<StripePaymentFormRef>(null);
 
   // Calculate subtotal from cart items
   const subTotal = cart.reduce((total, item) => {
@@ -424,7 +428,7 @@ export default function CheckoutPage() {
       localStorage.removeItem("cart_session_id");
 
       toast.success("Order placed successfully!");
-      router.push(`/orders/${result.orderId || result._id}`);
+      router.push(`/orders/success/${result.orderId || result._id}`);
     } catch (error) {
       console.error("Order error:", error);
       const errorMessage =
@@ -523,7 +527,7 @@ export default function CheckoutPage() {
       localStorage.removeItem("cart_session_id");
 
       toast.success("Order placed successfully!");
-      router.push(`/orders/${result.orderId || result._id}`);
+      router.push(`/orders/success/${result.orderId || result._id}`);
     } catch (error) {
       console.error("Order error:", error);
       const errorMessage =
@@ -670,6 +674,7 @@ export default function CheckoutPage() {
                       }}
                     >
                       <StripePaymentForm
+                        ref={stripeFormRef}
                         amount={totalAmount}
                         onSuccess={handlePaymentSuccess}
                         onError={handlePaymentError}
@@ -781,12 +786,38 @@ export default function CheckoutPage() {
 
                 {/* Place Order Button */}
                 <Button
-                  onClick={handleSubmit(onSubmit)}
-                  disabled={isProcessing}
+                  onClick={async (e) => {
+                    if (paymentMethod === "card") {
+                      // Trigger Stripe payment form submission
+                      e.preventDefault();
+                      if (stripeFormRef.current) {
+                        await stripeFormRef.current.submit();
+                      }
+                    } else {
+                      // COD payment
+                      handleSubmit(onSubmit)(e);
+                    }
+                  }}
+                  disabled={isProcessing || (paymentMethod === "card" && !clientSecret)}
                   className="w-full"
                   size="lg"
                 >
-                  {isProcessing ? "Processing..." : "Place Order"}
+                  {isProcessing ? (
+                    <>
+                      <Loader2 className="w-5 h-5 mr-2 animate-spin" />
+                      Processing...
+                    </>
+                  ) : paymentMethod === "card" ? (
+                    <>
+                      <CreditCard className="w-5 h-5 mr-2" />
+                      Pay & Place Order
+                    </>
+                  ) : (
+                    <>
+                      <Check className="w-5 h-5 mr-2" />
+                      Place Order
+                    </>
+                  )}
                 </Button>
               </CardContent>
             </Card>
@@ -810,18 +841,37 @@ export default function CheckoutPage() {
               </div>
             </div>
             <Button
-              onClick={handleSubmit(onSubmit)}
-              disabled={isProcessing}
+              onClick={async (e) => {
+                if (paymentMethod === "card") {
+                  // Trigger Stripe payment form submission
+                  e.preventDefault();
+                  if (stripeFormRef.current) {
+                    await stripeFormRef.current.submit();
+                  }
+                } else {
+                  // COD payment
+                  handleSubmit(onSubmit)(e);
+                }
+              }}
+              disabled={isProcessing || (paymentMethod === "card" && !clientSecret)}
               className="w-full"
               size="lg"
             >
               {isProcessing ? (
-                "Processing..."
+                <>
+                  <Loader2 className="w-5 h-5 mr-2 animate-spin" />
+                  Processing...
+                </>
+              ) : paymentMethod === "card" ? (
+                <>
+                  <CreditCard className="w-5 h-5 mr-2" />
+                  Pay & Place Order
+                </>
               ) : (
-                <span className="flex items-center gap-2">
-                  <Check className="w-5 h-5" />
+                <>
+                  <Check className="w-5 h-5 mr-2" />
                   Place Order
-                </span>
+                </>
               )}
             </Button>
           </div>

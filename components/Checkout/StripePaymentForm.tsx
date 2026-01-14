@@ -1,8 +1,7 @@
 "use client";
 
-import React, { useState, useEffect } from "react";
+import React, { useState, useEffect, useImperativeHandle, forwardRef } from "react";
 import { PaymentElement, useStripe, useElements } from "@stripe/react-stripe-js";
-import { Button } from "@/components/ui/button";
 import { Alert, AlertDescription } from "@/components/ui/alert";
 import { Loader2, CheckCircle2, AlertCircle, Lock } from "lucide-react";
 
@@ -12,16 +11,32 @@ interface StripePaymentFormProps {
   amount: number;
 }
 
-export default function StripePaymentForm({
-  onSuccess,
-  onError,
-  amount,
-}: StripePaymentFormProps) {
+export interface StripePaymentFormRef {
+  submit: () => Promise<void>;
+}
+
+// Loading states for progressive feedback
+const LOADING_MESSAGES = [
+  { message: "Processing your payment...", duration: 2000 },
+  { message: "Verifying transaction...", duration: 1500 },
+  { message: "Creating your order...", duration: 1000 },
+  { message: "Almost done...", duration: 500 },
+];
+
+const StripePaymentForm = forwardRef<StripePaymentFormRef, StripePaymentFormProps>(
+  ({ onSuccess, onError, amount }, ref) => {
   const stripe = useStripe();
   const elements = useElements();
   const [processing, setProcessing] = useState(false);
   const [error, setError] = useState<string | null>(null);
   const [message, setMessage] = useState<string | null>(null);
+  const [loadingStep, setLoadingStep] = useState(0);
+  const [showSuccess, setShowSuccess] = useState(false);
+
+  // Expose submit method to parent component
+  useImperativeHandle(ref, () => ({
+    submit: handleSubmit,
+  }));
 
   useEffect(() => {
     if (!stripe) {
@@ -56,10 +71,36 @@ export default function StripePaymentForm({
     });
   }, [stripe]);
 
-  const handleSubmit = async (e: React.FormEvent) => {
-    e.preventDefault();
+  // Progressive loading messages
+  useEffect(() => {
+    if (!processing) {
+      setLoadingStep(0);
+      return;
+    }
 
+    let currentStep = 0;
+    const intervals: NodeJS.Timeout[] = [];
+
+    const showNextMessage = (stepIndex: number) => {
+      if (stepIndex < LOADING_MESSAGES.length) {
+        setLoadingStep(stepIndex);
+        const timeout = setTimeout(() => {
+          showNextMessage(stepIndex + 1);
+        }, LOADING_MESSAGES[stepIndex].duration);
+        intervals.push(timeout);
+      }
+    };
+
+    showNextMessage(0);
+
+    return () => {
+      intervals.forEach(clearTimeout);
+    };
+  }, [processing]);
+
+  const handleSubmit = async () => {
     if (!stripe || !elements) {
+      setError("Payment system not ready. Please try again.");
       return;
     }
 
@@ -87,7 +128,11 @@ export default function StripePaymentForm({
         onError(confirmError.message || "Payment failed");
         setProcessing(false);
       } else if (paymentIntent && paymentIntent.status === "succeeded") {
-        onSuccess(paymentIntent.id);
+        // Show success state briefly before calling onSuccess
+        setShowSuccess(true);
+        setTimeout(() => {
+          onSuccess(paymentIntent.id);
+        }, 1500);
       }
     } catch (err) {
       const errorMessage =
@@ -98,8 +143,62 @@ export default function StripePaymentForm({
     }
   };
 
+  const currentLoadingMessage =
+    processing && loadingStep < LOADING_MESSAGES.length
+      ? LOADING_MESSAGES[loadingStep].message
+      : "";
+
   return (
-    <form onSubmit={handleSubmit} className="space-y-6">
+    <>
+      {/* Loading Overlay */}
+      {processing && (
+        <div className="fixed inset-0 bg-black/60 backdrop-blur-sm z-50 flex items-center justify-center">
+          <div className="bg-white rounded-2xl p-8 max-w-sm w-full mx-4 shadow-2xl">
+            <div className="text-center space-y-6">
+              {showSuccess ? (
+                <>
+                  <div className="inline-flex items-center justify-center w-16 h-16 rounded-full bg-green-100 animate-bounce">
+                    <CheckCircle2 className="w-8 h-8 text-green-600" />
+                  </div>
+                  <div>
+                    <h3 className="text-xl font-bold text-gray-900 mb-2">
+                      Payment Successful!
+                    </h3>
+                    <p className="text-gray-600 text-sm">
+                      Redirecting to your order...
+                    </p>
+                  </div>
+                </>
+              ) : (
+                <>
+                  <div className="inline-flex items-center justify-center w-16 h-16 rounded-full bg-primary/10">
+                    <Loader2 className="w-8 h-8 text-primary animate-spin" />
+                  </div>
+                  <div>
+                    <h3 className="text-xl font-bold text-gray-900 mb-2">
+                      {currentLoadingMessage}
+                    </h3>
+                    <p className="text-gray-600 text-sm">
+                      Please don't close this window
+                    </p>
+                  </div>
+                  
+                  {/* Progress Bar */}
+                  <div className="w-full bg-gray-200 rounded-full h-1.5">
+                    <div
+                      className="bg-primary h-1.5 rounded-full transition-all duration-500"
+                      style={{
+                        width: `${((loadingStep + 1) / LOADING_MESSAGES.length) * 100}%`,
+                      }}
+                    />
+                  </div>
+                </>
+              )}
+            </div>
+          </div>
+        </div>
+      )}
+
       <div className="space-y-4">
         <div className="flex items-center gap-2 text-sm text-muted-foreground">
           <Lock className="w-4 h-4" />
@@ -142,30 +241,15 @@ export default function StripePaymentForm({
             </span>
           </div>
         </div>
+
+        <p className="text-xs text-muted-foreground text-center">
+          Click "Pay & Place Order" below to complete your purchase
+        </p>
       </div>
-
-      <Button
-        type="submit"
-        disabled={!stripe || !elements || processing}
-        className="w-full"
-        size="lg"
-      >
-        {processing ? (
-          <>
-            <Loader2 className="w-4 h-4 mr-2 animate-spin" />
-            Processing Payment...
-          </>
-        ) : (
-          <>
-            <CheckCircle2 className="w-4 h-4 mr-2" />
-            Pay ৳{amount.toLocaleString()}
-          </>
-        )}
-      </Button>
-
-      <p className="text-xs text-muted-foreground text-center">
-        Your payment information is encrypted and secure
-      </p>
-    </form>
+    </>
   );
-}
+});
+
+StripePaymentForm.displayName = "StripePaymentForm";
+
+export default StripePaymentForm;
