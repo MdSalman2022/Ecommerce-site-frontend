@@ -68,6 +68,7 @@ const ProductReview: React.FC<ProductReviewProps> = ({
   const {ecommerce} = useSiteSettings();
   const [writeReview, setWriteReview] = useState(false);
   const [rating, setRating] = useState(0);
+  const [filterRating, setFilterRating] = useState(0);
   const [currentPage, setCurrentPage] = useState(1);
   const pageSize = 3;
 
@@ -88,10 +89,12 @@ const ProductReview: React.FC<ProductReviewProps> = ({
     },
   });
 
-  // Filter reviews by product ID
-  const reviews: ReviewData[] = allReviews.filter(
-    (review: any) => review.productId === productId
-  );
+  // Filter reviews by product ID and rating
+  const reviews: ReviewData[] = allReviews.filter((review: any) => {
+    const matchesProduct = review.productId === productId;
+    const matchesRating = filterRating === 0 || review.rating === filterRating;
+    return matchesProduct && matchesRating;
+  });
 
   useEffect(() => {
     setReviewLength(reviews.length);
@@ -107,6 +110,19 @@ const ProductReview: React.FC<ProductReviewProps> = ({
   const totalPages = Math.ceil(reviews.length / pageSize);
   const startIndex = (currentPage - 1) * pageSize;
   const paginatedReviews = reviews.slice(startIndex, startIndex + pageSize);
+
+  const userReview = reviews.find(r => r.email === user?.email);
+
+  const handleWriteReviewClick = () => {
+    if (userReview) {
+      setRating(userReview.rating);
+      reset({ comment: userReview.review });
+    } else {
+      setRating(0);
+      reset({ comment: '' });
+    }
+    setWriteReview(!writeReview);
+  };
 
   const handleRating = (newRating: number) => {
     setRating(newRating === rating ? 0 : newRating);
@@ -199,15 +215,30 @@ const ProductReview: React.FC<ProductReviewProps> = ({
 
             <div className="mt-4 space-y-2">
               {[5, 4, 3, 2, 1].map((num) => (
-                <div key={num} className="flex items-center gap-3 text-sm">
-                  <span className="w-3">{num}</span>
-                  <div className="flex-1 h-2 bg-secondary rounded-full overflow-hidden">
+                <button 
+                  key={num} 
+                  onClick={() => {
+                    const newFilter = filterRating === num ? 0 : num;
+                    setFilterRating(newFilter);
+                    setCurrentPage(1);
+                  }}
+                  className={`flex w-full items-center gap-3 text-sm transition-all p-1 rounded-md hover:bg-secondary/50 group ${
+                    filterRating === num ? "bg-secondary ring-1 ring-primary/20" : ""
+                  }`}
+                >
+                  <span className={`w-3 transition-colors ${filterRating === num ? "font-bold text-primary" : "text-card-foreground"}`}>{num}</span>
+                  <div className="flex-1 h-2 bg-secondary rounded-full overflow-hidden border border-border/50">
                     <div
-                      className="h-full bg-yellow-400 rounded-full"
+                      className={`h-full transition-all ${
+                        filterRating === num ? "bg-primary" : "bg-yellow-400 group-hover:bg-yellow-500"
+                      }`}
                       style={{width: `${starPercentages[num] || 0}%`}}
                     />
                   </div>
-                </div>
+                  <span className={`w-8 text-right transition-colors ${filterRating === num ? "font-bold text-primary" : "text-muted-foreground"}`}>
+                    {Math.round(starPercentages[num] || 0)}%
+                  </span>
+                </button>
               ))}
             </div>
           </div>
@@ -215,24 +246,28 @@ const ProductReview: React.FC<ProductReviewProps> = ({
 
         {/* Reviews List */}
         <div className="lg:col-span-3">
-          {/* Write Review Button */}
+          {/* Reviews Header & Filter Status */}
           <div className="flex flex-col sm:flex-row sm:justify-between sm:items-center gap-3 mb-6">
-            <div className="flex flex-wrap gap-2">
-              {[5, 4, 3, 2, 1].map((num) => (
-                <span
-                  key={num}
-                  className="flex items-center gap-1 rounded-lg border border-border px-3 py-1 text-sm hover:border-primary cursor-pointer"
+            <div className="flex flex-col gap-1">
+              <h3 className="text-lg font-semibold text-foreground">
+                {filterRating === 0 ? "All Reviews" : `Showing ${filterRating}-Star Reviews`}
+              </h3>
+              {filterRating !== 0 && (
+                <button 
+                  onClick={() => setFilterRating(0)}
+                  className="text-sm text-primary hover:underline flex items-center gap-1 w-fit"
                 >
-                  <FaStar className="text-yellow-400" /> {num}
-                </span>
-              ))}
+                  Clear filter and show all
+                </button>
+              )}
             </div>
+            
             <Button
               variant="outline"
-              onClick={() => setWriteReview(!writeReview)}
+              onClick={handleWriteReviewClick}
               className="flex items-center gap-2 w-full sm:w-auto"
             >
-              <AiOutlineEdit /> Write a Review
+              <AiOutlineEdit /> {userReview ? "Edit Your Review" : "Write a Review"}
             </Button>
           </div>
 

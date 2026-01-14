@@ -265,7 +265,7 @@ const ComponentToPrint = forwardRef(({order, storeSettings}, ref) => {
           </p>
           {customerEmail && (
             <p style={{margin: "0", fontSize: "12px", color: "#555"}}>
-              ✉️ {customerEmail}
+              {customerEmail}
             </p>
           )}
         </div>

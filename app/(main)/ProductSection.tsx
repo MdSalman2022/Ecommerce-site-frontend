@@ -33,7 +33,7 @@ export default async function ProductSection({ config }: { config?: any }) {
 
   return (
     <ProductCarousel
-      title={config?.title || (sourceType === 'bestseller' ? "Best deal Alert! 🛒" : "Best Selling ⌨️")}
+      title={config?.title || (sourceType === 'bestseller' ? "Best deal Alert!" : "Best Selling")}
       products={products.slice(0, limit)}
       viewAllHref={config?.viewAllLink || (sourceType === 'bestseller' ? "/products?filter=bestseller" : "/products?filter=featured")}
     />
