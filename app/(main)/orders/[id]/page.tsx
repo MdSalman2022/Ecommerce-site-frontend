@@ -4,6 +4,7 @@ import React, {useRef} from "react";
 import {useParams, useRouter} from "next/navigation";
 import {useAuth} from "@/contexts/AuthProvider";
 import {useQuery} from "@tanstack/react-query";
+import {useSiteSettings} from "@/hooks/useSiteSettings";
 import ComponentToPrint from "@/components/Invoice/ComponentToPrint";
 import {
   Package,
@@ -28,6 +29,7 @@ export default function OrderDetailsPage() {
   const orderId = params?.id as string;
   const router = useRouter();
   const {user} = useAuth();
+  const {store} = useSiteSettings();
 
   const {data: order, isLoading} = useQuery({
     queryKey: ["order", orderId],
@@ -83,14 +85,18 @@ export default function OrderDetailsPage() {
   }
 
   const steps = [
-    {label: "Confirmed", icon: CheckCircle2, status: "completed"},
     {
-      label: "Picked",
+      label: "Confirmed",
+      icon: CheckCircle2,
+      status: order.orderStatus !== "cancelled" ? "completed" : "pending",
+    },
+    {
+      label: "Processing",
       icon: Package,
       status:
-        order.shipment === "picked" ||
-        order.shipment === "shipped" ||
-        order.shipment === "delivered"
+        order.orderStatus === "processing" ||
+        order.orderStatus === "shipped" ||
+        order.orderStatus === "delivered"
           ? "completed"
           : "pending",
     },
@@ -98,22 +104,46 @@ export default function OrderDetailsPage() {
       label: "Shipped",
       icon: Truck,
       status:
-        order.shipment === "shipped" || order.shipment === "delivered"
+        order.orderStatus === "shipped" || order.orderStatus === "delivered"
           ? "completed"
           : "pending",
     },
     {
       label: "Delivered",
       icon: CheckCircle2,
-      status: order.shipment === "delivered" ? "completed" : "pending",
+      status: order.orderStatus === "delivered" ? "completed" : "pending",
     },
   ];
+
+  const completedStepsCount = steps.filter((step) => step.status === "completed").length;
+  const progressWidth = steps.length > 1 
+    ? (Math.max(0, completedStepsCount - 1) / (steps.length - 1)) * 100 
+    : 0;
+
+  // Calculate costs for robust display
+  const items = order.cart || order.items || [];
+  const calculatedItemsTotal = items.reduce(
+    (acc: number, item: any) => acc + (item.price * item.quantity),
+    0
+  );
+  const itemsTotal = order.itemsTotal || calculatedItemsTotal;
+  const discount = order.discountAmount || 0;
+  
+  let shippingCharge = order.deliveryCharge ?? order.shippingCost ?? 0;
+  
+  // Derive shipping if missing but needed
+  if (shippingCharge === 0 && order.amount) {
+    const derivedShipping = order.amount - itemsTotal + discount;
+    if (derivedShipping > 0) {
+      shippingCharge = derivedShipping;
+    }
+  }
 
   return (
     <>
       {/* Print-only Invoice */}
       <div className="hidden print:block">
-        <ComponentToPrint order={order} />
+        <ComponentToPrint order={order} storeSettings={store} />
       </div>
 
       {/* Screen View */}
@@ -158,9 +188,17 @@ export default function OrderDetailsPage() {
                     Order Status
                   </p>
                   <h2 className="text-2xl font-black capitalize tracking-tight flex items-center gap-3">
-                    {order.shipment || "In Progress"}
-                    <Badge className="bg-primary text-white border-none py-1 px-3">
-                      {order.orderStatus ? "Active" : "Cancelled"}
+                    {order.orderStatus || "In Progress"}
+                    <Badge 
+                      className={`${
+                        order.orderStatus === "cancelled" 
+                          ? "bg-red-500" 
+                          : order.orderStatus === "returned"
+                          ? "bg-gray-500"
+                          : "bg-green-600"
+                      } text-white border-none py-1 px-3`}
+                    >
+                      {order.orderStatus === "cancelled" ? "Cancelled" : order.orderStatus === "returned" ? "Returned" : "Active"}
                     </Badge>
                   </h2>
                 </div>
@@ -175,24 +213,32 @@ export default function OrderDetailsPage() {
               </div>
 
               <div className="mt-10 relative">
-                <div className="absolute top-1/2 left-0 w-full h-1 bg-gray-800 -translate-y-1/2 rounded-full"></div>
+                {/* Background Line (Gray) */}
+                <div className="absolute top-5 left-0 w-full h-0.5 bg-gray-800 -translate-y-1/2 rounded-full"></div>
+                
+                {/* Progress Line (Blue) */}
+                <div 
+                  className="absolute top-5 left-0 h-0.5 bg-primary -translate-y-1/2 rounded-full transition-all duration-700 ease-in-out"
+                  style={{ width: `${progressWidth}%` }}
+                ></div>
+
                 <div className="flex justify-between relative z-10">
                   {steps.map((step, i) => (
-                    <div key={i} className="flex flex-col items-center gap-2">
+                    <div key={i} className="flex flex-col items-center gap-3">
                       <div
-                        className={`w-10 h-10 rounded-full flex items-center justify-center border-2 ${
+                        className={`w-10 h-10 rounded-full flex items-center justify-center border-2 transition-all duration-300 ${
                           step.status === "completed"
-                            ? "bg-primary border-primary"
+                            ? "bg-primary border-primary text-white shadow-[0_0_15px_rgba(var(--primary),0.3)]"
                             : "bg-gray-900 border-gray-800 text-gray-500"
                         }`}
                       >
                         <step.icon size={18} />
                       </div>
                       <span
-                        className={`text-xs font-bold uppercase tracking-tighter ${
+                        className={`text-[10px] font-black uppercase tracking-widest text-center max-w-[80px] ${
                           step.status === "completed"
                             ? "text-primary"
-                            : "text-gray-500"
+                            : "text-gray-600"
                         }`}
                       >
                         {step.label}
@@ -207,20 +253,22 @@ export default function OrderDetailsPage() {
               <div className="flex justify-between items-start mb-12">
                 <div className="space-y-4">
                   <div className="flex items-center gap-3">
-                    <Image
-                      src="https://i.ibb.co/xSLpY24/logo-colored.webp"
-                      alt="BestDeal"
-                      width={48}
-                      height={48}
-                    />
+                    {store.logo && (
+                      <Image
+                        src={store.logo}
+                        alt={store.name}
+                        width={48}
+                        height={48}
+                      />
+                    )}
                     <span className="text-3xl font-black tracking-tighter">
-                      BestDeal
+                      {store.name}
                     </span>
                   </div>
                   <div className="text-gray-500 text-sm leading-relaxed">
-                    <p>Shewrapara, Mirpur 1216</p>
-                    <p>Bangladesh</p>
-                    <p>mehedi.salman102@gmail.com</p>
+                    <p>{store.address}</p>
+                    <p>{store.email}</p>
+                    <p>{store.phone}</p>
                   </div>
                 </div>
                 <div className="text-right">
@@ -329,9 +377,9 @@ export default function OrderDetailsPage() {
                 <div className="w-full max-w-xs space-y-4">
                   <div className="flex justify-between text-gray-500 font-medium">
                     <span>Subtotal</span>
-                    <span>৳{order.amount?.toLocaleString()}</span>
+                    <span>৳{itemsTotal.toLocaleString()}</span>
                   </div>
-                  {order.discountAmount > 0 && (
+                  {discount > 0 && (
                     <div className="flex justify-between text-red-500 font-bold bg-red-50 px-3 py-1 rounded">
                       <span>
                         Discount {order.promoCode && `(${order.promoCode})`}
@@ -341,15 +389,17 @@ export default function OrderDetailsPage() {
                   )}
                   <div className="flex justify-between text-gray-500 font-medium border-b border-gray-100 pb-4">
                     <span>Shipping</span>
-                    <span className="text-green-600 font-bold">Free</span>
+                    {shippingCharge > 0 ? (
+                      <span className="font-bold">৳{shippingCharge.toLocaleString()}</span>
+                    ) : (
+                      <span className="text-green-600 font-bold">Free</span>
+                    )}
                   </div>
                   <div className="flex justify-between text-2xl font-black text-gray-900 pt-2">
                     <span>Total</span>
                     <span className="text-primary">
                       ৳
-                      {(
-                        order.amount - (order.discountAmount || 0)
-                      )?.toLocaleString()}
+                      {order.amount?.toLocaleString()}
                     </span>
                   </div>
                 </div>
@@ -361,7 +411,7 @@ export default function OrderDetailsPage() {
                 </h4>
                 <p className="text-gray-500 text-sm max-w-sm mx-auto">
                   If you have any questions about this invoice, please use our
-                  contact form or email us at support@bestdeal.com
+                  contact form or email us at {store.email}
                 </p>
                 <div className="mt-10 flex justify-center gap-12 font-bold text-xs uppercase tracking-widest text-gray-400">
                   <p>100% Secure Payment</p>

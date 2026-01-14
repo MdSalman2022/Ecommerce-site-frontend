@@ -8,7 +8,7 @@ import { Switch } from '@/components/ui/switch';
 import { Tabs, TabsContent, TabsList, TabsTrigger } from '@/components/ui/tabs';
 import { Card, CardContent, CardDescription, CardHeader, CardTitle } from '@/components/ui/card';
 import { toast } from 'react-hot-toast';
-import { Megaphone, Loader2, Store, Share2, Layout, Bell, ShoppingCart, Search, Settings } from 'lucide-react'; 
+import { Megaphone, Loader2, Store, Share2, Layout, Bell, ShoppingCart, Search, Settings, Truck } from 'lucide-react'; 
 import { useSiteSettings, StoreSettings } from '@/hooks/useSiteSettings';
 
 const API_URL = process.env.NEXT_PUBLIC_SERVER_URL;
@@ -88,6 +88,7 @@ function DashboardSettings() {
   const tabsConfig = [
     { id: 'layout', label: 'Layout', icon: Layout },
     { id: 'store', label: 'Store Info', icon: Store },
+    { id: 'shipping', label: 'Shipping', icon: Truck },
     { id: 'social', label: 'Social', icon: Share2 },
     { id: 'seo', label: 'SEO', icon: Search },
     { id: 'maintenance', label: 'Maintenance', icon: Settings },
@@ -435,6 +436,44 @@ function DashboardSettings() {
           <div className="flex justify-end">
             <Button onClick={() => handleSave('seo')} disabled={isSaving}>
               {isSaving && <Loader2 className="w-4 h-4 mr-2 animate-spin" />} Save SEO Settings
+            </Button>
+          </div>
+        </TabsContent>
+
+        {/* Shipping Tab Content */}
+        <TabsContent value="shipping" className="space-y-6">
+          <Card>
+            <CardHeader>
+              <CardTitle>Shipping Configuration</CardTitle>
+              <CardDescription>Manage delivery charges for different zones</CardDescription>
+            </CardHeader>
+            <CardContent className="space-y-4">
+              <div className="grid grid-cols-2 gap-4">
+                <div>
+                  <Label>Inside Dhaka (৳)</Label>
+                  <Input 
+                    type="number"
+                    value={settings.shipping?.dhaka_in ?? 60}
+                    onChange={(e) => updateSetting('shipping', 'dhaka_in', parseInt(e.target.value))}
+                  />
+                  <p className="text-sm text-muted-foreground mt-1">Delivery Charge Inside Dhaka</p>
+                </div>
+                <div>
+                  <Label>Outside Dhaka (৳)</Label>
+                  <Input 
+                    type="number"
+                    value={settings.shipping?.dhaka_out ?? 120}
+                    onChange={(e) => updateSetting('shipping', 'dhaka_out', parseInt(e.target.value))}
+                  />
+                  <p className="text-sm text-muted-foreground mt-1">Delivery Charge Outside Dhaka</p>
+                </div>
+              </div>
+            </CardContent>
+          </Card>
+
+          <div className="flex justify-end">
+            <Button onClick={() => handleSave('shipping')} disabled={isSaving}>
+              {isSaving && <Loader2 className="w-4 h-4 mr-2 animate-spin" />} Save Shipping Rates
             </Button>
           </div>
         </TabsContent>

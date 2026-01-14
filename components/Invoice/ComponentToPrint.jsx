@@ -2,7 +2,7 @@
 import React, {forwardRef} from "react";
 import QRCode from "react-qr-code";
 
-const ComponentToPrint = forwardRef(({order}, ref) => {
+const ComponentToPrint = forwardRef(({order, storeSettings}, ref) => {
   // Map BestDeal order fields
   const customerName = order?.name || "Customer";
   const customerPhone = order?.contact || "N/A";
@@ -11,6 +11,13 @@ const ComponentToPrint = forwardRef(({order}, ref) => {
   const customerCity = order?.city || "";
   const orderNumber =
     order?.orderId || order?._id?.slice(0, 8).toUpperCase() || "N/A";
+
+  // Dynamic Store Info
+  const storeName = storeSettings?.name || "BestDeal Inc.";
+  const storeEmail = storeSettings?.email || "support@bestdeal.com";
+  const storePhone = storeSettings?.phone || "+880 1XXX-XXXXXX";
+  const storeAddress = storeSettings?.address || "123 E-commerce St, Tech City";
+  const storeLogo = storeSettings?.logo || "https://res.cloudinary.com/dnuulo3h5/image/upload/v1767881296/logo-colored_ee6kpe.webp";
 
   const formatStockDate = (dateStr) => {
     if (!dateStr) return "N/A";
@@ -21,10 +28,32 @@ const ComponentToPrint = forwardRef(({order}, ref) => {
     return `${month} ${day}, ${year}`;
   };
 
-  const subtotal = order?.amount || 0;
+  // Cost calculations with backward compatibility
+  // Calculate items total if missing
+  const items = order?.cart || order?.items || [];
+  const calculatedItemsTotal = items.reduce(
+    (acc, item) => acc + (item.price * item.quantity),
+    0
+  );
+  const itemsTotal = order?.itemsTotal || calculatedItemsTotal;
+
+  // Cost calculations with backward compatibility
   const discount = order?.discountAmount || 0;
-  const shippingCost = order?.shippingCost || 0;
-  const total = subtotal - discount + shippingCost;
+  
+  // Try to get explicit shipping charge
+  let shippingCharge = order?.deliveryCharge ?? order?.shippingCost ?? 0;
+  
+  // If explicit shipping is 0 but there's a difference in total, derive it
+  if (shippingCharge === 0 && order?.amount) {
+    const derivedShipping = order.amount - itemsTotal + discount;
+    // Allow small floating point tolerance or just check if > 0
+    if (derivedShipping > 0) {
+      shippingCharge = derivedShipping;
+    }
+  }
+
+  const subtotal = itemsTotal;
+  const total = order?.amount || 0;
 
   return (
     <div
@@ -54,7 +83,7 @@ const ComponentToPrint = forwardRef(({order}, ref) => {
         <div style={{display: "flex", alignItems: "center", gap: "16px"}}>
           <img
             style={{height: "56px", width: "56px", objectFit: "contain"}}
-            src="https://res.cloudinary.com/dnuulo3h5/image/upload/v1767881296/logo-colored_ee6kpe.webp"
+            src={storeLogo}
             alt="Logo"
           />
           <div>
@@ -66,13 +95,13 @@ const ComponentToPrint = forwardRef(({order}, ref) => {
                 letterSpacing: "-0.5px",
               }}
             >
-              BestDeal Inc.
+              {storeName}
             </h1>
             <p style={{margin: "2px 0 0 0", fontSize: "12px", color: "#666"}}>
-              123 E-commerce St, Tech City
+              {storeAddress}
             </p>
             <p style={{margin: "0", fontSize: "12px", color: "#666"}}>
-              support@bestdeal.com | +880 1XXX-XXXXXX
+              {storeEmail} | {storePhone}
             </p>
           </div>
         </div>
@@ -316,8 +345,8 @@ const ComponentToPrint = forwardRef(({order}, ref) => {
           <div style={summaryRow}>
             <span>Shipping</span>
             <span>
-              {shippingCost > 0 ? (
-                `৳${shippingCost.toLocaleString(undefined, {
+              {shippingCharge > 0 ? (
+                `৳${shippingCharge.toLocaleString(undefined, {
                   minimumFractionDigits: 2,
                 })}`
               ) : (
@@ -360,10 +389,10 @@ const ComponentToPrint = forwardRef(({order}, ref) => {
             color: "#333",
           }}
         >
-          Thank you for shopping with BestDeal! 🙏
+          Thank you for shopping with {storeName.split(' ')[0]}! 🙏
         </p>
         <p style={{margin: "0", fontSize: "11px", color: "#888"}}>
-          Questions? Contact us at support@bestdeal.com or call +880 1XXX-XXXXXX
+          Questions? Contact us at {storeEmail} or call {storePhone}
         </p>
       </div>
     </div>

@@ -120,12 +120,19 @@ export default function OrdersPage() {
                       Status
                     </p>
                     <Badge
-                      variant={
-                        order.shipment === "delivered" ? "default" : "secondary"
-                      }
-                      className="capitalize text-xs"
+                      className={`capitalize text-xs ${
+                        order.orderStatus === "delivered"
+                          ? "bg-green-500 text-white"
+                          : order.orderStatus === "cancelled"
+                          ? "bg-red-500 text-white"
+                          : order.orderStatus === "returned"
+                          ? "bg-gray-500 text-white"
+                          : order.orderStatus === "shipped"
+                          ? "bg-blue-500 text-white"
+                          : "bg-orange-500 text-white"
+                      }`}
                     >
-                      {order.shipment || "Processing"}
+                      {order.orderStatus || "Pending"}
                     </Badge>
                   </div>
                   <div className="col-span-2 md:col-span-1">

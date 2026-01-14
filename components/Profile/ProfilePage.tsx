@@ -17,7 +17,6 @@ import {
   Truck,
   CheckCircle,
   Clock,
-  X,
   Save,
   LayoutDashboard,
 } from "lucide-react";
@@ -27,14 +26,7 @@ import {Input} from "@/components/ui/input";
 import {Label} from "@/components/ui/label";
 import {Badge} from "@/components/ui/badge";
 import {Separator} from "@/components/ui/separator";
-import {
-  Sheet,
-  SheetContent,
-  SheetDescription,
-  SheetHeader,
-  SheetTitle,
-  SheetFooter,
-} from "@/components/ui/sheet";
+import { ResponsiveModal } from "@/components/ui/responsive-modal";
 import {toast} from "react-hot-toast";
 
 const API_URL = process.env.NEXT_PUBLIC_SERVER_URL;
@@ -355,108 +347,6 @@ export default function ProfilePage() {
               )}
             </CardContent>
           </Card>
-
-          {/* Mobile Sheet for Editing Shipping */}
-          <Sheet open={isEditingShipping} onOpenChange={setIsEditingShipping}>
-            <SheetContent
-              side="bottom"
-              className="h-fit overflow-y-auto rounded-t-3xl"
-            >
-              <SheetHeader>
-                <SheetTitle>
-                  {shippingData ? "Edit" : "Add"} Shipping Address
-                </SheetTitle>
-                <SheetDescription>
-                  Update your default shipping information
-                </SheetDescription>
-              </SheetHeader>
-              <form onSubmit={handleUpdateShipping} className="space-y-4 mt-6">
-                <div>
-                  <Label>Name</Label>
-                  <Input
-                    value={shippingFormData.name}
-                    onChange={(e) =>
-                      setShippingFormData({
-                        ...shippingFormData,
-                        name: e.target.value,
-                      })
-                    }
-                    placeholder="Your full name"
-                    required
-                  />
-                </div>
-                <div>
-                  <Label>Contact</Label>
-                  <Input
-                    value={shippingFormData.contact}
-                    onChange={(e) =>
-                      setShippingFormData({
-                        ...shippingFormData,
-                        contact: e.target.value,
-                      })
-                    }
-                    placeholder="Phone number"
-                    required
-                  />
-                </div>
-                <div>
-                  <Label>Address</Label>
-                  <Input
-                    value={shippingFormData.address}
-                    onChange={(e) =>
-                      setShippingFormData({
-                        ...shippingFormData,
-                        address: e.target.value,
-                      })
-                    }
-                    placeholder="Street address"
-                    required
-                  />
-                </div>
-                <div>
-                  <Label>City</Label>
-                  <Input
-                    value={shippingFormData.city}
-                    onChange={(e) =>
-                      setShippingFormData({
-                        ...shippingFormData,
-                        city: e.target.value,
-                      })
-                    }
-                    placeholder="City"
-                    required
-                  />
-                </div>
-                <SheetFooter className="grid grid-cols-2 gap-5 sm:gap-0 pt-4">
-                  <Button
-                    type="button"
-                    variant="outline"
-                    onClick={() => setIsEditingShipping(false)}
-                    className="h-12 text-lg"
-                  >
-                    Cancel
-                  </Button>
-                  <Button
-                    type="submit"
-                    disabled={updateShippingMutation.isPending}
-                    className="h-12 text-lg"
-                  >
-                    {updateShippingMutation.isPending ? (
-                      <>
-                        <div className="animate-spin rounded-full h-4 w-4 border-b-2 border-white mr-2" />
-                        Saving...
-                      </>
-                    ) : (
-                      <>
-                        <Save className="w-4 h-4 mr-2" />
-                        Save Changes
-                      </>
-                    )}
-                  </Button>
-                </SheetFooter>
-              </form>
-            </SheetContent>
-          </Sheet>
         </div>
 
         {/* Desktop: Two Column Layout */}
@@ -590,7 +480,7 @@ export default function ProfilePage() {
             <Card>
               <CardHeader className="flex flex-row items-center justify-between">
                 <CardTitle>Shipping Address</CardTitle>
-                {shippingData && !isEditingShipping && (
+                {shippingData && (
                   <Button
                     variant="outline"
                     size="sm"
@@ -602,79 +492,7 @@ export default function ProfilePage() {
                 )}
               </CardHeader>
               <CardContent>
-                {isEditingShipping ? (
-                  <form onSubmit={handleUpdateShipping} className="space-y-4">
-                    <div className="grid grid-cols-2 gap-4">
-                      <div>
-                        <Label>Name</Label>
-                        <Input
-                          value={shippingFormData.name}
-                          onChange={(e) =>
-                            setShippingFormData({
-                              ...shippingFormData,
-                              name: e.target.value,
-                            })
-                          }
-                          required
-                        />
-                      </div>
-                      <div>
-                        <Label>Contact</Label>
-                        <Input
-                          value={shippingFormData.contact}
-                          onChange={(e) =>
-                            setShippingFormData({
-                              ...shippingFormData,
-                              contact: e.target.value,
-                            })
-                          }
-                          required
-                        />
-                      </div>
-                      <div className="col-span-2">
-                        <Label>Address</Label>
-                        <Input
-                          value={shippingFormData.address}
-                          onChange={(e) =>
-                            setShippingFormData({
-                              ...shippingFormData,
-                              address: e.target.value,
-                            })
-                          }
-                          required
-                        />
-                      </div>
-                      <div>
-                        <Label>City</Label>
-                        <Input
-                          value={shippingFormData.city}
-                          onChange={(e) =>
-                            setShippingFormData({
-                              ...shippingFormData,
-                              city: e.target.value,
-                            })
-                          }
-                          required
-                        />
-                      </div>
-                    </div>
-                    <div className="flex gap-3">
-                      <Button
-                        type="submit"
-                        disabled={updateShippingMutation.isPending}
-                      >
-                        Save Changes
-                      </Button>
-                      <Button
-                        type="button"
-                        variant="outline"
-                        onClick={() => setIsEditingShipping(false)}
-                      >
-                        Cancel
-                      </Button>
-                    </div>
-                  </form>
-                ) : shippingData ? (
+                {shippingData ? (
                   <div className="p-4 bg-gray-50 rounded-lg space-y-2">
                     <div className="flex items-center justify-between">
                       <p className="font-semibold text-gray-900">
@@ -708,6 +526,101 @@ export default function ProfilePage() {
             </Card>
           </div>
         </div>
+
+        {/* Shared Responsive Modal for Editing Shipping */}
+        <ResponsiveModal 
+          open={isEditingShipping} 
+          onOpenChange={setIsEditingShipping}
+          title={shippingData ? "Edit Shipping Address" : "Add Shipping Address"}
+          description="Update your default shipping information"
+        >
+          <form onSubmit={handleUpdateShipping} className="space-y-4 py-2">
+            <div className="space-y-4">
+              <div>
+                <Label>Name</Label>
+                <Input
+                  value={shippingFormData.name}
+                  onChange={(e) =>
+                    setShippingFormData({
+                      ...shippingFormData,
+                      name: e.target.value,
+                    })
+                  }
+                  placeholder="Your full name"
+                  required
+                />
+              </div>
+              <div>
+                <Label>Contact</Label>
+                <Input
+                  value={shippingFormData.contact}
+                  onChange={(e) =>
+                    setShippingFormData({
+                      ...shippingFormData,
+                      contact: e.target.value,
+                    })
+                  }
+                  placeholder="Phone number"
+                  required
+                />
+              </div>
+              <div>
+                <Label>Address</Label>
+                <Input
+                  value={shippingFormData.address}
+                  onChange={(e) =>
+                    setShippingFormData({
+                      ...shippingFormData,
+                      address: e.target.value,
+                    })
+                  }
+                  placeholder="Street address"
+                  required
+                />
+              </div>
+              <div>
+                <Label>City</Label>
+                <Input
+                  value={shippingFormData.city}
+                  onChange={(e) =>
+                    setShippingFormData({
+                      ...shippingFormData,
+                      city: e.target.value,
+                    })
+                  }
+                  placeholder="City"
+                  required
+                />
+              </div>
+            </div>
+            
+            <div className="flex gap-3 pt-4 justify-end">
+              <Button
+                type="button"
+                variant="outline"
+                onClick={() => setIsEditingShipping(false)}
+              >
+                Cancel
+              </Button>
+              <Button
+                type="submit"
+                disabled={updateShippingMutation.isPending}
+              >
+                {updateShippingMutation.isPending ? (
+                  <>
+                    <div className="animate-spin rounded-full h-4 w-4 border-b-2 border-white mr-2" />
+                    Saving...
+                  </>
+                ) : (
+                  <>
+                    <Save className="w-4 h-4 mr-2" />
+                    Save Changes
+                  </>
+                )}
+              </Button>
+            </div>
+          </form>
+        </ResponsiveModal>
       </div>
     </div>
   );

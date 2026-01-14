@@ -87,6 +87,12 @@ export default function ProductForm({ initialData }: { initialData?: any }) {
   const [productTags, setProductTags] = useState<string[]>(initialData?.tags || []);
   const [isTagsGenerating, setIsTagsGenerating] = useState(false);
   
+  // Product Flags State
+  const [featured, setFeatured] = useState(initialData?.flags?.featured || false);
+  const [latest, setLatest] = useState(initialData?.flags?.latest || false);
+  const [bestseller, setBestseller] = useState(initialData?.flags?.bestseller || false);
+  const [special, setSpecial] = useState(initialData?.flags?.special || false);
+  
   // Variant Configs State (for per-variant pricing/stock)
   const [variantConfigs, setVariantConfigs] = useState<VariantConfig[]>(() => {
     if (initialData?.variants && initialData.variants.length > 0) {
@@ -105,7 +111,19 @@ export default function ProductForm({ initialData }: { initialData?: any }) {
   });
   
   const { register, control, handleSubmit, watch, setValue, formState: { errors } } = useForm<ProductFormData>({
-    defaultValues: initialData || {
+    defaultValues: initialData ? {
+      ...initialData,
+      // Convert ObjectIds to strings for category/subcategory
+      category: initialData.category?._id || initialData.category || '',
+      subCategory: initialData.subCategory?._id || initialData.subCategory || '',
+      // Initialize pricing/stock from first variant if product has variants
+      regularPrice: initialData.variants?.[0]?.regularPrice || 0,
+      salePrice: initialData.variants?.[0]?.salePrice || 0,
+      costPrice: initialData.variants?.[0]?.costPrice || 0,
+      stock: initialData.variants?.[0]?.stock || 0,
+      sku: initialData.variants?.[0]?.sku || '',
+      specifications: initialData.specifications || [{ key: '', value: '' }],
+    } : {
       regularPrice: 0,
       salePrice: 0,
       costPrice: 0,
@@ -392,7 +410,22 @@ export default function ProductForm({ initialData }: { initialData?: any }) {
            }, {}) 
            : {},
         // Include variant configs for per-variant pricing/stock
-        variantConfigs: data.hasVariants ? variantConfigs : [],
+        variantConfigs: data.hasVariants ? variantConfigs : [{
+          id: 'default',
+          name: 'Default',
+          attributes: {},
+          regularPrice: data.regularPrice,
+          salePrice: data.salePrice,
+          costPrice: data.costPrice,
+          stock: data.stock,
+          sku: data.sku || '',
+          images: []
+        }],
+        // Include product flags
+        featured,
+        latest,
+        bestseller,
+        special,
       };
 
       const url = initialData 
@@ -628,7 +661,7 @@ export default function ProductForm({ initialData }: { initialData?: any }) {
                 <CardHeader className="flex flex-row items-center justify-between space-y-0 pb-3 md:pb-6">
                     <CardTitle>Variants</CardTitle>
                     <div className="flex items-center gap-2">
-                        <Label htmlFor="hasVariants" className="text-sm cursor-pointer">Has variants</Label>
+                        <Label htmlFor="hasVariants" className="text-sm cursor-pointer">Multiple Variants</Label>
                         <Switch 
                             id="hasVariants" 
                             checked={watch('hasVariants')} 
@@ -1110,6 +1143,47 @@ export default function ProductForm({ initialData }: { initialData?: any }) {
                     {/* Hidden inputs to store legacy string values for fallback if needed */}
                     <input type="hidden" {...register('cat')} />
                     <input type="hidden" {...register('subcat')} />
+                </CardContent>
+            </Card>
+            
+            {/* Product Badges */}
+            <Card>
+                <CardHeader className="p-4 md:p-6 pb-2 md:pb-6">
+                    <CardTitle className="text-sm md:text-lg font-semibold">Product Badges</CardTitle>
+                    <p className="text-xs text-muted-foreground mt-1">Control which special sections display this product</p>
+                </CardHeader>
+                <CardContent className="space-y-4 p-4 md:p-6 pt-0 md:pt-0">
+                    <div className="flex items-center justify-between">
+                        <div className="space-y-0.5">
+                            <Label className="text-sm font-medium">Featured</Label>
+                            <p className="text-xs text-muted-foreground">Show on homepage carousel</p>
+                        </div>
+                        <Switch checked={featured} onCheckedChange={setFeatured} />
+                    </div>
+                    
+                    <div className="flex items-center justify-between border-t pt-4">
+                        <div className="space-y-0.5">
+                            <Label className="text-sm font-medium">Latest</Label>
+                            <p className="text-xs text-muted-foreground">Show in latest products</p>
+                        </div>
+                        <Switch checked={latest} onCheckedChange={setLatest} />
+                    </div>
+                    
+                    <div className="flex items-center justify-between border-t pt-4">
+                        <div className="space-y-0.5">
+                            <Label className="text-sm font-medium">Bestseller</Label>
+                            <p className="text-xs text-muted-foreground">Show in bestseller section</p>
+                        </div>
+                        <Switch checked={bestseller} onCheckedChange={setBestseller} />
+                    </div>
+                    
+                    <div className="flex items-center justify-between border-t pt-4">
+                        <div className="space-y-0.5">
+                            <Label className="text-sm font-medium">Special</Label>
+                            <p className="text-xs text-muted-foreground">Mark as special offer</p>
+                        </div>
+                        <Switch checked={special} onCheckedChange={setSpecial} />
+                    </div>
                 </CardContent>
             </Card>
         </div>

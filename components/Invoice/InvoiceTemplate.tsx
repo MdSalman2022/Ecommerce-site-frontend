@@ -4,12 +4,33 @@ import { Printer } from 'lucide-react';
 
 interface InvoiceProps {
   order: any;
+  storeSettings?: any;
 }
 
-export default function InvoiceTemplate({ order }: InvoiceProps) {
+export default function InvoiceTemplate({ order, storeSettings }: InvoiceProps) {
+  // Map BestDeal store fields
+  const storeName = storeSettings?.name || "BestDeal Inc.";
+  const storeEmail = storeSettings?.email || "support@bestdeal.com";
+  const storePhone = storeSettings?.phone || "+880 1XXX-XXXXXX";
+  const storeAddress = storeSettings?.address || "123 E-commerce St, Tech City";
+  const storeLogo = storeSettings?.logo || "https://res.cloudinary.com/dnuulo3h5/image/upload/v1767881296/logo-colored_ee6kpe.webp";
+
+  const storeCurrency = storeSettings?.currencySymbol || "৳";
+
   const handlePrint = () => {
     window.print();
   };
+
+  // Calculate items total if missing or needs validation
+  const items = order?.cart || order?.items || [];
+  const calculatedItemsTotal = items.reduce(
+    (acc: number, item: any) => acc + (item.price * item.quantity),
+    0
+  );
+  
+  const subtotal = order.itemsTotal || calculatedItemsTotal;
+  const discount = order.discountAmount || 0;
+  const total = order.amount || (subtotal - discount);
 
   return (
     <div className="bg-white p-8 max-w-[210mm] mx-auto min-h-[297mm] shadow-lg print:shadow-none" id="invoice-print">
@@ -23,14 +44,14 @@ export default function InvoiceTemplate({ order }: InvoiceProps) {
       {/* Header */}
       <div className="flex justify-between items-start mb-10 border-b pb-6">
         <div>
-          <img src="https://res.cloudinary.com/dnuulo3h5/image/upload/v1767881296/logo-colored_ee6kpe.webp" alt="BestDeal Logo" className="h-12 w-auto mb-2" />
+          <img src={storeLogo} alt={`${storeName} Logo`} className="h-12 w-auto mb-2" />
           <p className="text-gray-500 mt-1 uppercase text-sm font-bold tracking-wider">#{order.orderId || order._id.slice(0, 8)}</p>
         </div>
         <div className="text-right">
-          <h2 className="text-xl font-bold text-primary">BestDeal Inc.</h2>
-          <p className="text-sm text-gray-500">123 E-commerce St, Tech City</p>
-          <p className="text-sm text-gray-500">support@bestdeal.com</p>
-          <p className="text-sm text-gray-500">+1 (555) 123-4567</p>
+          <h2 className="text-xl font-bold text-primary">{storeName}</h2>
+          <p className="text-sm text-gray-500">{storeAddress}</p>
+          <p className="text-sm text-gray-500">{storeEmail}</p>
+          <p className="text-sm text-gray-500">{storePhone}</p>
         </div>
       </div>
 
@@ -40,7 +61,7 @@ export default function InvoiceTemplate({ order }: InvoiceProps) {
           <h3 className="text-gray-500 font-medium text-sm uppercase mb-2">Bill To</h3>
           <p className="font-bold text-gray-900">{order.name}</p>
           <p className="text-gray-600">{order.address}</p>
-          <p className="text-gray-600">{order.city}, PostCode</p>
+          <p className="text-gray-600">{order.city}</p>
           <p className="text-gray-600">{order.email}</p>
           <p className="text-gray-600">{order.contact}</p>
         </div>
@@ -82,7 +103,7 @@ export default function InvoiceTemplate({ order }: InvoiceProps) {
           </tr>
         </thead>
         <tbody>
-          {order.items.map((item: any, idx: number) => (
+          {items.map((item: any, idx: number) => (
             <tr key={idx} className="border-b border-gray-50">
               <td className="py-4">
                 <p className="font-medium text-gray-900">{item.name}</p>
@@ -93,8 +114,8 @@ export default function InvoiceTemplate({ order }: InvoiceProps) {
                 )}
               </td>
               <td className="text-center py-4 text-gray-600">{item.quantity}</td>
-              <td className="text-right py-4 text-gray-600">${item.price}</td>
-              <td className="text-right py-4 font-medium text-gray-900">${(item.price * item.quantity).toFixed(2)}</td>
+              <td className="text-right py-4 text-gray-600">{storeCurrency}{item.price?.toLocaleString()}</td>
+              <td className="text-right py-4 font-medium text-gray-900">{storeCurrency}{(item.price * item.quantity)?.toLocaleString()}</td>
             </tr>
           ))}
         </tbody>
@@ -105,21 +126,17 @@ export default function InvoiceTemplate({ order }: InvoiceProps) {
         <div className="w-64 space-y-3">
           <div className="flex justify-between text-gray-600">
             <span>Subtotal</span>
-            <span>${(order.amount).toFixed(2)}</span>
+            <span>{storeCurrency}{subtotal.toLocaleString()}</span>
           </div>
-          {order.discountAmount > 0 && (
+          {discount > 0 && (
              <div className="flex justify-between text-green-600">
                 <span>Discount</span>
-                <span>-${order.discountAmount}</span>
+                <span>-{storeCurrency}{discount.toLocaleString()}</span>
              </div>
           )}
           <div className="flex justify-between border-t border-gray-200 pt-3 text-lg font-bold text-gray-900">
-            <span>Total</span>
-            <span>${(order.amount - (order.discountAmount || 0)).toFixed(2)}</span>
-          </div>
-           <div className="flex justify-between text-xs text-gray-500 pt-1">
-            <span>Including VAT</span>
-            <span>${((order.amount) * 0.15).toFixed(2)}</span>
+            <span>Total Due</span>
+            <span>{storeCurrency}{total.toLocaleString()}</span>
           </div>
         </div>
       </div>
@@ -127,7 +144,7 @@ export default function InvoiceTemplate({ order }: InvoiceProps) {
       {/* Footer */}
       <div className="mt-20 border-t pt-8 text-center text-gray-500 text-sm">
         <p>Thank you for your business!</p>
-        <p className="mt-1">For any inquiries, please contact support@bestdeal.com</p>
+        <p className="mt-1">For any inquiries, please contact {storeEmail}</p>
       </div>
     </div>
   );

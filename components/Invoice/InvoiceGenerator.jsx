@@ -2,6 +2,7 @@
 import React, { useRef } from "react";
 import { useReactToPrint } from "react-to-print";
 import dynamic from "next/dynamic";
+import { useSiteSettings } from "@/hooks/useSiteSettings";
 
 const ComponentToPrint = dynamic(() => import("./ComponentToPrint"), {
   ssr: false,
@@ -9,6 +10,7 @@ const ComponentToPrint = dynamic(() => import("./ComponentToPrint"), {
 
 const InvoiceGenerator = ({ order }) => {
   const contentRef = useRef();
+  const { store } = useSiteSettings();
 
   const reactToPrintFn = useReactToPrint({ contentRef });
 
@@ -25,6 +27,7 @@ const InvoiceGenerator = ({ order }) => {
         <ComponentToPrint
           ref={contentRef}
           order={order}
+          storeSettings={store}
         />
       </div>
       

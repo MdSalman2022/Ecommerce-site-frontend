@@ -60,6 +60,7 @@ const ShippingForm = ({
   setIsEditingShipping,
   savedShipping,
   watch,
+  trigger,
 }: {
   register: any;
   errors: any;
@@ -70,6 +71,7 @@ const ShippingForm = ({
   setIsEditingShipping: (val: boolean) => void;
   savedShipping: ShippingFormData | null;
   watch: any;
+  trigger: any;
 }) => (
   <form className="space-y-4">
     {/* Show Previous Guest Details Option */}
@@ -183,27 +185,41 @@ const ShippingForm = ({
           )}
         </div>
 
-        <div className="space-y-2">
-          <Label htmlFor="city">City *</Label>
-          <Input
-            id="city"
-            {...register("city", {required: "City is required"})}
-            placeholder="Dhaka"
-          />
-          {errors.city && (
-            <p className="text-sm text-destructive">{errors.city.message}</p>
-          )}
-        </div>
+                <div className="space-y-2">
+                  <Label htmlFor="city">City *</Label>
+                  <Input
+                    id="city"
+                    {...register("city", {required: "City is required"})}
+                    placeholder="Dhaka"
+                  />
+                  {errors.city && (
+                    <p className="text-sm text-destructive">{errors.city.message}</p>
+                  )}
+                </div>
 
         {isEditingShipping && (
-          <Button
-            type="button"
-            variant="outline"
-            className="w-full"
-            onClick={() => setIsEditingShipping(false)}
-          >
-            Cancel
-          </Button>
+          <div className="flex gap-2">
+            <Button
+              type="button"
+              className="flex-1"
+              onClick={async () => {
+                const isValid = await trigger();
+                if (isValid) {
+                  setIsEditingShipping(false);
+                }
+              }}
+            >
+              Save Details
+            </Button>
+            <Button
+              type="button"
+              variant="outline"
+              className="flex-1"
+              onClick={() => setIsEditingShipping(false)}
+            >
+              Cancel
+            </Button>
+          </div>
         )}
       </>
     )}
@@ -229,6 +245,26 @@ export default function CheckoutPage() {
   const [creatingIntent, setCreatingIntent] = useState(false);
   const stripeFormRef = useRef<StripePaymentFormRef>(null);
 
+  // Dynamic Shipping Support
+  const [shippingRates, setShippingRates] = useState({ dhaka_in: 60, dhaka_out: 120 });
+  const [shippingZone, setShippingZone] = useState<"dhaka_in" | "dhaka_out">("dhaka_in");
+
+  // Fetch shipping rates
+  useEffect(() => {
+    const fetchRates = async () => {
+      try {
+        const res = await fetch(`${API_URL}/api/settings/shipping`);
+        const data = await res.json();
+        if (data.success && data.data) {
+          setShippingRates(data.data);
+        }
+      } catch (error) {
+        console.error("Failed to fetch shipping rates:", error);
+      }
+    };
+    fetchRates();
+  }, []);
+
   // Calculate subtotal from cart items
   const subTotal = cart.reduce((total, item) => {
     return total + item.price * item.quantity;
@@ -240,9 +276,10 @@ export default function CheckoutPage() {
     formState: {errors},
     setValue,
     watch,
+    trigger,
   } = useForm<ShippingFormData>();
 
-  const shippingCost = 60;
+  const shippingCost = shippingRates[shippingZone];
   const totalAmount = subTotal + shippingCost;
 
   // Mark loading as complete after component mounts
@@ -283,6 +320,9 @@ export default function CheckoutPage() {
               setValue("contact", data.contact);
               setValue("city", data.city);
               setValue("email", data.email || user.email);
+              if (data.shippingZone) {
+                setShippingZone(data.shippingZone);
+              }
             }
           }
         } catch (error) {
@@ -481,6 +521,9 @@ export default function CheckoutPage() {
         orderStatus: "pending",
         shipment: "picked",
         shippingCost: shippingCost,
+        shippingZone: shippingZone,
+        itemsTotal: subTotal,
+        deliveryCharge: shippingCost,
       };
 
       const response = await fetch(`${API_URL}/orderhistory`, {
@@ -504,6 +547,7 @@ export default function CheckoutPage() {
             body: JSON.stringify({
               email: user.email,
               ...shippingData,
+              shippingZone,
             }),
           });
         } catch (error) {
@@ -514,7 +558,7 @@ export default function CheckoutPage() {
         try {
           localStorage.setItem(
             "guest_checkout_details",
-            JSON.stringify(shippingData)
+            JSON.stringify({ ...shippingData, shippingZone })
           );
         } catch (error) {
           console.error("Failed to save guest details:", error);
@@ -606,7 +650,46 @@ export default function CheckoutPage() {
                   setIsEditingShipping={setIsEditingShipping}
                   savedShipping={savedShipping}
                   watch={watch}
+                  trigger={trigger}
                 />
+              </CardContent>
+            </Card>
+
+            {/* Shipping Method */}
+            <Card>
+              <CardHeader>
+                <CardTitle className="flex items-center gap-2 text-base lg:text-lg">
+                  <Truck className="w-5 h-5" />
+                  Shipping Method
+                </CardTitle>
+              </CardHeader>
+              <CardContent>
+                <RadioGroup 
+                  value={shippingZone} 
+                  onValueChange={(val) => setShippingZone(val as "dhaka_in" | "dhaka_out")}
+                  className="grid grid-cols-1 gap-2"
+                >
+                  <div 
+                    className={`flex items-center justify-between space-x-2 border rounded-md p-3 cursor-pointer transition-colors ${shippingZone === 'dhaka_in' ? 'border-primary bg-primary/5' : 'hover:bg-muted/50'}`}
+                    onClick={() => setShippingZone("dhaka_in")}
+                  >
+                    <div className="flex items-center space-x-2">
+                      <RadioGroupItem value="dhaka_in" id="dhaka_in" />
+                      <Label htmlFor="dhaka_in" className="cursor-pointer">Inside Dhaka</Label>
+                    </div>
+                    <span className="font-semibold">৳{shippingRates.dhaka_in}</span>
+                  </div>
+                  <div 
+                    className={`flex items-center justify-between space-x-2 border rounded-md p-3 cursor-pointer transition-colors ${shippingZone === 'dhaka_out' ? 'border-primary bg-primary/5' : 'hover:bg-muted/50'}`}
+                    onClick={() => setShippingZone("dhaka_out")}
+                  >
+                    <div className="flex items-center space-x-2">
+                      <RadioGroupItem value="dhaka_out" id="dhaka_out" />
+                      <Label htmlFor="dhaka_out" className="cursor-pointer">Outside Dhaka</Label>
+                    </div>
+                    <span className="font-semibold">৳{shippingRates.dhaka_out}</span>
+                  </div>
+                </RadioGroup>
               </CardContent>
             </Card>
 

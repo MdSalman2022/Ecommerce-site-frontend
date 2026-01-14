@@ -81,6 +81,11 @@ export interface NotificationSettings {
   adminEmail: string;
 }
 
+export interface ShippingSettings {
+  dhaka_in: number;
+  dhaka_out: number;
+}
+
 export interface StoreSettings {
   layout: LayoutSettings;
   store: StoreInfo;
@@ -89,6 +94,7 @@ export interface StoreSettings {
   seo: SEOSettings;
   maintenance: MaintenanceSettings;
   notifications: NotificationSettings;
+  shipping: ShippingSettings;
 }
 
 // ==================== DEFAULTS ====================
@@ -149,6 +155,10 @@ const DEFAULT_SETTINGS: StoreSettings = {
     lowStockAlert: false,
     newOrderAlert: false,
     adminEmail: "",
+  },
+  shipping: {
+    dhaka_in: 60,
+    dhaka_out: 120,
   },
 };
 

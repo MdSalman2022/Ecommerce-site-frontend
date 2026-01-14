@@ -3,7 +3,7 @@
 import React from "react";
 import { useParams, useRouter } from "next/navigation";
 import { useQuery } from "@tanstack/react-query";
-import { CheckCircle2, Package, Download, ArrowRight } from "lucide-react";
+import { CheckCircle2, Package, Download, ArrowRight, ArrowBigRight } from "lucide-react";
 import { Button } from "@/components/ui/button";
 import Link from "next/link";
 import confetti from "canvas-confetti";
@@ -151,25 +151,16 @@ export default function OrderSuccessPage() {
         </div>
 
         {/* Action Buttons */}
-        <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
+        <div className="flex gap-4">
           <Link href={`/orders/${order.orderId || order._id}`} className="w-full">
             <Button
               variant="default"
               className="w-full h-12 text-base font-semibold"
             >
-              <Package className="w-5 h-5 mr-2" />
-              View Order Details
+              View Order Invoice
+              <ArrowBigRight/>
             </Button>
-          </Link>
-          <Link href={`/orders/${order.orderId || order._id}`} className="w-full">
-            <Button
-              variant="outline"
-              className="w-full h-12 text-base font-semibold"
-            >
-              <Download className="w-5 h-5 mr-2" />
-              View & Print Invoice
-            </Button>
-          </Link>
+          </Link> 
         </div>
 
         {/* Continue Shopping */}

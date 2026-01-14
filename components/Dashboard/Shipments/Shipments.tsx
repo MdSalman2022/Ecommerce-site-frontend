@@ -96,21 +96,21 @@ function DashboardShipments() {
           <TbFileInvoice className="text-4xl p-2 w-12 h-12 rounded-lg bg-primary/10 text-primary" />
           <div>
             <p className="text-muted-foreground">Delivered</p>
-            <p className="text-2xl font-bold">{ordersArray.filter((o: any) => o.shipment === 'delivered').length}</p>
+            <p className="text-2xl font-bold">{ordersArray.filter((o: any) => o.orderStatus === 'delivered').length}</p>
           </div>
         </div>
         <div className="flex items-center gap-4 bg-card border border-border p-5 rounded-xl">
           <MdDoneAll className="text-4xl p-2 w-12 h-12 rounded-lg bg-green-500/10 text-green-500" />
           <div>
-            <p className="text-muted-foreground">In Transit</p>
-            <p className="text-2xl font-bold">{ordersArray.filter((o: any) => o.shipment === 'picked').length}</p>
+            <p className="text-muted-foreground">Processing</p>
+            <p className="text-2xl font-bold">{ordersArray.filter((o: any) => o.orderStatus === 'processing').length}</p>
           </div>
         </div>
         <div className="flex items-center gap-4 bg-card border border-border p-5 rounded-xl">
           <BiError className="text-4xl p-2 w-12 h-12 rounded-lg bg-primary/50/10 text-orange-500" />
           <div>
-            <p className="text-muted-foreground">Issues</p>
-            <p className="text-2xl font-bold">{ordersArray.filter((o: any) => !o.orderStatus).length}</p>
+            <p className="text-muted-foreground">Cancelled</p>
+            <p className="text-2xl font-bold">{ordersArray.filter((o: any) => o.orderStatus === 'cancelled').length}</p>
           </div>
         </div>
       </div>
@@ -125,7 +125,8 @@ function DashboardShipments() {
           </DropdownMenuTrigger>
           <DropdownMenuContent>
             <DropdownMenuItem onClick={() => handleUpdateStatus('delivered')}>Mark Delivered</DropdownMenuItem>
-            <DropdownMenuItem onClick={() => handleUpdateStatus('picked')}>Mark Picked</DropdownMenuItem>
+            <DropdownMenuItem onClick={() => handleUpdateStatus('processing')}>Mark Processing</DropdownMenuItem>
+            <DropdownMenuItem onClick={() => handleUpdateStatus('shipped')}>Mark Shipped</DropdownMenuItem>
           </DropdownMenuContent>
         </DropdownMenu>
 
@@ -196,15 +197,19 @@ function DashboardShipments() {
                 </TableCell>
                 <TableCell>
                   <span
-                    className={`px-3 py-1 rounded-full text-xs font-medium ${
-                      !order.orderStatus
+                    className={`px-3 py-1 rounded-full text-xs font-medium capitalize ${
+                      order.orderStatus === 'cancelled'
                         ? 'bg-red-100 text-red-600'
-                        : order.shipment === 'delivered'
+                        : order.orderStatus === 'delivered'
                         ? 'bg-green-100 text-green-600'
-                        : 'bg-primary/10 text-orange-600'
+                        : order.orderStatus === 'shipped'
+                        ? 'bg-blue-100 text-blue-600'
+                        : order.orderStatus === 'processing'
+                        ? 'bg-purple-100 text-purple-600'
+                        : 'bg-orange-100 text-orange-600'
                     }`}
                   >
-                    {order.orderStatus ? order.shipment : 'Cancelled'}
+                    {order.orderStatus || 'Pending'}
                   </span>
                 </TableCell>
               </TableRow>
